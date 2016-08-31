@@ -3,7 +3,7 @@ CXXFLAGS  = -c -std=c++14
 LDFLAGS   = -lsfml-graphics -lsfml-window -lsfml-system
 BDIR      = build
 VPATH     = src
-SOURCES   = main.cpp
+SOURCES   = main.cpp board.cpp cell.cpp
 OBJECTS   = $(SOURCES:%.cpp=$(BDIR)/%.o)
 EXECUTABLE= $(BDIR)/life
 
