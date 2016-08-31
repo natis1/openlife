@@ -1,0 +1,9 @@
+/bin/
+/build/
+/lib/
+*.a
+*.o
+autobuild
+fastbuild
+*.kdev4
+/.kdev4/
