@@ -26,6 +26,15 @@ double distance(T& t1, T& t2)
     return hypot(dx, dy);
 }
 
+template <typename T>
+double distance(sf::Vector2f a, T& t)
+{
+    auto b = t.getPosition();
+    double dx = abs(a.x - b.x);
+    double dy = abs(a.y - b.y);
+    return hypot(dx, dy);
+}
+
 // Compute angle between two objects in degrees
 template <typename T>
 double angle(T& t1, T& t2)

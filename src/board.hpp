@@ -20,5 +20,5 @@ private:
     sf::RenderWindow window;
 
     // Simulation backend
-    std::vector<Cell> cells;
+    std::vector<std::shared_ptr<Cell>> cells;
 };
