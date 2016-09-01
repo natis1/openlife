@@ -16,9 +16,14 @@ private:
 
     bool _inBounds(Cell& cell);
 
+    void _updateNeighbors();
+    void _update();
+    void _render();
+    void _handle();
+
     // Graphics frontend
     sf::RenderWindow window;
 
     // Simulation backend
-    std::vector<std::shared_ptr<Cell>> cells;
+    CellVec cells;
 };

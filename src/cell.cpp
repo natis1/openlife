@@ -1,14 +1,14 @@
 #include "cell.hpp"
-#include <iostream>
+#include "tools.hpp"
 
 float Cell::reproduce_chance = .01;
 float Cell::neighbor_radius  = 2;
 
 // Create initial cell
 Cell::Cell() : 
-    sf::CircleShape(10),
+    sf::CircleShape(9),
     neighbors(0),
-    life(1000),
+    life(50),
     total_life(life)
 {
     auto bounds = getLocalBounds();
@@ -21,7 +21,7 @@ Cell::Cell(Cell& a, Cell& b) :
 {
     const auto avg = [](auto x, auto y){return (x + y) / 2;};
 
-    setRotation(avg(a.getRotation(), b.getRotation()));
+    setRotation(a.getRotation());
 
     auto colorA = a.getFillColor();
     auto colorB = b.getFillColor();
@@ -33,7 +33,19 @@ Cell::Cell(Cell& a, Cell& b) :
     auto posA = a.getPosition();
     auto posB = b.getPosition();
 
-    setPosition(avg(posA.x, posB.x), avg(posA.y, posB.y));
+    auto dx = avg(posA.x, posB.x);
+    auto dy = avg(posA.y, posB.y);
+
+    auto radii = avg(a.getRadius(), b.getRadius());
+
+    auto toleranceDist = dist(0, radii);
+
+    auto generator = randomGenerator();
+
+    dx += ((radii + toleranceDist(generator))* sign(generator));
+    dy += ((radii + toleranceDist(generator))* sign(generator));
+
+    setPosition(dx, dy);
 }
 
 
@@ -53,8 +65,7 @@ void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
     {
         auto d = distance(*this, *cell);
         auto r = getRadius();
-        // *2 means if the circles collide on edges (If left off, would be collision of edge with a center)
-        if (d < r * 2) 
+        if (d < r) 
         {
             mates.push_back(cell);
         }
@@ -69,11 +80,11 @@ void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
 
 void Cell::update()
 {
-    moveVec(*this, .1);
+    moveVec(*this, 1);
     
     if (neighbors < 2)
     {
-        life--;
+        //life--;
     }
     else if (neighbors > 3)
     {
@@ -81,7 +92,7 @@ void Cell::update()
     }
     else
     {
-        life++;
+        //life++;
     }
 
     neighbors = 0;
@@ -91,16 +102,23 @@ void Cell::update()
     setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifeFraction));
 }
 
-std::vector<std::shared_ptr<Cell>> Cell::mate()
+CellVec Cell::mate()
 {
-    std::vector<std::shared_ptr<Cell>> children;
+    CellVec children;
 
-    /*
-    for (auto& mate : mates)
+    auto generator = randomGenerator();
+    auto chanceDist = dist(0, 1000);
+
+    if (mates.size() > 0)
     {
-        children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
+        for (auto& mate : mates)
+        {
+            if (chanceDist(generator) < 10)
+            {
+                children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
+            }
+        }
     }
-    */
     mates.clear();
 
 

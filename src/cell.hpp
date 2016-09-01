@@ -4,6 +4,10 @@
 
 #include "physics.hpp"
 
+class Cell;
+
+using CellVec = std::vector<std::shared_ptr<Cell>>;
+
 class Cell : public sf::CircleShape
 {
 static float reproduce_chance;
@@ -12,16 +16,16 @@ static float neighbor_radius;
 public:
     Cell();
     Cell(Cell& a, Cell& b);
-    void updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells);
+    void updateNeighbors(const CellVec& cells);
     void update();
-    std::vector<std::shared_ptr<Cell>> mate();
+    CellVec mate();
 
     void bounce();
     bool alive();
     int neighbors;
 
 
-    std::vector<std::shared_ptr<Cell>> mates;
+    CellVec mates;
 
 private:
     int life;
