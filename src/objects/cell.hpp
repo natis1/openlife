@@ -1,8 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <vector>
 
-#include "physics.hpp"
+#include "../tools/physics.hpp"
 
 class Cell;
 

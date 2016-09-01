@@ -1,6 +1,5 @@
 #pragma once
 #include "cell.hpp"
-#include <vector>
 
 class Board
 {

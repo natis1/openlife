@@ -1,4 +1,4 @@
-#include "board.hpp"
+#include "objects/board.hpp"
 
 int main()
 {
