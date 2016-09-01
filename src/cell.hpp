@@ -1,9 +1,15 @@
+#pragma once
 #include <SFML/Graphics.hpp>
+#include "physics.hpp"
 
 class Cell : public sf::CircleShape
 {
 public:
     Cell();
-    //Cell(Cell parent);
+    void update();
+    void bounce();
+
+private:
+    int life;
 };
 

@@ -7,15 +7,19 @@ Board::Board(int width, int height) :
 {
 }
 
+bool Board::_inBounds(Cell& cell)
+{
+    auto pos  = cell.getPosition();
+    auto size = window.getSize();
+    return pos.x > 0 and pos.x < size.x and pos.y > 0 and pos.y < size.y;
+}
+
 void Board::_genCells(int nCells)
 {
     for (unsigned i; i < nCells; i++)
     {
-        std::cout << "Generating cell" << std::endl;
         _genCell();
     }
-    std::cout << "Done" << std::endl;
-    std::cout << cells.size() << std::endl;
 }
 
 void Board::_genCell()
@@ -27,8 +31,9 @@ void Board::_genCell()
     std::mt19937 rng;
     rng.seed(std::random_device()());
     // Distributions for integer coordinates inside of the board
-    std::uniform_int_distribution<std::mt19937::result_type> widthDist  (0, (int)window.getSize().x); 
-    std::uniform_int_distribution<std::mt19937::result_type> heightDist (0, (int)window.getSize().y);
+    auto size = window.getSize();
+    std::uniform_int_distribution<std::mt19937::result_type> widthDist  (0, (int)size.x); 
+    std::uniform_int_distribution<std::mt19937::result_type> heightDist (0, (int)size.y);
 
     int x = widthDist(rng);
     int y = heightDist(rng);
@@ -50,6 +55,15 @@ void Board::run(int nCells)
             if (event.type == sf::Event::Closed)
             {
                 window.close();
+            }
+        }
+
+        for (auto& cell : cells)
+        {
+            cell.update();
+            if (not _inBounds(cell))
+            {
+                cell.bounce();
             }
         }
 

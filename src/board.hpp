@@ -1,3 +1,4 @@
+#pragma once
 #include "cell.hpp"
 #include <vector>
 
@@ -13,7 +14,7 @@ private:
     void _genNear(Cell parent, int tolerance=10);
     void _genCells(int nCells);
 
-    bool _in_bounds(Cell cell);
+    bool _inBounds(Cell& cell);
 
     // Graphics frontend
     sf::RenderWindow window;
