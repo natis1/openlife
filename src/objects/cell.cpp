@@ -70,9 +70,28 @@ void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-void Cell::update()
+void Cell::update(FoodVec& food)
 {
-    moveVec(*this, 1);
+    for (auto& f : food)
+    {
+        auto d = distance(*f, *this);
+        if (d < getRadius() + f->getRadius())
+        {
+            f->eat();
+            regen();
+        }
+    }
+
+    auto min = std::min_element(food.begin(), food.end(),
+        [this]( const auto &a, const auto &b )
+        {
+        return distance(*a, *this) < distance(*b, *this);
+        } );
+
+    auto angle_to_food = angle(**min, *this);
+    setRotation(angle_to_food);
+
+    moveVec(*this, .1);
     
     if (neighbors < 2)
     {
@@ -98,7 +117,7 @@ CellVec Cell::mate()
     CellVec children;
 
     auto generator = randomGenerator();
-    auto chanceDist = dist(0, 1000);
+    auto chanceDist = dist(0, 1000000);
 
     if (mates.size() > 0)
     {
