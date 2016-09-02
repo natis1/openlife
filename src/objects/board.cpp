@@ -1,7 +1,4 @@
 #include "board.hpp"
-#include "tools.hpp"
-#include <iostream>
-#include <memory>
 
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "")

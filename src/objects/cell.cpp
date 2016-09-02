@@ -1,15 +1,11 @@
 #include "cell.hpp"
-#include "tools.hpp"
 
 float Cell::reproduce_chance = .01;
 float Cell::neighbor_radius  = 2;
 
 // Create initial cell
 Cell::Cell() : 
-    sf::CircleShape(9),
-    neighbors(0),
-    life(50),
-    total_life(life)
+    neighbors(0)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -54,10 +50,6 @@ void Cell::bounce()
     rotate(180);
 }
 
-bool Cell::alive()
-{
-    return life >= 0;
-}
 
 void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
 {
@@ -84,22 +76,21 @@ void Cell::update()
     
     if (neighbors < 2)
     {
-        //life--;
+        //
     }
     else if (neighbors > 3)
     {
-        life--;
+        damage(1);
     }
     else
     {
-        //life++;
+        //
     }
 
     neighbors = 0;
 
     auto color = getFillColor();
-    float lifeFraction = (float)life / (float)total_life;
-    setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifeFraction));
+    setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifePercent()));
 }
 
 CellVec Cell::mate()

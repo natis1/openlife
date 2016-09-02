@@ -1,15 +1,12 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <vector>
-
-#include "../tools/physics.hpp"
+#include "entity.hpp"
+#include "../tools/tools.hpp"
 
 class Cell;
 
 using CellVec = std::vector<std::shared_ptr<Cell>>;
 
-class Cell : public sf::CircleShape
+class Cell : public Entity
 {
 static float reproduce_chance;
 static float neighbor_radius;
@@ -17,19 +14,18 @@ static float neighbor_radius;
 public:
     Cell();
     Cell(Cell& a, Cell& b);
+
+    virtual void update();
     void updateNeighbors(const CellVec& cells);
-    void update();
+
     CellVec mate();
 
     void bounce();
-    bool alive();
-    int neighbors;
-
-
-    CellVec mates;
 
 private:
-    int life;
-    int total_life;
+
+    int neighbors;
+
+    CellVec mates;
 };
 
