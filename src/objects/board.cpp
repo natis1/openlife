@@ -97,6 +97,24 @@ void Board::_update()
                     [](const auto & f) { return not f->alive(); }),
             food.end());
 
+    auto size = window.getSize();
+    auto widthDist  = dist(0, size.x);
+    auto heightDist = dist(0, size.y);
+    auto generator  = randomGenerator();
+
+    for (unsigned i = 0; i < (nFood - food.size()); i++)
+    {
+        Food f;
+
+        int x = widthDist(generator);
+        int y = heightDist(generator);
+
+        f.setPosition(x, y);
+        f.setFillColor(sf::Color(0, 255, 255));
+
+        food.push_back(std::make_shared<Food>(f));
+    } 
+
     _updateNeighbors();
 
     // Interact with neighbors, mate with mates
@@ -138,6 +156,8 @@ void Board::_handle()
 
 void Board::run(int nCells, int nFood)
 {
+    this->nFood  = nFood;
+    this->nCells = nCells;
     _genCells(nCells);
     _genFood(nFood);
 

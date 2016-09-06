@@ -29,4 +29,7 @@ private:
     // Simulation backend
     CellVec cells;
     FoodVec food;
+
+    int nFood;
+    int nCells;
 };

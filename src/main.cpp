@@ -3,7 +3,7 @@
 int main()
 {
     Board board;
-    board.run(100, 50);
+    board.run(50, 1000);
 
     return 0;
 }
