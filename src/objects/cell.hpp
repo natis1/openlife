@@ -1,6 +1,5 @@
 #pragma once
 #include "entity.hpp"
-#include "food.hpp"
 #include "../tools/tools.hpp"
 
 class Cell;
@@ -17,7 +16,7 @@ public:
     Cell();
     Cell(Cell& a, Cell& b);
 
-    virtual void update(FoodVec& food);
+    virtual void update();
     void updateNeighbors(const CellVec& cells);
 
     CellVec mate();

@@ -45,27 +45,6 @@ void Board::_genCell()
     cells.push_back(cell);
 }
 
-void Board::_genFood()
-{
-    auto size = window.getSize();
-    auto widthDist  = dist(0, size.x);
-    auto heightDist = dist(0, size.y);
-    auto generator  = randomGenerator();
-
-    for(unsigned i = 0; i < nFood; i++)
-    {
-        Food f;
-
-        int x = widthDist(generator);
-        int y = heightDist(generator);
-
-        f.setPosition(x, y);
-        f.setFillColor(sf::Color(0, 255, 255));
-
-        food.push_back(std::make_shared<Food>(f));
-    }
-}
-
 
 void Board::_updateNeighbors()
 {
@@ -88,32 +67,10 @@ void Board::_updateNeighbors()
 
 void Board::_update()
 {
-    cells.erase(
-        std::remove_if(cells.begin(), cells.end(),
-                    [](const auto & e) { return not e->alive(); }),
-            cells.end());
-    food.erase(
-        std::remove_if(food.begin(), food.end(),
-                    [](const auto & f) { return not f->alive(); }),
-            food.end());
-
     auto size = window.getSize();
     auto widthDist  = dist(0, size.x);
     auto heightDist = dist(0, size.y);
     auto generator  = randomGenerator();
-
-    for (unsigned i = 0; i < (nFood - food.size()); i++)
-    {
-        Food f;
-
-        int x = widthDist(generator);
-        int y = heightDist(generator);
-
-        f.setPosition(x, y);
-        f.setFillColor(sf::Color(0, 255, 255));
-
-        food.push_back(std::make_shared<Food>(f));
-    } 
 
     _updateNeighbors();
 
@@ -121,20 +78,21 @@ void Board::_update()
     std::vector<std::shared_ptr<Cell>> new_generation;
     for (auto cell : cells)
     {
-        cell->update(food);
+        cell->update();
         auto mates = cell->mate();
         new_generation.insert(new_generation.end(), mates.begin(), mates.end());
     }
     cells.insert(cells.end(), new_generation.begin(), new_generation.end());
+    cells.erase(
+        std::remove_if(cells.begin(), cells.end(),
+                    [](const auto & e) { return not e->alive(); }),
+            cells.end());
+
 }
 
 void Board::_render()
 {
     window.clear();
-    for (auto f : food)
-    {
-        window.draw(*f);
-    }
     for (auto cell : cells)
     {
         window.draw(*cell);
@@ -154,12 +112,10 @@ void Board::_handle()
     }
 }
 
-void Board::run(int nCells, int nFood)
+void Board::run(int nCells)
 {
-    this->nFood  = nFood;
     this->nCells = nCells;
     _genCells();
-    _genFood();
 
     while (window.isOpen())
     {
@@ -169,6 +125,7 @@ void Board::run(int nCells, int nFood)
 
         if (cells.size() == 0)
         {
+            std::cout << "No cells remaining" << std::endl;
             break;
         }
     }
