@@ -7,7 +7,7 @@ The ultimate life simulator
 Standard (Assumes `git`, `g++`, `make`)
 ```bash
 sudo apt-get install libsfml-dev
-git cone https://github.com/natis1/openlife
+git clone https://github.com/natis1/openlife
 cd openlife
 make
 ./build/life
