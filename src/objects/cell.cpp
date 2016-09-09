@@ -91,7 +91,7 @@ void Cell::update(FoodVec& food)
     auto angle_to_food = angle(**min, *this);
     setRotation(angle_to_food);
 
-    moveVec(*this, .1);
+    moveVec(*this, 1);
     
     if (neighbors < 2)
     {

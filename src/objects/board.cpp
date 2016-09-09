@@ -12,7 +12,7 @@ bool Board::_inBounds(Cell& cell)
     return pos.x > 0 and pos.x < size.x and pos.y > 0 and pos.y < size.y;
 }
 
-void Board::_genCells(int nCells)
+void Board::_genCells()
 {
     for (unsigned i = 0; i < nCells; i++)
     {
@@ -45,7 +45,7 @@ void Board::_genCell()
     cells.push_back(cell);
 }
 
-void Board::_genFood(int nFood)
+void Board::_genFood()
 {
     auto size = window.getSize();
     auto widthDist  = dist(0, size.x);
@@ -158,8 +158,8 @@ void Board::run(int nCells, int nFood)
 {
     this->nFood  = nFood;
     this->nCells = nCells;
-    _genCells(nCells);
-    _genFood(nFood);
+    _genCells();
+    _genFood();
 
     while (window.isOpen())
     {

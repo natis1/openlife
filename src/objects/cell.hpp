@@ -5,6 +5,7 @@
 
 class Cell;
 
+//Alias
 using CellVec = std::vector<std::shared_ptr<Cell>>;
 
 class Cell : public Entity
