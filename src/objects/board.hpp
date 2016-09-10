@@ -11,11 +11,11 @@ private:
     // Helper functions / Internal methods
     void _genCell();
     void _genNear(Cell parent, int tolerance=10);
-    void _genCells();
+    void _genCells(int nCells);
 
     bool _inBounds(Cell& cell);
 
-    void _updateNeighbors();
+    void _updateInteractions();
     void _update();
     void _render();
     void _handle();
@@ -25,6 +25,4 @@ private:
 
     // Simulation backend
     CellVec cells;
-
-    int nCells;
 };

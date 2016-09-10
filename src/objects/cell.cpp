@@ -1,7 +1,7 @@
 #include "cell.hpp"
 
-float Cell::reproduce_chance = .01;
-float Cell::neighbor_radius  = 2;
+float Cell::reproduce_chance = 10;
+float Cell::neighbor_radius  = 10;
 
 // Create initial cell
 Cell::Cell() : 
@@ -22,6 +22,7 @@ Cell::Cell(Cell& a, Cell& b) :
     auto colorA = a.getFillColor();
     auto colorB = b.getFillColor();
 
+    // Child cells are averaged colors of parent cells
     setFillColor(sf::Color(avg(colorA.r, colorB.r),
                            avg(colorA.g, colorB.g),
                            avg(colorA.b, colorB.b)));
@@ -29,11 +30,13 @@ Cell::Cell(Cell& a, Cell& b) :
     auto posA = a.getPosition();
     auto posB = b.getPosition();
 
+    // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
 
     auto radii = avg(a.getRadius(), b.getRadius());
 
+    // A tolerance around spawn distance prevents children from mating with their parents..
     auto toleranceDist = dist(0, radii);
 
     auto generator = randomGenerator();
@@ -51,18 +54,23 @@ void Cell::bounce()
 }
 
 
-void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
+// Build a list/count of neighbors and mates
+void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 {
     for (auto& cell : cells)
     {
-        auto d = distance(*this, *cell);
-        auto r = getRadius();
-        if (d < r) 
+        auto dist = distance(*this, *cell);
+        
+        auto radius          = getRadius();
+        auto neighbor_radius = radius * Cell::neighbor_radius;
+
+        // Mate with closer cells, treat further ones as neighbors, and ignore the rest
+        if (dist < radius) 
         {
             mates.push_back(cell);
         }
         
-        if (d < r * 2 * Cell::neighbor_radius)
+        if (dist < neighbor_radius)
         {
             neighbors++;
             cell->neighbors++;
@@ -87,7 +95,7 @@ void Cell::update()
     
     if (neighbors < 2)
     {
-        damage(1);
+        //damage(1);
     }
     else if (neighbors > 3)
     {
@@ -95,7 +103,7 @@ void Cell::update()
     }
     else
     {
-        regen(1);
+        //regen(1);
     }
 
     neighbors = 0;
@@ -108,14 +116,14 @@ CellVec Cell::mate()
 {
     CellVec children;
 
-    auto generator = randomGenerator();
     auto chanceDist = dist(0, 1000000);
+    auto generator  = randomGenerator();
 
     if (mates.size() > 0)
     {
         for (auto& mate : mates)
         {
-            if (chanceDist(generator) < 10)
+            if (chanceDist(generator) < Cell::reproduce_chance)
             {
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }

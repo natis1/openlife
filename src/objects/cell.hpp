@@ -17,7 +17,7 @@ public:
     Cell(Cell& a, Cell& b);
 
     virtual void update();
-    void updateNeighbors(const CellVec& cells);
+    void interact(const CellVec& cells);
 
     CellVec mate();
 
