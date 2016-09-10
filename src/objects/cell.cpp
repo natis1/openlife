@@ -9,7 +9,7 @@ int Cell::max_neighbors = 10;
 // Create initial cell
 Cell::Cell() : 
     neighbors(0),
-    Entity(10, 1000)
+    Entity(10, 10000)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -104,7 +104,7 @@ void Cell::update()
     }
     else if (neighbors > 3)
     {
-        damage(1);
+        damage(10);
     }
     else
     {
