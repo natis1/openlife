@@ -22,7 +22,9 @@ private:
 
     // Graphics frontend
     sf::RenderWindow window;
+    sf::Font font;
+    sf::Text info;
 
     // Simulation backend
-    CellVec cells;
+    CellVec  cells;
 };

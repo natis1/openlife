@@ -3,6 +3,12 @@
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "")
 {
+    if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
+    {
+        std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
+    }
+    info.setFont(font);
+    info.setCharacterSize(24);
 }
 
 bool Board::_inBounds(Cell& cell)
@@ -108,10 +114,15 @@ void Board::_update()
 void Board::_render()
 {
     window.clear();
+
+
     for (auto cell : cells)
     {
         window.draw(*cell);
     }
+
+    info.setString("Cells: " + std::to_string(cells.size()));
+    window.draw(info);
     window.display();
 }
 
