@@ -2,6 +2,9 @@
 
 The ultimate life simulator
 
+![Cell Grouping](http://i.imgur.com/Ag7284g.png)
+
+
 ### Install:
 
 Standard (Assumes `git`, `g++`, `make`)
