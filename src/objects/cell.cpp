@@ -40,9 +40,6 @@ Cell::Cell(Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
     
     
-    // A tolerance around spawn distance prevents children from mating with their parents..
-    // The radius is always going to be 10 so calculating it manually every time is silly
-    auto toleranceDist = 5.;
     
     
     //Calculate this dynamically you cretin
