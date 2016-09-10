@@ -1,12 +1,11 @@
 #!/bin/bash
 
-
 # This program will automatically build life with normal defaults
 #
 # Please be sure to install sfml and cmake. The readme should explain everything.
 #
 
-#Do not move build.sh. You can execute it from anywhere though.
+# Do not move build.sh. You can execute it from anywhere though.
 cd $(dirname $0)
 
 SRC_PATH=$(pwd)

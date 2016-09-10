@@ -27,10 +27,11 @@ file(GLOB_RECURSE SOURCE_FILES
   "${CMAKE_SOURCE_DIR}/src/*.c"
   "${CMAKE_SOURCE_DIR}/src/*.h")
 
-#c++14 is super modern and also required for a few autos
+# c++14 is super modern and also required for a few autos
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics)
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
