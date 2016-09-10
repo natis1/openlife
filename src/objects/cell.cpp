@@ -1,6 +1,7 @@
 #include "cell.hpp"
 
-float Cell::reproduce_chance = 1;
+
+float Cell::mate_radius      = 1;
 float Cell::neighbor_radius  = 5;
 float Cell::move_amount      = 0.1;
 
@@ -9,7 +10,7 @@ int Cell::max_neighbors = 10;
 // Create initial cell
 Cell::Cell() : 
     neighbors(0),
-    Entity(10, 1000)
+    Entity(10, 10000)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -37,25 +38,39 @@ Cell::Cell(Cell& a, Cell& b) :
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
-
-    auto radii = avg(a.getRadius(), b.getRadius());
-
-    // A tolerance around spawn distance prevents children from mating with their parents..
-    auto toleranceDist = dist(0, (int)radii);
-
-    auto generator = randomGenerator();
-
-    dx += ((radii + toleranceDist(generator))* sign(generator));
-    dy += ((radii + toleranceDist(generator))* sign(generator));
+    
+    
+    
+    
+    //Calculate this dynamically you cretin
+    //dx += ((radii + toleranceDist(generator))* sign(generator));
+    //dy += ((radii + toleranceDist(generator))* sign(generator));
 
     setPosition(dx, dy);
 }
 
 
-void Cell::bounce()
+void Cell::bounce(sf::Vector2<unsigned int> bounds)
 {
-    rotate(180);
-    moveVec(*this, 1);
+    auto rotation = getRotation();
+    auto radius   = getRadius();
+    auto pos      = getPosition();
+
+    float normal = 0; // Angle normal to surface
+
+    if (pos.x - radius < 0)             // Left 
+        normal = 0;
+    else if (pos.x + radius > bounds.x) // Right
+        normal = 180;
+    else if (pos.y - radius < 0)        // Top
+        normal = 90;
+    else                                // Bottom
+        normal = 270;
+
+    float inverse_normal = (int)(normal + 180) % 360;
+
+    setRotation((inverse_normal - rotation) + normal);
+    moveVec(*this, Cell::move_amount);
 }
 
 
@@ -67,15 +82,14 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
         auto dist = distance(*this, *cell);
         
         auto radius          = getRadius();
-        auto neighbor_radius = radius * Cell::neighbor_radius;
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < radius) 
+        if (dist < radius * Cell::mate_radius) 
         {
             mates.push_back(cell);
         }
         
-        if (dist < neighbor_radius)
+        if (dist < radius * Cell::neighbor_radius)
         {
             neighbors++;
             cell->neighbors++;
@@ -85,17 +99,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 void Cell::update()
 {
-    /*
-    auto min = std::min_element(food.begin(), food.end(),
-        [this]( const auto &a, const auto &b )
-        {
-        return distance(*a, *this) < distance(*b, *this);
-        } );
-
-    auto angle_to_food = angle(**min, *this);
-    setRotation(angle_to_food);
-    */
-
+    setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
     if (neighbors < 2)
@@ -104,7 +108,7 @@ void Cell::update()
     }
     else if (neighbors > 3)
     {
-        damage(1);
+        damage(10);
     }
     else
     {
@@ -112,24 +116,28 @@ void Cell::update()
     }
 
 
-    auto color = getFillColor();
-    setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifePercent()));
+    const sf::Color *cellColor = &getFillColor();
+    setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
 }
 
-CellVec Cell::mate()
+std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
-    CellVec children;
-
-    auto chanceDist = dist(0.0, 100.0);
-    auto generator  = randomGenerator();
+    std::vector<std::shared_ptr<Cell>> children;
+    
+    
 
     if (mates.size() > 0 and neighbors < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
-            auto percent = chanceDist(generator);
-            if (percent < Cell::reproduce_chance)
+            //This would be 1 in 100 RANDOM chance but I fixed it
+            horniness = horniness + horninessPrime;
+            
+            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from fucking twice every tick
+            if (horniness + mate->horniness > 100.)
             {
+                horniness = 0;
+                mate->horniness = 0;
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }
