@@ -13,6 +13,11 @@ std::uniform_int_distribution<std::mt19937::result_type> dist(int a, int b)
     return std::uniform_int_distribution<std::mt19937::result_type>(a, b); 
 } 
 
+std::uniform_real_distribution<double> dist(double a, double b)
+{
+    return std::uniform_real_distribution<double> (a, b);
+}
+
 int sign(std::mt19937 generator)
 {
     if (dist(0, 10000)(generator) < 5000)
