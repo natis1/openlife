@@ -1,6 +1,5 @@
 #pragma once
 #include "entity.hpp"
-#include "food.hpp"
 #include "../tools/tools.hpp"
 
 class Cell;
@@ -12,13 +11,15 @@ class Cell : public Entity
 {
 static float reproduce_chance;
 static float neighbor_radius;
+static float move_amount;
+static int   max_neighbors;
 
 public:
     Cell();
     Cell(Cell& a, Cell& b);
 
-    virtual void update(FoodVec& food);
-    void updateNeighbors(const CellVec& cells);
+    virtual void update();
+    void interact(const CellVec& cells);
 
     CellVec mate();
 

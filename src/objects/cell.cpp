@@ -1,11 +1,15 @@
 #include "cell.hpp"
 
-float Cell::reproduce_chance = .01;
-float Cell::neighbor_radius  = 2;
+float Cell::reproduce_chance = 1;
+float Cell::neighbor_radius  = 5;
+float Cell::move_amount      = 0.1;
+
+int Cell::max_neighbors = 10;
 
 // Create initial cell
 Cell::Cell() : 
-    neighbors(0)
+    neighbors(0),
+    Entity(10, 1000)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -22,6 +26,7 @@ Cell::Cell(Cell& a, Cell& b) :
     auto colorA = a.getFillColor();
     auto colorB = b.getFillColor();
 
+    // Child cells are averaged colors of parent cells
     setFillColor(sf::Color(avg(colorA.r, colorB.r),
                            avg(colorA.g, colorB.g),
                            avg(colorA.b, colorB.b)));
@@ -29,12 +34,14 @@ Cell::Cell(Cell& a, Cell& b) :
     auto posA = a.getPosition();
     auto posB = b.getPosition();
 
+    // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
 
     auto radii = avg(a.getRadius(), b.getRadius());
 
-    auto toleranceDist = dist(0, radii);
+    // A tolerance around spawn distance prevents children from mating with their parents..
+    auto toleranceDist = dist(0, (int)radii);
 
     auto generator = randomGenerator();
 
@@ -48,21 +55,27 @@ Cell::Cell(Cell& a, Cell& b) :
 void Cell::bounce()
 {
     rotate(180);
+    moveVec(*this, 1);
 }
 
 
-void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
+// Build a list/count of neighbors and mates
+void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 {
     for (auto& cell : cells)
     {
-        auto d = distance(*this, *cell);
-        auto r = getRadius();
-        if (d < r) 
+        auto dist = distance(*this, *cell);
+        
+        auto radius          = getRadius();
+        auto neighbor_radius = radius * Cell::neighbor_radius;
+
+        // Mate with closer cells, treat further ones as neighbors, and ignore the rest
+        if (dist < radius) 
         {
             mates.push_back(cell);
         }
         
-        if (d < r * 2 * Cell::neighbor_radius)
+        if (dist < neighbor_radius)
         {
             neighbors++;
             cell->neighbors++;
@@ -70,18 +83,9 @@ void Cell::updateNeighbors(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-void Cell::update(FoodVec& food)
+void Cell::update()
 {
-    for (auto& f : food)
-    {
-        auto d = distance(*f, *this);
-        if (d < getRadius() + f->getRadius())
-        {
-            f->eat();
-            regen();
-        }
-    }
-
+    /*
     auto min = std::min_element(food.begin(), food.end(),
         [this]( const auto &a, const auto &b )
         {
@@ -90,12 +94,13 @@ void Cell::update(FoodVec& food)
 
     auto angle_to_food = angle(**min, *this);
     setRotation(angle_to_food);
+    */
 
-    moveVec(*this, 1);
+    moveVec(*this, Cell::move_amount);
     
     if (neighbors < 2)
     {
-        //
+        damage(1);
     }
     else if (neighbors > 3)
     {
@@ -103,10 +108,9 @@ void Cell::update(FoodVec& food)
     }
     else
     {
-        //
+        //regen(1);
     }
 
-    neighbors = 0;
 
     auto color = getFillColor();
     setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifePercent()));
@@ -116,21 +120,23 @@ CellVec Cell::mate()
 {
     CellVec children;
 
-    auto generator = randomGenerator();
-    auto chanceDist = dist(0, 1000000);
+    auto chanceDist = dist(0.0, 100.0);
+    auto generator  = randomGenerator();
 
-    if (mates.size() > 0)
+    if (mates.size() > 0 and neighbors < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
-            if (chanceDist(generator) < 10)
+            auto percent = chanceDist(generator);
+            if (percent < Cell::reproduce_chance)
             {
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }
     }
+    // Interaction finished
     mates.clear();
-
+    neighbors = 0;
 
     return children;
 }
