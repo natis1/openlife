@@ -11,6 +11,8 @@ class Cell : public Entity
 {
 static float reproduce_chance;
 static float neighbor_radius;
+static float move_amount;
+static int   max_neighbors;
 
 public:
     Cell();

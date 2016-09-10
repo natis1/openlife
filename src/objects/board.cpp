@@ -29,11 +29,14 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 void Board::_genCell()
 {
-    auto size = window.getSize();
+    auto cell = std::make_shared<Cell>(Cell());
+
+    auto radius = cell->getRadius();
+    auto size   = window.getSize();
 
     // Distributions for initial random settings
-    auto widthDist  = dist(0, size.x);
-    auto heightDist = dist(0, size.y);
+    auto widthDist  = dist(radius, size.x - radius);
+    auto heightDist = dist(radius, size.y - radius);
     auto angleDist  = dist(0, 360);
     auto redDist    = dist(100, 255);
     auto blueDist   = dist(100, 255);
@@ -43,8 +46,6 @@ void Board::_genCell()
 
     int x = widthDist(generator);
     int y = heightDist(generator);
-
-    auto cell = std::make_shared<Cell>(Cell());
 
     cell->setPosition(x, y);
     cell->setRotation(angleDist(generator));
@@ -73,7 +74,6 @@ void Board::_updateInteractions()
         {
             // Modify the cell to push it into bounds
             cell->bounce();
-            moveVec(*cell, 1);
         }
         it++;
     }

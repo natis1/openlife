@@ -1,11 +1,15 @@
 #include "cell.hpp"
 
-float Cell::reproduce_chance = 10;
-float Cell::neighbor_radius  = 10;
+float Cell::reproduce_chance = 1;
+float Cell::neighbor_radius  = 5;
+float Cell::move_amount      = 0.1;
+
+int Cell::max_neighbors = 10;
 
 // Create initial cell
 Cell::Cell() : 
-    neighbors(0)
+    neighbors(0),
+    Entity(10, 1000)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -37,7 +41,7 @@ Cell::Cell(Cell& a, Cell& b) :
     auto radii = avg(a.getRadius(), b.getRadius());
 
     // A tolerance around spawn distance prevents children from mating with their parents..
-    auto toleranceDist = dist(0, radii);
+    auto toleranceDist = dist(0, (int)radii);
 
     auto generator = randomGenerator();
 
@@ -51,6 +55,7 @@ Cell::Cell(Cell& a, Cell& b) :
 void Cell::bounce()
 {
     rotate(180);
+    moveVec(*this, 1);
 }
 
 
@@ -91,11 +96,11 @@ void Cell::update()
     setRotation(angle_to_food);
     */
 
-    moveVec(*this, .1);
+    moveVec(*this, Cell::move_amount);
     
     if (neighbors < 2)
     {
-        //damage(1);
+        damage(1);
     }
     else if (neighbors > 3)
     {
@@ -106,7 +111,6 @@ void Cell::update()
         //regen(1);
     }
 
-    neighbors = 0;
 
     auto color = getFillColor();
     setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifePercent()));
@@ -116,21 +120,23 @@ CellVec Cell::mate()
 {
     CellVec children;
 
-    auto chanceDist = dist(0, 1000000);
+    auto chanceDist = dist(0.0, 100.0);
     auto generator  = randomGenerator();
 
-    if (mates.size() > 0)
+    if (mates.size() > 0 and neighbors < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
-            if (chanceDist(generator) < Cell::reproduce_chance)
+            auto percent = chanceDist(generator);
+            if (percent < Cell::reproduce_chance)
             {
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }
     }
+    // Interaction finished
     mates.clear();
-
+    neighbors = 0;
 
     return children;
 }
