@@ -1,7 +1,7 @@
 #include "cell.hpp"
 
+
 float Cell::mate_radius      = 1;
-float Cell::reproduce_chance = 1;
 float Cell::neighbor_radius  = 5;
 float Cell::move_amount      = 0.1;
 
@@ -38,16 +38,16 @@ Cell::Cell(Cell& a, Cell& b) :
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
-
-    auto radii = avg(a.getRadius(), b.getRadius());
-
+    
+    
     // A tolerance around spawn distance prevents children from mating with their parents..
-    auto toleranceDist = dist(0, (int)radii);
-
-    auto generator = randomGenerator();
-
-    dx += ((radii + toleranceDist(generator))* sign(generator));
-    dy += ((radii + toleranceDist(generator))* sign(generator));
+    // The radius is always going to be 10 so calculating it manually every time is silly
+    auto toleranceDist = 5.;
+    
+    
+    //Calculate this dynamically you cretin
+    //dx += ((radii + toleranceDist(generator))* sign(generator));
+    //dy += ((radii + toleranceDist(generator))* sign(generator));
 
     setPosition(dx, dy);
 }
@@ -102,6 +102,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 void Cell::update()
 {
+    setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
     if (neighbors < 2)
@@ -118,24 +119,28 @@ void Cell::update()
     }
 
 
-    auto color = getFillColor();
-    setFillColor(sf::Color(color.r, color.g, color.b, 255 * lifePercent()));
+    const sf::Color *cellColor = &getFillColor();
+    setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
 }
 
-CellVec Cell::mate()
+std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
-    CellVec children;
-
-    auto chanceDist = dist(0.0, 100.0);
-    auto generator  = randomGenerator();
+    std::vector<std::shared_ptr<Cell>> children;
+    
+    
 
     if (mates.size() > 0 and neighbors < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
-            auto percent = chanceDist(generator);
-            if (percent < Cell::reproduce_chance)
+            //This would be 1 in 100 RANDOM chance but I fixed it
+            horniness = horniness + horninessPrime;
+            
+            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from fucking twice every tick
+            if (horniness + mate->horniness > 100.)
             {
+                horniness = 0;
+                mate->horniness = 0;
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }

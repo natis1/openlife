@@ -3,6 +3,9 @@
 #include <tuple>
 #include <iostream>
 
+
+// TODO: Move to body file
+
 // Conversions
 template <typename T>
 T degrees(T t)
@@ -35,12 +38,12 @@ double angle(T1& t1, T2& t2)
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
 
-    if (angle < 0)
-    {
-        angle = 360 + angle;
+    
+    if (angle < 0) {
+        angle = 360. + angle;
     }
-    else if (angle > 360)
-    {
+    
+    if (angle > 360.) {
         angle = (int)angle % 360;
     }
     return angle;
@@ -50,10 +53,7 @@ double angle(T1& t1, T2& t2)
 template <typename T>
 void moveVec(T& t, double amount)
 {
-    double angle = radians(t.getRotation());
-    double dx    = amount * cos(angle);
-    double dy    = amount * sin(angle);
-    t.move(dx, dy);
+    t.move( amount * cos(radians(t.getRotation())) , amount * sin(radians(t.getRotation())));
 }
 
 
