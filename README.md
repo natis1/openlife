@@ -4,29 +4,34 @@ The ultimate life simulator
 
 ![Cell Grouping](http://i.imgur.com/Ag7284g.png)
 
+## Build Instructions
 
-### Install:
+### Get prerequisite programs
 
-Standard (Assumes `git`, `g++`, `make`)
-```bash
-sudo apt-get install libsfml-dev
-git clone https://github.com/natis1/openlife
-cd openlife
-make
-./build/life
+To build openlife, you will need a compiler, git, make, and cmake, as well as the sfml libraries
+
+On most Linux these should be included in your repositories. For example you might try
+
+Ubuntu or Debian `apt-get install build-essential g++ git cmake libsfml-dev`
+
+Arch `pacman -S gcc git cmake sfml`
+
+Redhat or Fedora (etc.) `yum install gcc-c++ git cmake SFML`
+
+### Build:
+
+For most users, building should be as simple as running `./build.sh`, which will compile openlife in a build directory and copy it up one level.
+When openlife is fully released it will include more features like installing.
+
+To manually build, run the following commands:
+
 ```
-Server (All pre-requisites)
-```bash
-ssh -Y [server ip]
-
-sudo apt-get install g++
-sudo apt-get install make
-sudo apt-get install libsfml-dev
-sudo apt-get install git
-git clone https://github.com/natis1/openlife
-cd openlife
-make
-./build/life
+mkdir build
+cd build
+cmake ..
 ```
-
-(Graphics will be output on client machine)
+(configure openlife with a program like ccmake)
+```
+make
+```
+optional: `make install`
