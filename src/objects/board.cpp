@@ -41,8 +41,8 @@ void Board::_genCell()
     auto size   = window.getSize();
 
     // Distributions for initial random settings
-    auto widthDist  = dist(radius, size.x - radius);
-    auto heightDist = dist(radius, size.y - radius);
+    auto widthDist  = dist(2 * radius, size.x - (2 * radius));
+    auto heightDist = dist(2 * radius, size.y - (2 * radius));
     auto angleDist  = dist(0, 360);
     auto redDist    = dist(100, 255);
     auto blueDist   = dist(100, 255);
@@ -65,6 +65,7 @@ void Board::_genCell()
 void Board::_updateInteractions()
 {
     CellVec remaining;
+    auto size = window.getSize();
     remaining.reserve(cells.size()); // No allocation problems :)
     // ~Efficiently build the list of neighbors/mates
     // This technically runs in O(n + E(1, n){n - i}) (E(){} is meant to be a summation)
@@ -79,7 +80,7 @@ void Board::_updateInteractions()
         if (not _inBounds(**it))
         {
             // Modify the cell to push it into bounds
-            cell->bounce();
+            cell->bounce(size);
         }
         it++;
     }

@@ -9,6 +9,8 @@ using CellVec = std::vector<std::shared_ptr<Cell>>;
 
 class Cell : public Entity
 {
+
+static float mate_radius;
 static float reproduce_chance;
 static float neighbor_radius;
 static float move_amount;
@@ -23,7 +25,7 @@ public:
 
     CellVec mate();
 
-    void bounce();
+    void bounce(sf::Vector2<unsigned int> bounds);
 
 private:
 

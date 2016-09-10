@@ -1,5 +1,6 @@
 #include "cell.hpp"
 
+float Cell::mate_radius      = 1;
 float Cell::reproduce_chance = 1;
 float Cell::neighbor_radius  = 5;
 float Cell::move_amount      = 0.1;
@@ -52,10 +53,27 @@ Cell::Cell(Cell& a, Cell& b) :
 }
 
 
-void Cell::bounce()
+void Cell::bounce(sf::Vector2<unsigned int> bounds)
 {
-    rotate(180);
-    moveVec(*this, 1);
+    auto rotation = getRotation();
+    auto radius   = getRadius();
+    auto pos      = getPosition();
+
+    float normal = 0; // Angle normal to surface
+
+    if (pos.x - radius < 0)             // Left 
+        normal = 0;
+    else if (pos.x + radius > bounds.x) // Right
+        normal = 180;
+    else if (pos.y - radius < 0)        // Top
+        normal = 90;
+    else                                // Bottom
+        normal = 270;
+
+    float inverse_normal = (int)(normal + 180) % 360;
+
+    setRotation((inverse_normal - rotation) + normal);
+    moveVec(*this, Cell::move_amount);
 }
 
 
@@ -67,15 +85,14 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
         auto dist = distance(*this, *cell);
         
         auto radius          = getRadius();
-        auto neighbor_radius = radius * Cell::neighbor_radius;
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < radius) 
+        if (dist < radius * Cell::mate_radius) 
         {
             mates.push_back(cell);
         }
         
-        if (dist < neighbor_radius)
+        if (dist < radius * Cell::neighbor_radius)
         {
             neighbors++;
             cell->neighbors++;
@@ -85,17 +102,6 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 void Cell::update()
 {
-    /*
-    auto min = std::min_element(food.begin(), food.end(),
-        [this]( const auto &a, const auto &b )
-        {
-        return distance(*a, *this) < distance(*b, *this);
-        } );
-
-    auto angle_to_food = angle(**min, *this);
-    setRotation(angle_to_food);
-    */
-
     moveVec(*this, Cell::move_amount);
     
     if (neighbors < 2)
