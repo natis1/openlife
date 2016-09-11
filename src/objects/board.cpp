@@ -3,6 +3,8 @@
 namespace objects 
 {
 
+const float Board::move_amount = 10.0f;
+
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
 {
@@ -188,6 +190,24 @@ void Board::_handle()
                 }
             }
         }
+        if (event.type == sf::Event::KeyPressed)
+        {
+            switch (event.key.code)
+            {
+                case sf::Keyboard::W:
+                    cell_view.move(0.0f, -Board::move_amount);
+                    break;
+                case sf::Keyboard::A:
+                    cell_view.move(-Board::move_amount, 0.0f);
+                    break;
+                case sf::Keyboard::S:
+                    cell_view.move(0.0f, Board::move_amount);
+                    break;
+                case sf::Keyboard::D:
+                    cell_view.move(Board::move_amount, 0.0f);
+                    break;
+            };
+        }
     }
 }
 
@@ -200,7 +220,8 @@ void Board::run(int nCells, int x, int y)
     border = sf::RectangleShape(sf::Vector2f(x, y));
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
-    border.setOutlineThickness(1.0);
+    border.setOutlineThickness(10.0);
+
     _genCells(nCells);
 
     while (window.isOpen())

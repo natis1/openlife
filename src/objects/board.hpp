@@ -6,6 +6,9 @@ namespace objects
 {
 class Board
 {
+
+    const static float move_amount;
+
 public:
     Board(int width=640, int height=480);
     void run(int nCells=100, int x=1000, int y=1000);
