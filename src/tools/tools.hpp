@@ -1,3 +1,4 @@
+#pragma once
 #include <random>
 #include <vector>
 #include <iostream>
@@ -8,9 +9,32 @@
 
 namespace tools
 {
+
+// Normally defined types
 std::mt19937 randomGenerator();
 std::uniform_int_distribution<std::mt19937::result_type> dist(int a, int b);
 std::uniform_real_distribution<double> dist(double a, double b);
 int sign(std::mt19937);
 unsigned long long getTime();
+
+// Templatize types
+
+template <typename T>
+T avg (T a, T b)
+{
+    return ((a + b) / 2.);
+}
+
+template<typename T>
+void print(T t) {
+    std::cout << t << "\n";
+}
+
+template<typename T, typename... Args>
+void print(T first, Args... args) {
+    print(first);
+    print(args...);
+    std::cout << std::endl;
+}
+
 }

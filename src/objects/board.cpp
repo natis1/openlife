@@ -43,8 +43,11 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 std::shared_ptr<Cell> Board::_generateRandomCell()
 {
+
+    // Explicitly import names
     using tools::dist;
     using tools::randomGenerator;
+
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
@@ -53,9 +56,8 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     // Distributions for initial random settings
     auto widthDist  = dist(2 * radius, size.x - (2 * radius));
     auto heightDist = dist(2 * radius, size.y - (2 * radius));
+    auto colorDist  = dist(0, 255);
     auto angleDist  = dist(0, 360);
-    auto redDist    = dist(0, 255);
-    auto blueDist   = dist(0, 255);
 
     // An alternative to providing a seed
     auto generator  = randomGenerator();
@@ -66,11 +68,10 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     cell->setPosition(x, y);
     cell->setRotation(angleDist(generator));
     
-    
-    // Cells have 128 green so they can always be seen, red and blue go between 0 and 255 and represent turning rate and mating rate.
+    // Cells have 16 green so they can always be seen, red and blue go between 0 and 255 and represent turning rate and mating rate.
     
     // Higher mating rates mean more offspring but also more damage.
-    cell->setFillColor(sf::Color(redDist(generator), 128, blueDist(generator)));
+    cell->setFillColor(sf::Color(colorDist(generator), 16, colorDist(generator)));
 
     return cell;
 }
@@ -181,6 +182,7 @@ void Board::run(int nCells)
         if (cells.size() == 0) break;
         unsigned long long frameTime = getTime() - startFrame;
         frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
+        tools::print("Drawtime: ", frameTime);
         //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
     }
 }

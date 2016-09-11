@@ -27,7 +27,7 @@ Cell::Cell() :
 Cell::Cell(Cell& a, Cell& b) :
     Cell::Cell()
 {
-    const auto avg = [](auto x, auto y){return (x + y) / 2;};
+    using tools::avg;
 
     setRotation(a.getRotation());
 

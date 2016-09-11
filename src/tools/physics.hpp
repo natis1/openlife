@@ -3,8 +3,8 @@
 #include <tuple>
 #include <iostream>
 
-
-// TODO: Move to body file
+// Can't move templates to body files 
+// (There are cases where we can, but we really shouldn't : http://stackoverflow.com/questions/5612791/c-template-and-header-files)
 
 // Conversions
 template <typename T>
