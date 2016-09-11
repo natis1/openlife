@@ -47,11 +47,11 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
-    auto size   = window.getSize();
+    auto size   = border.getSize();
 
     // Distributions for initial random settings
-    auto widthDist  = dist(2 * radius, size.x - (2 * radius));
-    auto heightDist = dist(2 * radius, size.y - (2 * radius));
+    auto widthDist  = dist(0, (int)size.x);
+    auto heightDist = dist(0, (int)size.y);
     auto colorDist  = dist(0, 255);
     auto angleDist  = dist(0, 360);
 
