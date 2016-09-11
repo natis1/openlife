@@ -34,10 +34,10 @@ private:
     
     
     
-    // Yep, it's exactly what it sounds like. After this reaches a threshhold the cells mate.
-    double horniness = 0;
-    // The change in horniness over time, determined by cell's red. Change the divisor to effect change in reproduction rates.
-    double horninessPrime = ( (double) getFillColor().r ) / 92.;
+    // After this reaches a threshhold a stork comes down and provides the cells with babies
+    double affection = 0;
+    // The change in affection over time, represented by the cell's red. Change the divisor to effect change in reproduction rates.
+    double affectionPrime = ( (double) getFillColor().r ) / 92.;
     
     
     // The change in angle over time in degrees. Negative is to the left and vicea versa

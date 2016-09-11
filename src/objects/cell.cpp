@@ -131,13 +131,13 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
         for (auto& mate : mates)
         {
             //This would be 1 in 100 RANDOM chance but I fixed it
-            horniness = horniness + horninessPrime;
+            affection = affection + affectionPrime;
             
-            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from fucking twice every tick
-            if (horniness + mate->horniness > 100.)
+            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from falling too far in love.
+            if (affection + mate->affection > 100.)
             {
-                horniness = 0;
-                mate->horniness = 0;
+                affection = 0;
+                mate->affection = 0;
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }
