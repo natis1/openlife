@@ -14,7 +14,6 @@ private:
     // Helper functions / Internal methods
     
     // Functions for generating random cells
-    void _genNear(Cell parent, int tolerance=10);
     void _genCells(int nCells);
     std::shared_ptr<Cell> _generateRandomCell();
     
@@ -32,8 +31,11 @@ private:
     sf::Text info;
     sf::Text frame_display;
 
+    sf::View cell_view;
+    sf::View info_view;
+
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
-    sf::Vector2i border_vec;
+    sf::RectangleShape border;
 };
 }

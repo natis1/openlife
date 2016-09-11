@@ -6,6 +6,10 @@ namespace objects
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
 {
+    auto view = window.getView();
+    cell_view = view;
+    info_view = view;
+
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
     {
         std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
@@ -20,13 +24,7 @@ Board::Board(int width, int height) :
 
 bool Board::_inBounds(Cell& cell)
 {
-    auto pos    = cell.getPosition();
-    auto radius = cell.getRadius();
-    // Addition of radius will make the cells bounce when their edges touch the border's edges
-    return pos.x - radius > 0            && 
-           pos.x + radius < border_vec.x && 
-           pos.y - radius > 0            && 
-           pos.y + radius < border_vec.y;
+    return border.getGlobalBounds().contains(cell.getPosition());
 }
 
 // Randomly generate n cells
@@ -108,7 +106,7 @@ void Board::_updateInteractions()
         if (not _inBounds(**it))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(border_vec);
+            cell->bounce(border.getSize());
         }
         it++;
     }
@@ -139,15 +137,24 @@ void Board::_render()
 {
     window.clear();
 
+    window.setView(cell_view);
 
+    // Simulation
     for (auto cell : cells)
     {
         window.draw(*cell);
     }
+    window.draw(border);
 
+    // Gui/Info
+
+    window.setView(info_view);
+    
     info.setString("Cells: " + std::to_string(cells.size()));
+
     window.draw(info);
     window.draw(frame_display);
+
     window.display(); // For organization
 }
 
@@ -166,6 +173,21 @@ void Board::_handle()
             sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
             window.setView(sf::View(visibleArea));
         }
+        if (event.type == sf::Event::MouseWheelScrolled)
+        {
+            if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+            {
+                int amount = event.mouseWheelScroll.delta;
+                if (amount == 1)
+                {
+                    cell_view.zoom(0.95f);
+                }
+                else
+                {
+                    cell_view.zoom(1.05f);
+                }
+            }
+        }
     }
 }
 
@@ -175,7 +197,10 @@ void Board::run(int nCells, int x, int y)
 {
     using tools::getTime;
 
-    border_vec = sf::Vector2i(x, y);
+    border = sf::RectangleShape(sf::Vector2f(x, y));
+    border.setFillColor(sf::Color(0, 0, 0, 0));
+    border.setOutlineColor(sf::Color(200, 0, 200, 128));
+    border.setOutlineThickness(1.0);
     _genCells(nCells);
 
     while (window.isOpen())

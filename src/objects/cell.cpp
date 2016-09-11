@@ -50,7 +50,7 @@ Cell::Cell(Cell& a, Cell& b) :
 }
 
 
-void Cell::bounce(sf::Vector2i bounds)
+void Cell::bounce(sf::Vector2f bounds)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
