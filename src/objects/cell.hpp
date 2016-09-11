@@ -11,10 +11,13 @@ class Cell : public Entity
     const static float neighbor_radius;
     const static float move_amount;
 
-    const static int   max_neighbors;
+    const static int max_neighbors;
+    const static int overpopulation_limit;
+    const static int underpopulation_limit; 
 
     const static double underpopulation_damage;
     const static double overpopulation_damage;
+    const static double affection_threshold;
 
 public:
     Cell();

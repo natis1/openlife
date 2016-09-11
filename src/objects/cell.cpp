@@ -5,10 +5,13 @@ const float Cell::mate_radius      = 1;
 const float Cell::neighbor_radius  = 5;
 const float Cell::move_amount      = 0.1;
 
+const int Cell::underpopulation_limit = 2;
+const int Cell::overpopulation_limit  = 10;
 const int Cell::max_neighbors = 10;
 
 const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.1;
+const double Cell::affection_threshold = 100.;
 
 // Create initial cell
 Cell::Cell() : 
@@ -101,13 +104,13 @@ void Cell::update()
     setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
-    if (neighbors.size() < 2)
+    if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
     {
-        damage(.001);
+        damage(Cell::underpopulation_damage);
     }
-    else if (neighbors.size() > 3)
+    else if (neighbors.size() > Cell::overpopulation_limit) // Overpopulation
     {
-        damage(.1);
+        damage(Cell::overpopulation_damage);
     }
 
     const sf::Color *cellColor = &getFillColor();
@@ -118,8 +121,6 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;
     
-    
-
     if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
     {
         for (auto& mate : mates)
@@ -128,7 +129,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
             affection = affection + affectionPrime;
             
             //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from falling too far in love.
-            if (affection + mate->affection > 100.)
+            if (affection + mate->affection > Cell::affection_threshold)
             {
                 affection = 0;
                 mate->affection = 0;
@@ -136,6 +137,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
             }
         }
     }
+
     // Interaction finished
     mates.clear();
     neighbors.clear();
