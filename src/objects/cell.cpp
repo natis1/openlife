@@ -9,7 +9,6 @@ int Cell::max_neighbors = 10;
 
 // Create initial cell
 Cell::Cell() : 
-    neighbors(0),
     Entity(10, 10000)
 {
     auto bounds = getLocalBounds();
@@ -38,13 +37,6 @@ Cell::Cell(Cell& a, Cell& b) :
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
-    
-    
-    
-    
-    //Calculate this dynamically you cretin
-    //dx += ((radii + toleranceDist(generator))* sign(generator));
-    //dy += ((radii + toleranceDist(generator))* sign(generator));
 
     setPosition(dx, dy);
 }
@@ -79,9 +71,8 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 {
     for (auto& cell : cells)
     {
-        auto dist = distance(*this, *cell);
-        
-        auto radius          = getRadius();
+        auto dist   = distance(*this, *cell);
+        auto radius = getRadius();
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
         if (dist < radius * Cell::mate_radius) 
@@ -91,10 +82,15 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
         
         if (dist < radius * Cell::neighbor_radius)
         {
-            neighbors++;
-            cell->neighbors++;
+            addNeighbor(cell);
+            cell->addNeighbor(std::make_shared<Cell>(*this));
         }
     }
+}
+
+void Cell::addNeighbor(std::shared_ptr<Cell> cell)
+{
+    neighbors.push_back(cell);
 }
 
 void Cell::update()
@@ -102,11 +98,11 @@ void Cell::update()
     setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
-    if (neighbors < 2)
+    if (neighbors.size() < 2)
     {
         damage(1);
     }
-    else if (neighbors > 3)
+    else if (neighbors.size() > 3)
     {
         damage(10);
     }
@@ -126,7 +122,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     
     
 
-    if (mates.size() > 0 and neighbors < Cell::max_neighbors)
+    if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
@@ -144,7 +140,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     }
     // Interaction finished
     mates.clear();
-    neighbors = 0;
+    neighbors.clear();
 
     return children;
 }

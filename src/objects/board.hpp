@@ -1,9 +1,6 @@
 #pragma once
 #include "cell.hpp"
-
-// To keep constant frametime
-#include <sys/time.h>
-#include <unistd.h>
+#include "../tools/tools.hpp"
 
 class Board
 {
@@ -26,7 +23,6 @@ private:
     void _render();
     void _handle();
     
-    unsigned long long _getExecutionTime();
 
     // Graphics frontend
     sf::RenderWindow window;

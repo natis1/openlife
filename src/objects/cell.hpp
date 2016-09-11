@@ -25,29 +25,22 @@ public:
 
     virtual void update();
     void interact(const std::vector<std::shared_ptr<Cell>>& cells);
+    void addNeighbor(std::shared_ptr<Cell> neighbor);
 
     std::vector<std::shared_ptr<Cell>> mate();
 
     void bounce(sf::Vector2<unsigned int> bounds);
 
 private:
-    
-    
-    
     // After this reaches a threshhold a stork comes down and provides the cells with babies
     double affection = 0;
     // The change in affection over time, represented by the cell's red. Change the divisor to effect change in reproduction rates.
     double affectionPrime = ( (double) getFillColor().r ) / 92.;
     
-    
     // The change in angle over time in degrees. Negative is to the left and vicea versa
     double anglePrime = (( (double) getFillColor().b ) - 127.)  / 1500.;
     
-    
-    
-    
-    
-    int neighbors;
     std::vector<std::shared_ptr<Cell>> mates;
+    std::vector<std::shared_ptr<Cell>> neighbors;
 };
 

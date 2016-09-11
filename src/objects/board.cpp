@@ -76,9 +76,24 @@ void Board::_updateInteractions()
     std::vector<std::shared_ptr<Cell>> remaining;
     auto size = window.getSize();
     remaining.reserve(cells.size()); // No allocation problems :)
-    // ~Efficiently build the list of neighbors/mates
-    // This runs in < O(n^2) from my testing. See for yourself, I added a frame timer.
-    // I've chosen to use iterators because it makes slicing possible, which is where the efficiency gains come from
+    /* ~Efficiently build the list of neighbors/mates
+    
+    If you simplify O(n + E(1, n, n-1)), it becomes O((n / 2) * n), which is O(n^2)
+    What I actually meant is that this algorithm is more efficient than T = n^2:
+    
+    Values / Instructions / n^2
+    1      / 1            / 1
+    2      / 3            / 4
+    3      / 6            / 9
+    4      / 10           / 16
+    ...
+    10     / 55           / 100
+    100    / 5050         / 10000
+    1000   / 500500       / 1000000
+    
+    http://stackoverflow.com/questions/11032015/how-to-find-time-complexity-of-an-algorithm
+    
+    I've chosen to use iterators because it makes slicing possible, which is where the efficiency gains come from */
     auto it = cells.begin();
     while (it != cells.end())
     {
@@ -149,13 +164,6 @@ void Board::_handle()
     }
 }
 
-unsigned long long Board::_getExecutionTime()
-{
-    struct timeval now;
-    gettimeofday (&now, NULL);
-    return now.tv_usec + (unsigned long long)now.tv_sec * 1000000;
-}
-
 
 
 
@@ -166,13 +174,13 @@ void Board::run(int nCells)
 
     while (window.isOpen())
     {
-        unsigned long long startFrame = _getExecutionTime();
+        unsigned long long startFrame = getTime();
         _handle();
         _update();
         _render();
         
         if (cells.size() == 0) break;
-        unsigned long long frameTime = _getExecutionTime() - startFrame;
+        unsigned long long frameTime = getTime() - startFrame;
         frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
         //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
     }
