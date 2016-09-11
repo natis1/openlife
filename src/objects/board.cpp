@@ -4,7 +4,7 @@ namespace objects
 {
 
 Board::Board(int width, int height) :
-    window(sf::VideoMode(width, height), "")
+    window(sf::VideoMode(width, height), "Life")
 {
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
     {
@@ -22,10 +22,10 @@ bool Board::_inBounds(Cell& cell)
 {
     auto pos    = cell.getPosition();
     auto radius = cell.getRadius();
-    // Addition of radius will make the cells bounce when their edges touch the window's edges
-    return pos.x - radius > 0      && 
+    // Addition of radius will make the cells bounce when their edges touch the border's edges
+    return pos.x - radius > 0            && 
            pos.x + radius < border_vec.x && 
-           pos.y - radius > 0      && 
+           pos.y - radius > 0            && 
            pos.y + radius < border_vec.y;
 }
 
@@ -159,6 +159,12 @@ void Board::_handle()
         if (event.type == sf::Event::Closed)
         {
             window.close();
+        }
+        if (event.type == sf::Event::Resized)
+        {
+            // update the view to the new size of the window
+            sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+            window.setView(sf::View(visibleArea));
         }
     }
 }
