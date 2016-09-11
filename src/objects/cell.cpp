@@ -9,7 +9,7 @@ int Cell::max_neighbors = 10;
 
 // Create initial cell
 Cell::Cell() : 
-    Entity(10, 10000)
+    Entity(10, 100)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -100,17 +100,12 @@ void Cell::update()
     
     if (neighbors.size() < 2)
     {
-        damage(1);
+        damage(.01);
     }
     else if (neighbors.size() > 3)
     {
-        damage(10);
+        damage(.1);
     }
-    else
-    {
-        //regen(1);
-    }
-
 
     const sf::Color *cellColor = &getFillColor();
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
