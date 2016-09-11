@@ -133,7 +133,8 @@ void Board::_render()
 
     info.setString("Cells: " + std::to_string(cells.size()));
     window.draw(info);
-    
+    window.draw(frameDisplay);
+    window.display(); // For organization
 }
 
 void Board::_handle()
@@ -158,13 +159,11 @@ unsigned long long Board::_getExecutionTime()
 
 
 
+// This function should really only call other functions (Similar to how no code goes in int main)
 void Board::run(int nCells)
 {
     _genCells(nCells);
 
-    int needInfo = 0;
-    unsigned long long *frameTimeHistory [60];
-    
     while (window.isOpen())
     {
         unsigned long long startFrame = _getExecutionTime();
@@ -174,28 +173,8 @@ void Board::run(int nCells)
         
         if (cells.size() == 0) break;
         unsigned long long frameTime = _getExecutionTime() - startFrame;
-        //std::cout << frameTime << std::endl;
-        
-        frameTimeHistory[needInfo] = &frameTime;
-        needInfo++;
-        if (needInfo >= 59){
-            unsigned long long average = 0;
-            for (int i = 0; i < 60; i++) {
-                average += *frameTimeHistory[i];
-            }
-            average = average / 60;
-            
-            frameDisplay.setString( "Drawtime: " + std::to_string(average) + "us");
-            needInfo = 0;
-        }
-        window.draw(frameDisplay);
-        window.display();
-        
-        // Assuming this math and cout takes 3 microsecond
-        if (frameTime < 16664){
-            usleep(16664 - frameTime);
-        }
-        
+        frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
+        //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
     }
 }
 
