@@ -1,5 +1,7 @@
 #include "cell.hpp"
 
+namespace objects
+{
 
 const float Cell::mate_radius      = 1;
 const float Cell::neighbor_radius  = 5;
@@ -143,4 +145,6 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     neighbors.clear();
 
     return children;
+}
+
 }

@@ -1,5 +1,8 @@
 #include "board.hpp"
 
+namespace objects 
+{
+
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "")
 {
@@ -40,6 +43,8 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 std::shared_ptr<Cell> Board::_generateRandomCell()
 {
+    using tools::dist;
+    using tools::randomGenerator;
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
@@ -112,11 +117,6 @@ void Board::_updateInteractions()
 
 void Board::_update()
 {
-    auto size       = window.getSize();
-    auto widthDist  = dist(0, size.x);
-    auto heightDist = dist(0, size.y);
-    auto generator  = randomGenerator();
-
     _updateInteractions();
 
     // Interact with neighbors, mate with mates
@@ -165,11 +165,10 @@ void Board::_handle()
 }
 
 
-
-
 // This function should really only call other functions (Similar to how no code goes in int main)
 void Board::run(int nCells)
 {
+    using tools::getTime;
     _genCells(nCells);
 
     while (window.isOpen())
@@ -186,3 +185,4 @@ void Board::run(int nCells)
     }
 }
 
+}

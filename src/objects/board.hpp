@@ -2,6 +2,8 @@
 #include "cell.hpp"
 #include "../tools/tools.hpp"
 
+namespace objects
+{
 class Board
 {
 public:
@@ -33,3 +35,4 @@ private:
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
 };
+}

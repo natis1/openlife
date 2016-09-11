@@ -4,6 +4,9 @@
 #include <iostream>
 #include "../tools/tools.hpp"
 
+namespace objects
+{
+
 class Cell : public Entity
 {
     // Static variables don't live in class instances and therefore do not affect shared pointers
@@ -44,3 +47,4 @@ private:
     std::vector<std::shared_ptr<Cell>> neighbors;
 };
 
+}
