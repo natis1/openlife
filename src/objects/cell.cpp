@@ -1,16 +1,23 @@
 #include "cell.hpp"
 
+namespace objects
+{
 
-float Cell::mate_radius      = 1;
-float Cell::neighbor_radius  = 5;
-float Cell::move_amount      = 0.1;
+const float Cell::mate_radius      = 1;
+const float Cell::neighbor_radius  = 5;
+const float Cell::move_amount      = 0.1;
 
-int Cell::max_neighbors = 10;
+const int Cell::underpopulation_limit = 2;
+const int Cell::overpopulation_limit  = 10;
+const int Cell::max_neighbors = 10;
+
+const double Cell::underpopulation_damage = 0.001;
+const double Cell::overpopulation_damage  = 0.1;
+const double Cell::affection_threshold = 100.;
 
 // Create initial cell
 Cell::Cell() : 
-    neighbors(0),
-    Entity(10, 10000)
+    Entity(10, 100)
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
@@ -20,7 +27,7 @@ Cell::Cell() :
 Cell::Cell(Cell& a, Cell& b) :
     Cell::Cell()
 {
-    const auto avg = [](auto x, auto y){return (x + y) / 2;};
+    using tools::avg;
 
     setRotation(a.getRotation());
 
@@ -38,13 +45,6 @@ Cell::Cell(Cell& a, Cell& b) :
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
     auto dy = avg(posA.y, posB.y);
-    
-    
-    
-    
-    //Calculate this dynamically you cretin
-    //dx += ((radii + toleranceDist(generator))* sign(generator));
-    //dy += ((radii + toleranceDist(generator))* sign(generator));
 
     setPosition(dx, dy);
 }
@@ -79,9 +79,8 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 {
     for (auto& cell : cells)
     {
-        auto dist = distance(*this, *cell);
-        
-        auto radius          = getRadius();
+        auto dist   = distance(*this, *cell);
+        auto radius = getRadius();
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
         if (dist < radius * Cell::mate_radius) 
@@ -91,10 +90,15 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
         
         if (dist < radius * Cell::neighbor_radius)
         {
-            neighbors++;
-            cell->neighbors++;
+            addNeighbor(cell);
+            cell->addNeighbor(std::make_shared<Cell>(*this));
         }
     }
+}
+
+void Cell::addNeighbor(std::shared_ptr<Cell> cell)
+{
+    neighbors.push_back(cell);
 }
 
 void Cell::update()
@@ -102,19 +106,14 @@ void Cell::update()
     setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
-    if (neighbors < 2)
+    if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
     {
-        damage(1);
+        damage(Cell::underpopulation_damage);
     }
-    else if (neighbors > 3)
+    else if (neighbors.size() > Cell::overpopulation_limit) // Overpopulation
     {
-        damage(10);
+        damage(Cell::overpopulation_damage);
     }
-    else
-    {
-        //regen(1);
-    }
-
 
     const sf::Color *cellColor = &getFillColor();
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
@@ -124,27 +123,28 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;
     
-    
-
-    if (mates.size() > 0 and neighbors < Cell::max_neighbors)
+    if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
     {
         for (auto& mate : mates)
         {
             //This would be 1 in 100 RANDOM chance but I fixed it
-            horniness = horniness + horninessPrime;
+            affection = affection + affectionPrime;
             
-            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from fucking twice every tick
-            if (horniness + mate->horniness > 100.)
+            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from falling too far in love.
+            if (affection + mate->affection > Cell::affection_threshold)
             {
-                horniness = 0;
-                mate->horniness = 0;
+                affection = 0;
+                mate->affection = 0;
                 children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
             }
         }
     }
+
     // Interaction finished
     mates.clear();
-    neighbors = 0;
+    neighbors.clear();
 
     return children;
+}
+
 }

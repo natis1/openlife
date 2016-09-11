@@ -1,5 +1,8 @@
 #include "board.hpp"
 
+namespace objects 
+{
+
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "")
 {
@@ -40,6 +43,11 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 std::shared_ptr<Cell> Board::_generateRandomCell()
 {
+
+    // Explicitly import names
+    using tools::dist;
+    using tools::randomGenerator;
+
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
@@ -48,9 +56,8 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     // Distributions for initial random settings
     auto widthDist  = dist(2 * radius, size.x - (2 * radius));
     auto heightDist = dist(2 * radius, size.y - (2 * radius));
+    auto colorDist  = dist(0, 255);
     auto angleDist  = dist(0, 360);
-    auto redDist    = dist(0, 255);
-    auto blueDist   = dist(0, 255);
 
     // An alternative to providing a seed
     auto generator  = randomGenerator();
@@ -61,11 +68,10 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     cell->setPosition(x, y);
     cell->setRotation(angleDist(generator));
     
-    
-    // Cells have 128 green so they can always be seen, red and blue go between 0 and 255 and represent turning rate and mating rate.
+    // Cells have 16 green so they can always be seen, red and blue go between 0 and 255 and represent turning rate and mating rate.
     
     // Higher mating rates mean more offspring but also more damage.
-    cell->setFillColor(sf::Color(redDist(generator), 128, blueDist(generator)));
+    cell->setFillColor(sf::Color(colorDist(generator), 16, colorDist(generator)));
 
     return cell;
 }
@@ -76,9 +82,24 @@ void Board::_updateInteractions()
     std::vector<std::shared_ptr<Cell>> remaining;
     auto size = window.getSize();
     remaining.reserve(cells.size()); // No allocation problems :)
-    // ~Efficiently build the list of neighbors/mates
-    // This runs in < O(n^2) from my testing. See for yourself, I added a frame timer.
-    // I've chosen to use iterators because it makes slicing possible, which is where the efficiency gains come from
+    /* ~Efficiently build the list of neighbors/mates
+    
+    If you simplify O(n + E(1, n, n-1)), it becomes O((n / 2) * n), which is O(n^2)
+    What I actually meant is that this algorithm is more efficient than T = n^2:
+    
+    Values / Instructions / n^2
+    1      / 1            / 1
+    2      / 3            / 4
+    3      / 6            / 9
+    4      / 10           / 16
+    ...
+    10     / 55           / 100
+    100    / 5050         / 10000
+    1000   / 500500       / 1000000
+    
+    http://stackoverflow.com/questions/11032015/how-to-find-time-complexity-of-an-algorithm
+    
+    I've chosen to use iterators because it makes slicing possible, which is where the efficiency gains come from */
     auto it = cells.begin();
     while (it != cells.end())
     {
@@ -97,11 +118,6 @@ void Board::_updateInteractions()
 
 void Board::_update()
 {
-    auto size       = window.getSize();
-    auto widthDist  = dist(0, size.x);
-    auto heightDist = dist(0, size.y);
-    auto generator  = randomGenerator();
-
     _updateInteractions();
 
     // Interact with neighbors, mate with mates
@@ -133,7 +149,8 @@ void Board::_render()
 
     info.setString("Cells: " + std::to_string(cells.size()));
     window.draw(info);
-    
+    window.draw(frameDisplay);
+    window.display(); // For organization
 }
 
 void Board::_handle()
@@ -148,54 +165,26 @@ void Board::_handle()
     }
 }
 
-unsigned long long Board::_getExecutionTime()
-{
-    struct timeval now;
-    gettimeofday (&now, NULL);
-    return now.tv_usec + (unsigned long long)now.tv_sec * 1000000;
-}
 
-
-
-
+// This function should really only call other functions (Similar to how no code goes in int main)
 void Board::run(int nCells)
 {
+    using tools::getTime;
     _genCells(nCells);
 
-    int needInfo = 0;
-    unsigned long long *frameTimeHistory [60];
-    
     while (window.isOpen())
     {
-        unsigned long long startFrame = _getExecutionTime();
+        unsigned long long startFrame = getTime();
         _handle();
         _update();
         _render();
         
         if (cells.size() == 0) break;
-        unsigned long long frameTime = _getExecutionTime() - startFrame;
-        //std::cout << frameTime << std::endl;
-        
-        frameTimeHistory[needInfo] = &frameTime;
-        needInfo++;
-        if (needInfo >= 59){
-            unsigned long long average = 0;
-            for (int i = 0; i < 60; i++) {
-                average += *frameTimeHistory[i];
-            }
-            average = average / 60;
-            
-            frameDisplay.setString( "Drawtime: " + std::to_string(average) + "us");
-            needInfo = 0;
-        }
-        window.draw(frameDisplay);
-        window.display();
-        
-        // Assuming this math and cout takes 3 microsecond
-        if (frameTime < 16664){
-            usleep(16664 - frameTime);
-        }
-        
+        unsigned long long frameTime = getTime() - startFrame;
+        frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
+        tools::print("Drawtime: ", frameTime);
+        //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
     }
 }
 
+}

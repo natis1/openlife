@@ -1,5 +1,7 @@
 #include "tools.hpp"
 
+namespace tools
+{
 std::mt19937 randomGenerator()
 {
     // Create and seed a random number generator
@@ -28,4 +30,13 @@ int sign(std::mt19937 generator)
     {
         return -1;
     }
+}
+
+unsigned long long getTime()
+{
+    struct timeval now;
+    gettimeofday (&now, NULL);
+    return now.tv_usec + (unsigned long long)now.tv_sec * 1000000;
+}
+
 }

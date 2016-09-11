@@ -1,19 +1,22 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+namespace objects
+{
 class Entity : public sf::CircleShape
 {
 
 public:
-    Entity(double size=10, int life=50);
+    Entity(double size, double life);
     virtual void update();
     bool alive();
-    void damage(int n=1);
-    void regen(int n=1);
+    void damage(double n=1.);
+    void regen(double n=1.);
     double lifePercent();
 
 private:
-    int life;
-    int total_life;
+    double life;
+    double total_life;
 };
+}
 
