@@ -8,7 +8,7 @@ class Board
 {
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100);
+    void run(int nCells=100, int x=1000, int y=1000);
 
 private:
     // Helper functions / Internal methods
@@ -30,9 +30,10 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     sf::Text info;
-    sf::Text frameDisplay;
+    sf::Text frame_display;
 
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
+    sf::Vector2i border_vec;
 };
 }

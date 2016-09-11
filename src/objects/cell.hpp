@@ -32,7 +32,7 @@ public:
 
     std::vector<std::shared_ptr<Cell>> mate();
 
-    void bounce(sf::Vector2<unsigned int> bounds);
+    void bounce(sf::Vector2i bounds);
 
 private:
     // After this reaches a threshhold a stork comes down and provides the cells with babies

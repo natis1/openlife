@@ -13,21 +13,20 @@ Board::Board(int width, int height) :
     info.setFont(font);
     info.setCharacterSize(24);
     
-    frameDisplay.setFont(font);
-    frameDisplay.setCharacterSize(24);
-    frameDisplay.setPosition(0., 40.);
+    frame_display.setFont(font);
+    frame_display.setCharacterSize(24);
+    frame_display.setPosition(0., 40.);
 }
 
 bool Board::_inBounds(Cell& cell)
 {
     auto pos    = cell.getPosition();
     auto radius = cell.getRadius();
-    auto size   = window.getSize();
     // Addition of radius will make the cells bounce when their edges touch the window's edges
     return pos.x - radius > 0      && 
-           pos.x + radius < size.x && 
+           pos.x + radius < border_vec.x && 
            pos.y - radius > 0      && 
-           pos.y + radius < size.y;
+           pos.y + radius < border_vec.y;
 }
 
 // Randomly generate n cells
@@ -43,7 +42,6 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 std::shared_ptr<Cell> Board::_generateRandomCell()
 {
-
     // Explicitly import names
     using tools::dist;
     using tools::randomGenerator;
@@ -110,7 +108,7 @@ void Board::_updateInteractions()
         if (not _inBounds(**it))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(size);
+            cell->bounce(border_vec);
         }
         it++;
     }
@@ -149,7 +147,7 @@ void Board::_render()
 
     info.setString("Cells: " + std::to_string(cells.size()));
     window.draw(info);
-    window.draw(frameDisplay);
+    window.draw(frame_display);
     window.display(); // For organization
 }
 
@@ -167,23 +165,23 @@ void Board::_handle()
 
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Board::run(int nCells)
+void Board::run(int nCells, int x, int y)
 {
     using tools::getTime;
+
+    border_vec = sf::Vector2i(x, y);
     _genCells(nCells);
 
     while (window.isOpen())
     {
-        unsigned long long startFrame = getTime();
+        unsigned long long start_frame = getTime();
         _handle();
         _update();
         _render();
         
         if (cells.size() == 0) break;
-        unsigned long long frameTime = getTime() - startFrame;
-        frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
-        tools::print("Drawtime: ", frameTime);
-        //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
+        unsigned long long frame_time = getTime() - start_frame;
+        frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
     }
 }
 
