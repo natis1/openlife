@@ -33,6 +33,5 @@ cmake ..
 (configure openlife with a program like ccmake)
 ```
 make
->>>>>>> master
 ```
 optional: `make install`
