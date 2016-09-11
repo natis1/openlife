@@ -4,20 +4,17 @@
 #include <iostream>
 #include "../tools/tools.hpp"
 
-class Cell;
-
-//Alias
-//using CellVec = std::vector<std::shared_ptr<Cell>>;
-
 class Cell : public Entity
 {
-    
-    // Effects of shared_ptr are undermined by static variables
-    static float mate_radius;
-    static float reproduce_chance;
-    static float neighbor_radius;
-    static float move_amount;
-    static int   max_neighbors;
+    // Static variables don't live in class instances and therefore do not affect shared pointers
+    const static float mate_radius;
+    const static float neighbor_radius;
+    const static float move_amount;
+
+    const static int   max_neighbors;
+
+    const static double underpopulation_damage;
+    const static double overpopulation_damage;
 
 public:
     Cell();

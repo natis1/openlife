@@ -1,11 +1,14 @@
 #include "cell.hpp"
 
 
-float Cell::mate_radius      = 1;
-float Cell::neighbor_radius  = 5;
-float Cell::move_amount      = 0.1;
+const float Cell::mate_radius      = 1;
+const float Cell::neighbor_radius  = 5;
+const float Cell::move_amount      = 0.1;
 
-int Cell::max_neighbors = 10;
+const int Cell::max_neighbors = 10;
+
+const double Cell::underpopulation_damage = 0.001;
+const double Cell::overpopulation_damage  = 0.1;
 
 // Create initial cell
 Cell::Cell() : 
@@ -100,7 +103,7 @@ void Cell::update()
     
     if (neighbors.size() < 2)
     {
-        damage(.01);
+        damage(.001);
     }
     else if (neighbors.size() > 3)
     {
