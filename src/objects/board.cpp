@@ -166,6 +166,7 @@ void Board::_handle()
     while (window.pollEvent(event))
     {
         _pan();
+        _zoom(event);
         switch (event.type)
         {
             case sf::Event::Closed:
@@ -177,29 +178,28 @@ void Board::_handle()
                 window.setView(sf::View(visibleArea));
                 }
                 break;
-            case sf::Event::MouseWheelScrolled:
-                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-                {
-                    int amount = event.mouseWheelScroll.delta;
-                    if (amount == 1)
-                    {
-                        cell_view.zoom(0.95f);
-                    }
-                    else
-                    {
-                        cell_view.zoom(1.05f);
-                    }
-                }
-                break;
-            case sf::Event::KeyPressed:
-                //input_manager.recordPress(event.key.code);
-                break;
-            //case event.type == sf::Event::KeyReleased:
-            //    input_manager.recordRelease(event.key.code);
-            //    break;
             default:
                 break;
         };
+    }
+}
+
+void Board::_zoom(sf::Event& event)
+{
+    if (event.type == sf::Event::MouseWheelScrolled)
+    {
+        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+        {
+            int amount = event.mouseWheelScroll.delta;
+            if (amount == 1)
+            {
+                cell_view.zoom(0.95f);
+            }
+            else
+            {
+                cell_view.zoom(1.05f);
+            }
+        }
     }
 }
 

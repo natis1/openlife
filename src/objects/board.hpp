@@ -28,6 +28,7 @@ private:
     void _render();
     void _handle();
     
+    void _zoom(sf::Event& event);
     void _pan();
 
     // Graphics frontend
@@ -38,8 +39,6 @@ private:
 
     sf::View cell_view;
     sf::View info_view;
-
-    //InputManager input_manager;
 
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
