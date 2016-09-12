@@ -4,9 +4,9 @@
 
 namespace objects
 {
+
 class Board
 {
-
     const static float move_amount;
 
 public:
@@ -23,10 +23,12 @@ private:
     bool _inBounds(Cell& cell);
 
     void _updateInteractions();
+
     void _update();
     void _render();
     void _handle();
     
+    void _pan();
 
     // Graphics frontend
     sf::RenderWindow window;
@@ -37,8 +39,11 @@ private:
     sf::View cell_view;
     sf::View info_view;
 
+    //InputManager input_manager;
+
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
     sf::RectangleShape border;
 };
+
 }

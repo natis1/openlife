@@ -165,52 +165,61 @@ void Board::_handle()
     sf::Event event;
     while (window.pollEvent(event))
     {
-        if (event.type == sf::Event::Closed)
+        _pan();
+        switch (event.type)
         {
-            window.close();
-        }
-        if (event.type == sf::Event::Resized)
-        {
-            // update the view to the new size of the window
-            sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-            window.setView(sf::View(visibleArea));
-        }
-        if (event.type == sf::Event::MouseWheelScrolled)
-        {
-            if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-            {
-                int amount = event.mouseWheelScroll.delta;
-                if (amount == 1)
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::Resized:
                 {
-                    cell_view.zoom(0.95f);
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visibleArea));
                 }
-                else
+                break;
+            case sf::Event::MouseWheelScrolled:
+                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
                 {
-                    cell_view.zoom(1.05f);
+                    int amount = event.mouseWheelScroll.delta;
+                    if (amount == 1)
+                    {
+                        cell_view.zoom(0.95f);
+                    }
+                    else
+                    {
+                        cell_view.zoom(1.05f);
+                    }
                 }
-            }
-        }
-        if (event.type == sf::Event::KeyPressed)
-        {
-            switch (event.key.code)
-            {
-                case sf::Keyboard::W:
-                    cell_view.move(0.0f, -Board::move_amount);
-                    break;
-                case sf::Keyboard::A:
-                    cell_view.move(-Board::move_amount, 0.0f);
-                    break;
-                case sf::Keyboard::S:
-                    cell_view.move(0.0f, Board::move_amount);
-                    break;
-                case sf::Keyboard::D:
-                    cell_view.move(Board::move_amount, 0.0f);
-                    break;
-            };
-        }
+                break;
+            case sf::Event::KeyPressed:
+                //input_manager.recordPress(event.key.code);
+                break;
+            //case event.type == sf::Event::KeyReleased:
+            //    input_manager.recordRelease(event.key.code);
+            //    break;
+            default:
+                break;
+        };
     }
 }
 
+void Board::_pan()
+{
+    const auto pressed = [](auto key){return sf::Keyboard::isKeyPressed(key);};
+
+    if (pressed(sf::Keyboard::A) ||
+        pressed(sf::Keyboard::Left))
+        cell_view.move(-Board::move_amount, 0.0f);
+    if (pressed(sf::Keyboard::S) ||
+        pressed(sf::Keyboard::Down))
+        cell_view.move(0.0f, Board::move_amount);
+    if (pressed(sf::Keyboard::W) ||
+        pressed(sf::Keyboard::Up))
+        cell_view.move(0.0f, -Board::move_amount);
+    if (pressed(sf::Keyboard::D) ||
+        pressed(sf::Keyboard::Right))
+        cell_view.move(Board::move_amount, 0.0f);
+}
 
 // This function should really only call other functions (Similar to how no code goes in int main)
 void Board::run(int nCells, int x, int y)
