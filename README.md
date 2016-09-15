@@ -2,6 +2,8 @@
 
 The ultimate life simulator
 
+Main dependency is [SFML](http://www.sfml-dev.org/license.php)
+
 ![Cell Grouping](http://i.imgur.com/Ag7284g.png)
 
 ## Build Instructions
@@ -33,6 +35,5 @@ cmake ..
 (configure openlife with a program like ccmake)
 ```
 make
->>>>>>> master
 ```
 optional: `make install`

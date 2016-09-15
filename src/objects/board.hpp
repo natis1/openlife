@@ -1,5 +1,6 @@
 #pragma once
 #include "cell.hpp"
+#include "simulation.hpp"
 #include "../tools/tools.hpp"
 
 namespace objects
@@ -16,14 +17,6 @@ public:
 private:
     // Helper functions / Internal methods
     
-    // Functions for generating random cells
-    void _genCells(int nCells);
-    std::shared_ptr<Cell> _generateRandomCell();
-    
-    bool _inBounds(Cell& cell);
-
-    void _updateInteractions();
-
     void _update();
     void _render();
     void _handle();
@@ -37,12 +30,14 @@ private:
     sf::Text info;
     sf::Text frame_display;
 
-    sf::View cell_view;
+    sf::View simulation_view;
     sf::View info_view;
 
     // Simulation backend
-    std::vector<std::shared_ptr<Cell>> cells;
-    sf::RectangleShape border;
+    Simulation simulation;
+
+    // Timing
+    unsigned long long frame_time;
 };
 
 }
