@@ -3,9 +3,15 @@
 namespace objects 
 {
 
+const float Board::move_amount = 10.0f;
+
 Board::Board(int width, int height) :
-    window(sf::VideoMode(width, height), "")
+    window(sf::VideoMode(width, height), "Life")
 {
+    auto view = window.getView();
+    cell_view = view;
+    info_view = view;
+
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
     {
         std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
@@ -13,21 +19,14 @@ Board::Board(int width, int height) :
     info.setFont(font);
     info.setCharacterSize(24);
     
-    frameDisplay.setFont(font);
-    frameDisplay.setCharacterSize(24);
-    frameDisplay.setPosition(0., 40.);
+    frame_display.setFont(font);
+    frame_display.setCharacterSize(24);
+    frame_display.setPosition(0., 40.);
 }
 
 bool Board::_inBounds(Cell& cell)
 {
-    auto pos    = cell.getPosition();
-    auto radius = cell.getRadius();
-    auto size   = window.getSize();
-    // Addition of radius will make the cells bounce when their edges touch the window's edges
-    return pos.x - radius > 0      && 
-           pos.x + radius < size.x && 
-           pos.y - radius > 0      && 
-           pos.y + radius < size.y;
+    return border.getGlobalBounds().contains(cell.getPosition());
 }
 
 // Randomly generate n cells
@@ -43,7 +42,6 @@ void Board::_genCells(int nCells)
 // Randomly generate a single cell
 std::shared_ptr<Cell> Board::_generateRandomCell()
 {
-
     // Explicitly import names
     using tools::dist;
     using tools::randomGenerator;
@@ -51,11 +49,11 @@ std::shared_ptr<Cell> Board::_generateRandomCell()
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
-    auto size   = window.getSize();
+    auto size   = border.getSize();
 
     // Distributions for initial random settings
-    auto widthDist  = dist(2 * radius, size.x - (2 * radius));
-    auto heightDist = dist(2 * radius, size.y - (2 * radius));
+    auto widthDist  = dist(0, (int)size.x);
+    auto heightDist = dist(0, (int)size.y);
     auto colorDist  = dist(0, 255);
     auto angleDist  = dist(0, 360);
 
@@ -110,7 +108,7 @@ void Board::_updateInteractions()
         if (not _inBounds(**it))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(size);
+            cell->bounce(border.getSize());
         }
         it++;
     }
@@ -141,15 +139,24 @@ void Board::_render()
 {
     window.clear();
 
+    window.setView(cell_view);
 
+    // Simulation
     for (auto cell : cells)
     {
         window.draw(*cell);
     }
+    window.draw(border);
 
+    // Gui/Info
+
+    window.setView(info_view);
+    
     info.setString("Cells: " + std::to_string(cells.size()));
+
     window.draw(info);
-    window.draw(frameDisplay);
+    window.draw(frame_display);
+
     window.display(); // For organization
 }
 
@@ -158,32 +165,84 @@ void Board::_handle()
     sf::Event event;
     while (window.pollEvent(event))
     {
-        if (event.type == sf::Event::Closed)
+        _pan();
+        _zoom(event);
+        switch (event.type)
         {
-            window.close();
+            case sf::Event::Closed:
+                window.close();
+                break;
+            case sf::Event::Resized:
+                {
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visibleArea));
+                }
+                break;
+            default:
+                break;
+        };
+    }
+}
+
+void Board::_zoom(sf::Event& event)
+{
+    if (event.type == sf::Event::MouseWheelScrolled)
+    {
+        if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+        {
+            int amount = event.mouseWheelScroll.delta;
+            if (amount == 1)
+            {
+                cell_view.zoom(0.95f);
+            }
+            else
+            {
+                cell_view.zoom(1.05f);
+            }
         }
     }
 }
 
+void Board::_pan()
+{
+    const auto pressed = [](auto key){return sf::Keyboard::isKeyPressed(key);};
+
+    if (pressed(sf::Keyboard::A) ||
+        pressed(sf::Keyboard::Left))
+        cell_view.move(-Board::move_amount, 0.0f);
+    if (pressed(sf::Keyboard::S) ||
+        pressed(sf::Keyboard::Down))
+        cell_view.move(0.0f, Board::move_amount);
+    if (pressed(sf::Keyboard::W) ||
+        pressed(sf::Keyboard::Up))
+        cell_view.move(0.0f, -Board::move_amount);
+    if (pressed(sf::Keyboard::D) ||
+        pressed(sf::Keyboard::Right))
+        cell_view.move(Board::move_amount, 0.0f);
+}
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Board::run(int nCells)
+void Board::run(int nCells, int x, int y)
 {
     using tools::getTime;
+
+    border = sf::RectangleShape(sf::Vector2f(x, y));
+    border.setFillColor(sf::Color(0, 0, 0, 0));
+    border.setOutlineColor(sf::Color(200, 0, 200, 128));
+    border.setOutlineThickness(10.0);
+
     _genCells(nCells);
 
     while (window.isOpen())
     {
-        unsigned long long startFrame = getTime();
+        unsigned long long start_frame = getTime();
         _handle();
         _update();
         _render();
         
         if (cells.size() == 0) break;
-        unsigned long long frameTime = getTime() - startFrame;
-        frameDisplay.setString( "Drawtime: " + std::to_string(frameTime) + "us");
-        tools::print("Drawtime: ", frameTime);
-        //frameDisplay.setString("Drawtime per cell: " + std::to_string(frameTime / cells.size()));
+        unsigned long long frame_time = getTime() - start_frame;
+        frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
     }
 }
 
