@@ -8,12 +8,12 @@ const float Cell::neighbor_radius  = 5;
 const float Cell::move_amount      = 0.1;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 10;
-const int Cell::max_neighbors = 10;
+const int Cell::overpopulation_limit  = 5;
+const int Cell::max_neighbors = 5;
 
 const double Cell::underpopulation_damage = 0.001;
-const double Cell::overpopulation_damage  = 0.1;
-const double Cell::affection_threshold = 100.;
+const double Cell::overpopulation_damage  = 0.2;
+const double Cell::affection_threshold = 1000.;
 
 // Create initial cell
 Cell::Cell() : 
@@ -29,7 +29,7 @@ Cell::Cell(Cell& a, Cell& b) :
 {
     using tools::avg;
 
-    setRotation(a.getRotation());
+    setRotation(a.getRotation() + 90);
 
     auto colorA = a.getFillColor();
     auto colorB = b.getFillColor();
@@ -116,7 +116,11 @@ void Cell::update()
     }
 
     const sf::Color *cellColor = &getFillColor();
+    // Fade on death
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
+
+    // Moved this to inside of update: this decreases the rate of mating (And makes it more realistic)
+    affection += affectionPrime; 
 }
 
 std::vector<std::shared_ptr<Cell>> Cell::mate()
@@ -127,10 +131,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     {
         for (auto& mate : mates)
         {
-            //This would be 1 in 100 RANDOM chance but I fixed it
-            affection = affection + affectionPrime;
-            
-            //The mating threshold is currently 100, this can be changed. Anyway this stops 2 parents from falling too far in love.
+            //The mating threshold stops 2 parents from falling too far in love.
             if (affection + mate->affection > Cell::affection_threshold)
             {
                 affection = 0;
