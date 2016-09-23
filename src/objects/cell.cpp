@@ -58,22 +58,45 @@ void Cell::bounce(sf::Vector2f bounds)
     auto pos      = getPosition();
 
     float normal = 0; // Angle normal to surface
+    float reflected = 0; // Angle after reflection off of surface
 
-    if (pos.x - radius < 0)             // Left 
-        normal = 0;
-    else if (pos.x + radius > bounds.x) // Right
-        normal = 180;
-    else if (pos.y - radius < 0)        // Top
-        normal = 90;
-    else if (pos.y + radius > bounds.y) // Bottom
-        normal = 270;
+    bool left   = pos.x - radius < 0; 
+    bool right  = pos.x + radius > bounds.x;
+    bool top    = pos.y - radius < 0; 
+    bool bottom = pos.y + radius > bounds.y;
 
-    float inverse_normal = (int)(normal + 180) % 360;
-    float incidence      = rotation - inverse_normal;
-    float reflected      = normal - incidence;
+    // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
+    // Single-plane collisions use the law of reflection
+    
+    // Corner cases
+    if (left && top)
+        reflected = 315;
+    else if (left && bottom)
+        reflected = 45;
+    else if (right && top)
+        reflected = 225;
+    else if (right && bottom)
+        reflected = 135;
+
+    // Edge cases
+    else 
+    {
+        if (left)       
+            normal = 0;
+        else if (right) 
+            normal = 180;
+        else if (top) 
+            normal = 90;
+        else if (bottom) 
+            normal = 270;
+
+        float inverse_normal = (int)(normal + 180) % 360;
+        float incidence      = rotation - inverse_normal;
+
+        reflected = normal - incidence;
+    }
     
     setRotation(reflected);
-    moveVec(*this, Cell::move_amount);
 }
 
 
