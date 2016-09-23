@@ -65,12 +65,14 @@ void Cell::bounce(sf::Vector2f bounds)
         normal = 180;
     else if (pos.y - radius < 0)        // Top
         normal = 90;
-    else                                // Bottom
+    else if (pos.y + radius > bounds.y) // Bottom
         normal = 270;
 
     float inverse_normal = (int)(normal + 180) % 360;
-
-    setRotation((inverse_normal - rotation) + normal);
+    float incidence      = rotation - inverse_normal;
+    float reflected      = normal - incidence;
+    
+    setRotation(reflected);
     moveVec(*this, Cell::move_amount);
 }
 
@@ -82,8 +84,6 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     {
         auto dist   = distance(*this, *cell);
         auto radius = getRadius();
-        
-        
         
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
         if (dist < radius * Cell::mate_radius) 
@@ -184,8 +184,6 @@ void Cell::update()
     const sf::Color *cellColor = &getFillColor();
     // Fade on death
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
-
-     
 }
 
 std::vector<std::shared_ptr<Cell>> Cell::mate()

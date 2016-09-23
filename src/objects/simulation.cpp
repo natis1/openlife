@@ -113,8 +113,7 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
 
     auto radius = cell->getRadius();
     auto size   = border.getSize();
-
-    // Distributions for initial random settings
+// Distributions for initial random settings
     auto widthDist  = dist(0, (int)size.x);
     auto heightDist = dist(0, (int)size.y);
     auto colorDist  = dist(0, 255);
