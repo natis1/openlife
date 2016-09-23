@@ -4,6 +4,12 @@
 #include <iostream>
 #include "../tools/tools.hpp"
 
+struct Point {
+    double x;
+    double y;
+};
+
+
 namespace objects
 {
 
@@ -21,6 +27,7 @@ class Cell : public Entity
     const static double underpopulation_damage;
     const static double overpopulation_damage;
     const static double affection_threshold;
+    const static double turn_rate;
 
 public:
     Cell();
@@ -45,6 +52,13 @@ private:
     
     std::vector<std::shared_ptr<Cell>> mates;
     std::vector<std::shared_ptr<Cell>> neighbors;
+    
+    Point getAverageNeighborLoc();
+    
+    double calculateIdealAngle(Point neighborLoc, double currentAngle);
+
+    double calculateNextAngle(double currentAngle, bool isOverpopulated);
+    
 };
 
 }

@@ -3,9 +3,9 @@
 namespace objects
 {
 
-const float Cell::mate_radius      = 1;
-const float Cell::neighbor_radius  = 5;
-const float Cell::move_amount      = 0.1;
+const float Cell::mate_radius      = 1.;
+const float Cell::neighbor_radius  = 5.;
+const float Cell::move_amount      = 1.;
 
 const int Cell::underpopulation_limit = 2;
 const int Cell::overpopulation_limit  = 5;
@@ -14,6 +14,7 @@ const int Cell::max_neighbors = 5;
 const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
+const double Cell::turn_rate = 0.5; // Degrees
 
 // Create initial cell
 Cell::Cell() : 
@@ -81,7 +82,9 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     {
         auto dist   = distance(*this, *cell);
         auto radius = getRadius();
-
+        
+        
+        
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
         if (dist < radius * Cell::mate_radius) 
         {
@@ -96,6 +99,65 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
+double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
+{
+    
+    double deltaLocation[2];
+    deltaLocation[0] = this->getPosition().x - neighborLoc.x;
+    deltaLocation[1] = this->getPosition().y - neighborLoc.y;
+    
+    //Assuming unit circle
+    if ( abs(deltaLocation[0]) < 0.05 ) {
+        return currentAngle;
+    } else if (deltaLocation[0] > 0) {
+        if (deltaLocation[1] < 0) {
+            //Forth quadrent, need positive numbers
+            return ((atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643) + 360);
+        }
+        
+        return (atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643);
+    } else {
+        return ((atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643) + 180);
+    }
+    
+    
+    
+}
+
+double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
+{
+    double idealAngle = calculateIdealAngle(getAverageNeighborLoc(), currentAngle);
+    if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
+    
+    if (idealAngle > currentAngle + turn_rate) {
+        return currentAngle + turn_rate;
+    } else if (idealAngle < currentAngle - turn_rate) {
+        return currentAngle - turn_rate;
+    } else {
+        return idealAngle;
+    }
+    
+}
+
+Point Cell::getAverageNeighborLoc()
+{
+    Point averagePoint {0, 0};
+    if (neighbors.size() == 0){
+        averagePoint.x = this->getPosition().x;
+        averagePoint.y = this->getPosition().y;
+        return averagePoint;
+    }
+    for (auto& neighbor : neighbors) {
+        averagePoint.x += neighbor->getPosition().x;
+        averagePoint.y += neighbor->getPosition().y;
+    }
+
+    averagePoint.x /= neighbors.size();
+    averagePoint.y /= neighbors.size();
+
+    return averagePoint;
+}
+
 void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 {
     neighbors.push_back(cell);
@@ -103,24 +165,27 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 
 void Cell::update()
 {
-    setRotation(this->getRotation() + this->anglePrime);
     moveVec(*this, Cell::move_amount);
     
     if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
     {
+        setRotation(calculateNextAngle(this->getRotation(), false));
         damage(Cell::underpopulation_damage);
     }
     else if (neighbors.size() > Cell::overpopulation_limit) // Overpopulation
     {
+        setRotation(calculateNextAngle(this->getRotation(), true));
         damage(Cell::overpopulation_damage);
+    } else {
+        setRotation(calculateNextAngle(this->getRotation(), false));
+        affection += affectionPrime;
     }
 
     const sf::Color *cellColor = &getFillColor();
     // Fade on death
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
 
-    // Moved this to inside of update: this decreases the rate of mating (And makes it more realistic)
-    affection += affectionPrime; 
+     
 }
 
 std::vector<std::shared_ptr<Cell>> Cell::mate()
