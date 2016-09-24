@@ -14,7 +14,7 @@ const int Cell::max_neighbors = 5;
 const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
-const double Cell::turn_rate = 0.5; // Degrees
+const double Cell::turn_rate = 1.0; // Degrees
 
 // Create initial cell
 Cell::Cell() : 
@@ -68,15 +68,15 @@ void Cell::bounce(sf::Vector2f bounds)
     // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
     // Single-plane collisions use the law of reflection
     
-    // Corner cases
+    // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
-        reflected = 315;
+        reflected = (int)(rotation + 180) % 360;
     else if (left && bottom)
-        reflected = 45;
+        reflected = (int)(rotation + 180) % 360;
     else if (right && top)
-        reflected = 225;
+        reflected = (int)(rotation + 180) % 360;
     else if (right && bottom)
-        reflected = 135;
+        reflected = (int)(rotation + 180) % 360;
 
     // Edge cases
     else 

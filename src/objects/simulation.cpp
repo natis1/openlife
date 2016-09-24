@@ -37,6 +37,11 @@ void Simulation::update()
     std::vector<std::shared_ptr<Cell>> new_generation;
     for (auto cell : cells)
     {
+        if (not _inBounds(*cell))
+        {
+            // Modify the cell to push it into bounds
+            cell->bounce(border.getSize());
+        }
         cell->update();
         auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
         new_generation.insert(new_generation.end(), children.begin(), children.end());
@@ -47,6 +52,7 @@ void Simulation::update()
         std::remove_if(cells.begin(), cells.end(),
                     [](const auto & e) { return not e->alive(); }),
             cells.end());
+
 }
 
 void Simulation::updateInteractions()
@@ -78,11 +84,6 @@ void Simulation::updateInteractions()
         remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
 
         cell->interact(remaining);
-        if (not _inBounds(**it))
-        {
-            // Modify the cell to push it into bounds
-            cell->bounce(border.getSize());
-        }
         it++;
     }
 }
