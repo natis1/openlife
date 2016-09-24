@@ -3,11 +3,7 @@
 #include <vector>
 #include <iostream>
 #include "../tools/tools.hpp"
-
-struct Point {
-    double x;
-    double y;
-};
+#include "point.hpp"
 
 
 namespace objects

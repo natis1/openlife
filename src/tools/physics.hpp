@@ -10,13 +10,13 @@
 template <typename T>
 T degrees(T t)
 {
-    return t * 57.2958;
+    return t * 57.29577951308232;
 }
 
 template <typename T>
 T radians(T t)
 {
-    return t * 0.0174533;
+    return t * 0.017453292519943;
 }
 
 template <typename T1, typename T2>

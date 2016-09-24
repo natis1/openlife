@@ -135,12 +135,12 @@ double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
     } else if (deltaLocation[0] > 0) {
         if (deltaLocation[1] < 0) {
             //Forth quadrent, need positive numbers
-            return ((atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643) + 360);
+            return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 360;
         }
         
-        return (atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643);
+        return degrees(atan2(deltaLocation[1], deltaLocation[0]));
     } else {
-        return ((atan2(deltaLocation[1], deltaLocation[0]) * 180/3.141592653589793238462643) + 180);
+        return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 180;
     }
     
     
