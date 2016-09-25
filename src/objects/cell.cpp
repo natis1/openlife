@@ -198,7 +198,7 @@ void Cell::update()
         damage(Cell::overpopulation_damage);
     } else {
         setRotation(calculateNextAngle(this->getRotation(), false));
-        affection += genome.affectionPrime;
+        affection += genome.gene("affection_prime");
     }
 
     const sf::Color *cellColor = &getFillColor();

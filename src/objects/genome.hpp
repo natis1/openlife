@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
 
 namespace objects
 {
@@ -14,7 +15,11 @@ public:
 
     sf::Color representation();
 
-    double affectionPrime;
+    double gene(std::string);
+
+private:
+    std::unordered_map<std::string, double> attributes;
+
 };
 
 }
