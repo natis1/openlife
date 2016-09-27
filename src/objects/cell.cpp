@@ -18,10 +18,12 @@ const double Cell::turn_rate = 1.0; // Degrees
 
 // Create initial cell
 Cell::Cell() : 
-    Entity(10, 100)
+    Entity(10, 100), // Size, life
+    genome()
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
+    setFillColor(genome.representation());
 }
 
 // Create child cell
@@ -30,15 +32,9 @@ Cell::Cell(Cell& a, Cell& b) :
 {
     using tools::avg;
 
+    genome = Genome(a.genome, b.genome);
+
     setRotation(a.getRotation() + 90);
-
-    auto colorA = a.getFillColor();
-    auto colorB = b.getFillColor();
-
-    // Child cells are averaged colors of parent cells
-    setFillColor(sf::Color(avg(colorA.r, colorB.r),
-                           avg(colorA.g, colorB.g),
-                           avg(colorA.b, colorB.b)));
 
     auto posA = a.getPosition();
     auto posB = b.getPosition();
@@ -48,6 +44,7 @@ Cell::Cell(Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
+    setFillColor(genome.representation());
 }
 
 
@@ -201,7 +198,7 @@ void Cell::update()
         damage(Cell::overpopulation_damage);
     } else {
         setRotation(calculateNextAngle(this->getRotation(), false));
-        affection += affectionPrime;
+        affection += genome.gene("affection_prime");
     }
 
     const sf::Color *cellColor = &getFillColor();
