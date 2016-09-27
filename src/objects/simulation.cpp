@@ -37,6 +37,11 @@ void Simulation::update()
     std::vector<std::shared_ptr<Cell>> new_generation;
     for (auto cell : cells)
     {
+        if (not _inBounds(*cell))
+        {
+            // Modify the cell to push it into bounds
+            cell->bounce(border.getSize());
+        }
         cell->update();
         auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
         new_generation.insert(new_generation.end(), children.begin(), children.end());
@@ -47,6 +52,7 @@ void Simulation::update()
         std::remove_if(cells.begin(), cells.end(),
                     [](const auto & e) { return not e->alive(); }),
             cells.end());
+
 }
 
 void Simulation::updateInteractions()
@@ -78,11 +84,6 @@ void Simulation::updateInteractions()
         remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
 
         cell->interact(remaining);
-        if (not _inBounds(**it))
-        {
-            // Modify the cell to push it into bounds
-            cell->bounce(border.getSize());
-        }
         it++;
     }
 }
@@ -113,11 +114,9 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
 
     auto radius = cell->getRadius();
     auto size   = border.getSize();
-
-    // Distributions for initial random settings
+// Distributions for initial random settings
     auto widthDist  = dist(0, (int)size.x);
     auto heightDist = dist(0, (int)size.y);
-    auto colorDist  = dist(0, 255);
     auto angleDist  = dist(0, 360);
 
     // An alternative to providing a seed
@@ -129,11 +128,6 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
     cell->setPosition(x, y);
     cell->setRotation(angleDist(generator));
     
-    // Cells have 16 green so they can always be seen, red and blue go between 0 and 255 and represent turning rate and mating rate.
-    
-    // Higher mating rates mean more offspring but also more damage.
-    cell->setFillColor(sf::Color(colorDist(generator), 16, colorDist(generator)));
-
     return cell;
 }
 
