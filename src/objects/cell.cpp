@@ -3,9 +3,11 @@
 namespace objects
 {
 
-const float Cell::mate_radius      = 1.;
-const float Cell::neighbor_radius  = 5.;
-const float Cell::move_amount      = 1.;
+const float Cell::mate_radius      = 1.0f;
+const float Cell::neighbor_radius  = 5.0f;
+const float Cell::move_modifier    = 3.0f;
+const float Cell::standard_radius  = 3.0f;
+const float Cell::minimum_radius   = 10.0f;
 
 const int Cell::underpopulation_limit = 2;
 const int Cell::overpopulation_limit  = 5;
@@ -15,15 +17,16 @@ const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = 1.0; // Degrees
+const double Cell::max_life = 100.0;
 
 // Create initial cell
 Cell::Cell() : 
-    Entity(10, 100), // Size, life
+    Entity(Cell::standard_radius, Cell::max_life), 
     genome()
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
-    setFillColor(genome.representation());
+    displayAttributes();
 }
 
 // Create child cell
@@ -44,9 +47,14 @@ Cell::Cell(Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
-    setFillColor(genome.representation());
+    displayAttributes();
 }
 
+void Cell::displayAttributes()
+{
+    setFillColor(genome.representation());
+    setRadius(Cell::standard_radius * genome.gene("size") + Cell::minimum_radius);
+}
 
 void Cell::bounce(sf::Vector2f bounds)
 {
@@ -185,7 +193,8 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 
 void Cell::update()
 {
-    moveVec(*this, Cell::move_amount);
+    auto radius = getRadius();
+    moveVec(*this, Cell::move_modifier * (Cell::standard_radius / radius)); // As radius increases, speed decreases
     
     if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
     {

@@ -17,7 +17,9 @@ class Cell : public Entity
     // Static variables don't live in class instances and therefore do not affect shared pointers
     const static float mate_radius;
     const static float neighbor_radius;
-    const static float move_amount;
+    const static float move_modifier; // How fast a cell moves relative to its size
+    const static float standard_radius; // The size of an average cell
+    const static float minimum_radius;
 
     const static int max_neighbors;
     const static int overpopulation_limit;
@@ -27,6 +29,7 @@ class Cell : public Entity
     const static double overpopulation_damage;
     const static double affection_threshold;
     const static double turn_rate;
+    const static double max_life;
 
 public:
     Cell();
@@ -49,12 +52,14 @@ private:
     
     std::vector<std::shared_ptr<Cell>> mates;
     std::vector<std::shared_ptr<Cell>> neighbors;
+
+    void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
     Point getAverageNeighborLoc();
     
     double calculateIdealAngle(Point neighborLoc, double currentAngle);
     double calculateNextAngle(double currentAngle, bool isOverpopulated);
-    
+
 };
 
 }
