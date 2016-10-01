@@ -7,7 +7,7 @@ namespace objects
 struct Simulation
 {
     Simulation();
-    Simulation(int nCells, int width, int height, sf::RectangleShape spawn_area);
+    Simulation(int nCells, int width, int height);
 
     void update();
     void updateInteractions();
@@ -26,7 +26,6 @@ private:
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
     sf::RectangleShape border;
-    sf::RectangleShape spawn_area;
 };
 
 }

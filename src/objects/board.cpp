@@ -116,11 +116,7 @@ void Board::run(int nCells, int x, int y)
 {
     using tools::getTime;
 
-    auto spawn_area = sf::RectangleShape(sf::Vector2f(x/3, y/3));
-    simulation = Simulation(nCells, x, y, spawn_area);
-
-    auto view_port = sf::FloatRect(0, 0, x, y);
-    simulation_view.reset(view_port);
+    simulation = Simulation(nCells, x, y);
 
     while (window.isOpen())
     {
