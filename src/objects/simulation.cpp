@@ -5,8 +5,10 @@ namespace objects
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height)
+Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area)
 {
+    spawn_area = set_spawn_area;
+
     border = sf::RectangleShape(sf::Vector2f(width, height));
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
@@ -113,8 +115,8 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
     auto radius = cell->getRadius();
-    auto size   = border.getSize();
-// Distributions for initial random settings
+    auto size   = spawn_area.getSize();
+    // Distributions for initial random settings
     auto widthDist  = dist(0, (int)size.x);
     auto heightDist = dist(0, (int)size.y);
     auto angleDist  = dist(0, 360);
