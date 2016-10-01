@@ -64,8 +64,9 @@ void Board::_handle()
                 break;
             case sf::Event::Resized:
                 {
-                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(visibleArea));
+                sf::FloatRect visible_area(0, 0, event.size.width, event.size.height);
+                simulation_view.reset(visible_area);
+                info_view.reset(visible_area);
                 }
                 break;
             default:
