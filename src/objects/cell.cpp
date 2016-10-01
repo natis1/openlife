@@ -4,7 +4,7 @@ namespace objects
 {
 
 const float Cell::mate_radius      = 1.0f;
-const float Cell::neighbor_radius  = 5.0f;
+const float Cell::neighbor_radius  = 10.0f;
 const float Cell::move_modifier    = 3.0f;
 const float Cell::standard_radius  = 3.0f;
 const float Cell::minimum_radius   = 10.0f;
