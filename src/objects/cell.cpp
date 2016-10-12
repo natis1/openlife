@@ -20,8 +20,8 @@ const double Cell::turn_rate = 1.0; // Degrees
 const double Cell::max_life = 100.0;
 
 // Create initial cell
-Cell::Cell() : 
-    Entity(Cell::standard_radius, Cell::max_life), 
+Cell::Cell() :
+    Entity(Cell::standard_radius, Cell::max_life),
     genome()
 {
     auto bounds = getLocalBounds();
@@ -65,14 +65,14 @@ void Cell::bounce(sf::Vector2f bounds)
     float normal = 0; // Angle normal to surface
     float reflected = 0; // Angle after reflection off of surface
 
-    bool left   = pos.x - radius < 0; 
+    bool left   = pos.x - radius < 0;
     bool right  = pos.x + radius > bounds.x;
-    bool top    = pos.y - radius < 0; 
+    bool top    = pos.y - radius < 0;
     bool bottom = pos.y + radius > bounds.y;
 
     // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
     // Single-plane collisions use the law of reflection
-    
+
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
         reflected = (int)(rotation + 180) % 360;
@@ -84,15 +84,15 @@ void Cell::bounce(sf::Vector2f bounds)
         reflected = (int)(rotation + 180) % 360;
 
     // Edge cases
-    else 
+    else
     {
-        if (left)       
+        if (left)
             normal = 0;
-        else if (right) 
+        else if (right)
             normal = 180;
-        else if (top) 
+        else if (top)
             normal = 90;
-        else if (bottom) 
+        else if (bottom)
             normal = 270;
 
         float inverse_normal = (int)(normal + 180) % 360;
@@ -100,7 +100,7 @@ void Cell::bounce(sf::Vector2f bounds)
 
         reflected = normal - incidence;
     }
-    
+
     setRotation(reflected);
 }
 
@@ -112,13 +112,13 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     {
         auto dist   = distance(*this, *cell);
         auto radius = getRadius();
-        
+
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < radius * Cell::mate_radius) 
+        if (dist < radius * Cell::mate_radius)
         {
             mates.push_back(cell);
         }
-        
+
         if (dist < radius * Cell::neighbor_radius)
         {
             addNeighbor(cell);
@@ -129,34 +129,39 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
 {
-    
+
     double deltaLocation[2];
     deltaLocation[0] = this->getPosition().x - neighborLoc.x;
     deltaLocation[1] = this->getPosition().y - neighborLoc.y;
-    
+
     //Assuming unit circle
-    if ( abs(deltaLocation[0]) < 0.05 ) {
+    if ( abs(deltaLocation[0]) < 0.0001 ) {
+      if (deltaLocation[1] > 0.5) {
+        return 90;
+      } else if (deltaLocation[1] < -0.5) {
+        return -90;
+      }
         return currentAngle;
     } else if (deltaLocation[0] > 0) {
         if (deltaLocation[1] < 0) {
-            //Forth quadrent, need positive numbers
+//Forth quadrent, need positive numbers
             return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 360;
         }
-        
+
         return degrees(atan2(deltaLocation[1], deltaLocation[0]));
     } else {
         return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 180;
     }
-    
-    
-    
+
+
+
 }
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
     double idealAngle = calculateIdealAngle(getAverageNeighborLoc(), currentAngle);
     if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
-    
+
     if (idealAngle > currentAngle + turn_rate) {
         return currentAngle + turn_rate;
     } else if (idealAngle < currentAngle - turn_rate) {
@@ -164,7 +169,7 @@ double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
     } else {
         return idealAngle;
     }
-    
+
 }
 
 Point Cell::getAverageNeighborLoc()
@@ -195,7 +200,7 @@ void Cell::update()
 {
     auto radius = getRadius();
     moveVec(*this, Cell::move_modifier * (Cell::standard_radius / radius)); // As radius increases, speed decreases
-    
+
     if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
     {
         setRotation(calculateNextAngle(this->getRotation(), false));
@@ -218,7 +223,7 @@ void Cell::update()
 std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;
-    
+
     if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
     {
         for (auto& mate : mates)

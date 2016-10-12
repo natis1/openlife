@@ -1,6 +1,6 @@
 #include "board.hpp"
 
-namespace objects 
+namespace objects
 {
 
 const float Board::move_amount = 10.0f;
@@ -18,7 +18,7 @@ Board::Board(int width, int height) :
     }
     info.setFont(font);
     info.setCharacterSize(24);
-    
+
     frame_display.setFont(font);
     frame_display.setCharacterSize(24);
     frame_display.setPosition(0., 40.);
@@ -28,7 +28,7 @@ Board::Board(int width, int height) :
 void Board::_update()
 {
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()));
+    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + std::to_string(simulation.getCellCount() / (4)) + " microcells per pixel");
     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
 }
 
@@ -129,7 +129,7 @@ void Board::run(int nCells, int x, int y)
         _handle();
         _update();
         _render();
-        
+
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;
     }

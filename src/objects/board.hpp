@@ -16,11 +16,11 @@ public:
 
 private:
     // Helper functions / Internal methods
-    
+
     void _update();
     void _render();
     void _handle();
-    
+
     void _zoom(sf::Event& event);
     void _pan();
 
