@@ -75,25 +75,49 @@ void Cell::bounce(sf::Vector2f bounds)
     
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
+    {
         reflected = (int)(rotation + 180) % 360;
+        move(1.0, 1.0);
+    }
     else if (left && bottom)
+    {
+        move(1.0, -1.0);
         reflected = (int)(rotation + 180) % 360;
+    }
     else if (right && top)
+    {
+        move(-1.0, 1.0);
         reflected = (int)(rotation + 180) % 360;
+    }
     else if (right && bottom)
+    {
+        move(-1.0, -1.0);
         reflected = (int)(rotation + 180) % 360;
+    }
 
     // Edge cases
     else 
     {
         if (left)       
+        {
             normal = 0;
+            move(1.0, 0);
+        }
         else if (right) 
+        {
             normal = 180;
+            move(-1.0, 0);
+        }
         else if (top) 
+        {
             normal = 90;
+            move(0, 1.0);
+        }
         else if (bottom) 
+        {
             normal = 270;
+            move(0, -1.0);
+        }
 
         float inverse_normal = (int)(normal + 180) % 360;
         float incidence      = rotation - inverse_normal;
