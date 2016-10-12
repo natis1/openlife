@@ -9,7 +9,6 @@ namespace objects
         // Describe the initial genome
         modifiers = {
             {"affection_prime", 2.77}, // "Genome has a value affection_prime, which is between zero and 2.77"
-            {"size", 1.0} // Cells vary between 0 and a set radius * 2
         };
 
         auto randDist  = tools::dist(0., 1.);
