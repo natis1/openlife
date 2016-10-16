@@ -151,7 +151,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
+double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
 {
 
     double deltaLocation[2];
@@ -168,7 +168,7 @@ double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
         return currentAngle;
     } else if (deltaLocation[0] > 0) {
         if (deltaLocation[1] < 0) {
-//Forth quadrent, need positive numbers
+            //Forth quadrant, need positive numbers
             return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 360;
         }
 
@@ -176,14 +176,11 @@ double Cell::calculateIdealAngle(Point neighborLoc, double currentAngle)
     } else {
         return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 180;
     }
-
-
-
 }
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
-    double idealAngle = calculateIdealAngle(getAverageNeighborLoc(), currentAngle);
+    double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
     if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
 
     if (idealAngle > currentAngle + turn_rate) {
@@ -193,24 +190,23 @@ double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
     } else {
         return idealAngle;
     }
-
 }
 
-Point Cell::getAverageNeighborLoc()
+sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
 {
-    Point averagePoint {0, 0};
-    if (neighbors.size() == 0){
-        averagePoint.x = this->getPosition().x;
-        averagePoint.y = this->getPosition().y;
+    sf::Vector2f averagePoint (0, 0);
+    if (cells.size() == 0)
+    {
         return averagePoint;
     }
-    for (auto& neighbor : neighbors) {
-        averagePoint.x += neighbor->getPosition().x;
-        averagePoint.y += neighbor->getPosition().y;
+    for (auto& cell : cells) 
+    {
+        averagePoint.x += cell->getPosition().x;
+        averagePoint.y += cell->getPosition().y;
     }
 
-    averagePoint.x /= neighbors.size();
-    averagePoint.y /= neighbors.size();
+    averagePoint.x /= cells.size();
+    averagePoint.y /= cells.size();
 
     return averagePoint;
 }

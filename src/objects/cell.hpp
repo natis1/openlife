@@ -4,13 +4,16 @@
 
 #include "../tools/tools.hpp"
 
-#include "point.hpp"
 #include "entity.hpp"
 #include "genome.hpp"
 
 
 namespace objects
 {
+
+class Cell;
+
+sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
 class Cell : public Entity
 {
@@ -55,9 +58,7 @@ private:
 
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
-    Point getAverageNeighborLoc();
-    
-    double calculateIdealAngle(Point neighborLoc, double currentAngle);
+    double calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle);
     double calculateNextAngle(double currentAngle, bool isOverpopulated);
 
 };
