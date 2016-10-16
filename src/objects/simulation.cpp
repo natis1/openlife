@@ -25,6 +25,12 @@ int Simulation::getCellCount()
     return cells.size();
 }
 
+float Simulation::getArea()
+{
+    auto size = border.getSize();
+    return size.x * size.y;
+}
+
 void Simulation::render(sf::RenderWindow& target)
 {
     for (auto cell : cells)

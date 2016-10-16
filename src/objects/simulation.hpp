@@ -14,6 +14,7 @@ struct Simulation
     void render(sf::RenderWindow& target);
 
     int getCellCount();
+    float getArea();
 
 private:
     // Functions for generating random cells
