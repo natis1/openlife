@@ -153,29 +153,9 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
 {
-
-    double deltaLocation[2];
-    deltaLocation[0] = this->getPosition().x - neighborLoc.x;
-    deltaLocation[1] = this->getPosition().y - neighborLoc.y;
-
-    //Assuming unit circle
-    if ( abs(deltaLocation[0]) < 0.0001 ) {
-      if (deltaLocation[1] > 0.5) {
-        return 90;
-      } else if (deltaLocation[1] < -0.5) {
-        return -90;
-      }
-        return currentAngle;
-    } else if (deltaLocation[0] > 0) {
-        if (deltaLocation[1] < 0) {
-            //Forth quadrant, need positive numbers
-            return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 360;
-        }
-
-        return degrees(atan2(deltaLocation[1], deltaLocation[0]));
-    } else {
-        return degrees(atan2(deltaLocation[1], deltaLocation[0])) + 180;
-    }
+    auto angle = atan2(getPosition().y - neighborLoc.y, 
+                       getPosition().x - neighborLoc.x);
+    return degrees(angle) - 90;
 }
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
