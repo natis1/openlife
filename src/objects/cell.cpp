@@ -160,6 +160,11 @@ double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
+    if (neighbors.empty())
+    {
+        return currentAngle;
+    }
+
     double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
     if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
 
