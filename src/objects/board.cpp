@@ -28,7 +28,7 @@ Board::Board(int width, int height) :
 void Board::_update()
 {
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000) / simulation.getArea()));
+    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
 }
 

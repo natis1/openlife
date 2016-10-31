@@ -11,6 +11,7 @@ cd $(dirname $0)
 SRC_PATH=$(pwd)
 BUILD_PATH="$SRC_PATH/build"
 EXE_NAME="openlife"
+TEST_NAME="openlifetests"
 
 mkdir "$BUILD_PATH"
 cd "$BUILD_PATH"
@@ -21,3 +22,5 @@ cmake "$SRC_PATH" -DCMAKE_BUILD_TYPE=DEBUG
 make -j $(nproc)
 chmod a+x "$EXE_NAME"
 cp "$EXE_NAME" ..
+chmod a+x "$TEST_NAME"
+cp "$TEST_NAME" ..
