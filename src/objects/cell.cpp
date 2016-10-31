@@ -17,7 +17,7 @@ const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = 1.0; // Degrees
-const double Cell::max_life = 100.0;
+const double Cell::max_life = 10.0;
 
 // Create initial cell
 Cell::Cell() :
