@@ -17,7 +17,7 @@ const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = 1.0; // Degrees
-const double Cell::max_life = 100.0;
+const double Cell::max_life = 10.0;
 
 // Create initial cell
 Cell::Cell() :
@@ -160,6 +160,11 @@ double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
+    if (neighbors.empty())
+    {
+        return currentAngle;
+    }
+
     double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
     if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
 
@@ -218,6 +223,12 @@ void Cell::update()
     const sf::Color *cellColor = &getFillColor();
     // Fade on death
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
+}
+
+std::string Cell::csv()
+{
+    auto position = getPosition();
+    return std::to_string(position.x) + "," + std::to_string(position.y);
 }
 
 std::vector<std::shared_ptr<Cell>> Cell::mate()

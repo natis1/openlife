@@ -42,6 +42,7 @@ public:
     void interact(const std::vector<std::shared_ptr<Cell>>& cells);
     void addNeighbor(std::shared_ptr<Cell> neighbor);
 
+    std::string csv();
     std::vector<std::shared_ptr<Cell>> mate();
 
     void bounce(sf::Vector2f bounds);

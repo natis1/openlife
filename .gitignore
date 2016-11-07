@@ -8,3 +8,5 @@ fastbuild
 *.kdev4
 /.kdev4/
 openlife
+openlifetests
+data

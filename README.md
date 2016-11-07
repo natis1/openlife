@@ -4,7 +4,15 @@ The ultimate life simulator
 
 Main dependency is [SFML](http://www.sfml-dev.org/license.php)
 
-![Cell Grouping](http://i.imgur.com/Ag7284g.png)
+![Cell Grouping](http://i.imgur.com/XflwKHx.png)
+
+### A density graph (Basic analysis):
+
+![Density Graph](http://i.imgur.com/4DIB9a0.png)
+
+### Average Location Graph:
+
+![Location Graph](http://i.imgur.com/kAvGROO.png)
 
 ## Build Instructions
 

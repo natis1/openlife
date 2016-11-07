@@ -3,9 +3,13 @@
 namespace objects
 {
 
+using tools::print;
+
 // Code for simulation backend only
 struct Simulation
 {
+    const static int csv_save_period;
+
     Simulation();
     Simulation(int nCells, int width, int height, sf::RectangleShape spawn_area);
 
@@ -23,6 +27,8 @@ private:
     
     bool _inBounds(Cell& cell);
     void _updateInteractions();
+
+    int update_count;
 
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
