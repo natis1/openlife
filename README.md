@@ -6,6 +6,10 @@ Main dependency is [SFML](http://www.sfml-dev.org/license.php)
 
 ![Cell Grouping](http://i.imgur.com/Ag7284g.png)
 
+### A density graph (Basic analysis):
+
+![Density Graph](http://i.imgur.com/4DIB9a0.png)
+
 ## Build Instructions
 
 ### Get prerequisite programs
