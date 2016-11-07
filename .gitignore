@@ -10,3 +10,4 @@ fastbuild
 openlife
 openlifetests
 data
+__pycache__
