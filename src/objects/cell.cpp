@@ -225,6 +225,12 @@ void Cell::update()
     setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
 }
 
+std::string Cell::csv()
+{
+    auto position = getPosition();
+    return std::to_string(position.x) + "," + std::to_string(position.y);
+}
+
 std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;

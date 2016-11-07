@@ -2,6 +2,7 @@
 #include <random>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <sys/time.h> // To keep constant frametime
 #include <unistd.h>
@@ -35,6 +36,19 @@ void print(T first, Args... args) {
     print(first);
     print(args...);
     std::cout << std::endl;
+}
+
+template <typename T>
+void writeCSV(std::string filename, std::vector<T> items)
+{
+    std::ofstream csvfile;
+    csvfile.open(filename);
+    for (const auto& item : items)
+    {
+        auto line = item->csv();
+        csvfile << line + "\n";
+    }
+    csvfile.close();
 }
 
 }
