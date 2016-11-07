@@ -3,6 +3,8 @@
 namespace objects
 {
 
+const int Simulation::csv_save_period = 60;
+
 Simulation::Simulation(){}
 
 Simulation::Simulation(int nCells, int width, int height)
@@ -12,12 +14,22 @@ Simulation::Simulation(int nCells, int width, int height)
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
 
+    center_marker.setRadius(10);
+    center_marker.setFillColor(sf::Color(255, 0, 0));
+
     _genCells(nCells);
+    update_count = 1;
 }
 
 int Simulation::getCellCount()
 {
     return cells.size();
+}
+
+float Simulation::getArea()
+{
+    auto size = border.getSize();
+    return size.x * size.y;
 }
 
 void Simulation::render(sf::RenderWindow& target)
@@ -27,6 +39,7 @@ void Simulation::render(sf::RenderWindow& target)
         target.draw(*cell);
     }
     target.draw(border);
+    target.draw(center_marker);
 }
 
 void Simulation::update()
@@ -53,6 +66,14 @@ void Simulation::update()
                     [](const auto & e) { return not e->alive(); }),
             cells.end());
 
+    center_marker.setPosition(getAverageLocation(cells));
+    if (update_count % Simulation::csv_save_period == 0)
+    {
+        std::string filename = "data/simulation_" + std::to_string(update_count / Simulation::csv_save_period) + ".csv";
+        //print(filename);
+        tools::writeCSV(filename, cells);
+    }
+    update_count++;
 }
 
 void Simulation::updateInteractions()

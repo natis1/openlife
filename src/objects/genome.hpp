@@ -19,7 +19,6 @@ public:
 private:
     std::unordered_map<std::string, double> genes;     // Dictionary string : double where double is a value between zero and one
     std::unordered_map<std::string, double> modifiers; // Dictionary string : double where double is a constant that gets multiplied by the gene
-
 };
 
 }

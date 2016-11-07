@@ -1,7 +1,9 @@
-#I think version 2.8.10 is good enough
+# I think version 2.8.10 is good enough
 
 cmake_minimum_required (VERSION 2.8.10)
 cmake_policy(VERSION 2.8.10)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     #GCC with c++14 support (I think 4.9) required
@@ -18,18 +20,27 @@ else()
     message (WARNING "You are using an unsupported compiler. GCC is recommended for this program, even on Windows. If you do have any errors, do leave a report though")
 endif()
 
-
 set(PROJECT_NAME openlife)
+set(PROJECT_LIB  openlifelib)
+set(TEST_NAME    openlifetests)
 
-file(GLOB_RECURSE SOURCE_FILES
-  "${CMAKE_SOURCE_DIR}/src/*.cpp"
-  "${CMAKE_SOURCE_DIR}/src/*.hpp"
-  "${CMAKE_SOURCE_DIR}/src/*.c"
-  "${CMAKE_SOURCE_DIR}/src/*.h")
+file(GLOB_RECURSE LIB_SOURCES
+  "${CMAKE_SOURCE_DIR}/src/*/*.cpp"
+  "${CMAKE_SOURCE_DIR}/src/*/*.hpp")
 
-# c++14 is super modern and also required for a few autos
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+file (GLOB_RECURSE PROG_SOURCES
+    "${CMAKE_SOURCE_DIR}/src/main.cpp"
+    "${CMAKE_SOURCE_DIR}/src/main.hpp")
+
+file (GLOB_RECURSE TEST_SOURCES
+    "${CMAKE_SOURCE_DIR}/tests/*.cpp" # Skip Compiler.hpp and Compiler.cpp, which include int main()
+    "${CMAKE_SOURCE_DIR}/tests/*.hpp")
+
+add_library(${PROJECT_LIB} SHARED "${LIB_SOURCES}")
+add_executable(${PROJECT_NAME} ${PROG_SOURCES})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
+add_executable(${TEST_NAME} ${TEST_SOURCES})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics)
