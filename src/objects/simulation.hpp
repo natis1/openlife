@@ -1,5 +1,13 @@
 #include "cell.hpp"
 
+struct rectangleShape {
+    double x = 0;
+    double y = 0;
+    double height;
+    double width;
+};
+
+
 namespace objects
 {
 
@@ -16,7 +24,8 @@ struct Simulation
 
     void update();
     void updateInteractions();
-    void render(sf::RenderWindow& target);
+    
+    //void render(sf::RenderWindow& target);
 
     int getCellCount();
     float getArea();
@@ -28,15 +37,20 @@ private:
     
     bool _inBounds(Cell& cell);
     void _updateInteractions();
+    position _getAverageLocation();
+    
 
     unsigned long long last_update;
     int update_count;
 
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;
-    sf::RectangleShape border;
-    sf::RectangleShape spawn_area;
-    sf::CircleShape    center_marker;
+    
+    
+    //Graphics BS
+    
+    rectangleShape border;
+    position center_marker;
 };
 
 }

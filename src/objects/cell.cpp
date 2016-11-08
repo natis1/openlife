@@ -219,10 +219,8 @@ void Cell::update()
         setRotation(calculateNextAngle(this->getRotation(), false));
         affection += genome.gene("affection_prime");
     }
-
-    const sf::Color *cellColor = &getFillColor();
     // Fade on death
-    setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
+    setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
 }
 
 std::string Cell::csv()
