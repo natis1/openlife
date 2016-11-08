@@ -71,7 +71,12 @@ void Simulation::update()
     center_marker.setPosition(getAverageLocation(cells));
     if (update_count % Simulation::csv_save_period == 0)
     {
-        std::string filename = "data/simulation_" + std::to_string(update_count / Simulation::csv_save_period) + ".csv";
+        std::string count = std::to_string(update_count / Simulation::csv_save_period);
+        for (int i = count.size(); i < 5; i++)
+        {
+            count = "0" + count;
+        }
+        std::string filename = "data/simulation_" + count + ".csv";
         //print(filename);
         tools::writeCSV(filename, cells);
     }

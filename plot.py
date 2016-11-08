@@ -20,13 +20,16 @@ def calc_average_loc(filename):
 def calc_density(filename):
     return len(read_csv(filename)) / 4 
 
+def find_filenames():
+    return ['data/' + filename for _, _, filenames in os.walk('data') for filename in filenames]
+
 viewsTable = {
     'density'  : calc_density,
     'location' : calc_average_loc}
 
 def main():
     # Recursively build list of data files
-    filenames   = ['data/' + filename for _, _, filenames in os.walk('data') for filename in filenames]
+    filenames = find_filenames()
 
     if len(sys.argv) > 1:         # Ignore first argument, which is filepath of script
         view = sys.argv[1] # View type string is second argument
