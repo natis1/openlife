@@ -42,7 +42,8 @@ def graph(filename):
         for node in nearest:
             edges.append((i, node[0]))
     networks = inner_networks(edges)
-    print('Edge set of %s edges contains %s networks' % (len(edges), len(networks)))
+    print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
+    print(networks)
 
     G=nx.Graph()#  G is an empty Graph
     G.add_nodes_from(range(len(content)))

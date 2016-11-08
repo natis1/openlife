@@ -3,7 +3,7 @@
 namespace objects
 {
 
-const int Simulation::csv_save_period = 6000;
+const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
@@ -20,7 +20,8 @@ Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set
     center_marker.setFillColor(sf::Color(255, 0, 0));
 
     _genCells(nCells);
-    update_count = 1;
+    last_update = getTime();
+    update_count = 0;
 }
 
 int Simulation::getCellCount()
@@ -69,9 +70,11 @@ void Simulation::update()
             cells.end());
 
     center_marker.setPosition(getAverageLocation(cells));
-    if (update_count % Simulation::csv_save_period == 0)
+    unsigned long long time_diff = getTime() - last_update;
+    if (time_diff > Simulation::csv_save_period)
     {
-        std::string count = std::to_string(update_count / Simulation::csv_save_period);
+        print(time_diff);
+        std::string count = std::to_string(update_count);
         for (int i = count.size(); i < 5; i++)
         {
             count = "0" + count;
@@ -79,8 +82,9 @@ void Simulation::update()
         std::string filename = "data/simulation_" + count + ".csv";
         //print(filename);
         tools::writeCSV(filename, cells);
+        last_update = getTime();
+        update_count++;
     }
-    update_count++;
 }
 
 void Simulation::updateInteractions()

@@ -4,6 +4,7 @@ namespace objects
 {
 
 using tools::print;
+using tools::getTime;
 
 // Code for simulation backend only
 struct Simulation
@@ -28,6 +29,7 @@ private:
     bool _inBounds(Cell& cell);
     void _updateInteractions();
 
+    unsigned long long last_update;
     int update_count;
 
     // Simulation backend
