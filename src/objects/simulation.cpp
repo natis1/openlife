@@ -3,7 +3,7 @@
 namespace objects
 {
 
-const int Simulation::csv_save_period = 60;
+const int Simulation::csv_save_period = 6000;
 
 Simulation::Simulation(){}
 
