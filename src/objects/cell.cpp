@@ -37,10 +37,10 @@ Cell::Cell(Cell& a, Cell& b) :
 
     genome = Genome(a.genome, b.genome);
 
-    setRotation(a.getRotation() + 90);
+    setRotation(a.getRotation() + 90.);
 
-    auto posA = a.getPosition();
-    auto posB = b.getPosition();
+    position posA = a.getPosition();
+    position posB = b.getPosition();
 
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);

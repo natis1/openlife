@@ -1,6 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include entity.hpp
 #include <unordered_map>
+
 
 namespace objects
 {
