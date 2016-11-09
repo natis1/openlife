@@ -20,7 +20,9 @@ def calc_average_loc(filename):
     return xsum / len(content), ysum / len(content)
 
 def calc_density(filename):
-    return len(read_csv(filename)) / 4 
+    content = read_csv(filename)
+    print(len(content))
+    return len(content) / 4
 
 def find_filenames():
     return ['data/' + filename for _, _, filenames in os.walk('data') for filename in filenames]
@@ -46,8 +48,8 @@ def inner_networks(edges):
     return networks
 
 def graph(filename):
-
     content = read_csv(filename)
+    print('%s (%s)' % (filename, len(content)))
 
     edges = []
     for i, (x1, y1) in enumerate(content):
