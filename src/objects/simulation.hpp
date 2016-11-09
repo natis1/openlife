@@ -20,7 +20,7 @@ struct Simulation
     const static int csv_save_period;
 
     Simulation();
-    Simulation(int nCells, int width, int height, sf::RectangleShape spawn_area);
+    Simulation(int nCells, int width, int height);
 
     void update();
     void updateInteractions();

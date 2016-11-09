@@ -56,7 +56,7 @@ void Cell::displayAttributes()
     setRadius(Cell::standard_radius * genome.gene("size") + Cell::minimum_radius);
 }
 
-void Cell::bounce(sf::Vector2f bounds)
+void Cell::bounce(int x, int y, double width, double height)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
@@ -151,11 +151,11 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
+double Cell::calculateIdealAngle(point neighborLoc, double currentAngle)
 {
     auto angle = atan2(getPosition().y - neighborLoc.y, 
                        getPosition().x - neighborLoc.x);
-    return degrees(angle) - 90;
+    return degrees(angle) - 90.;
 }
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)

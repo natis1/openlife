@@ -35,7 +35,7 @@ namespace objects
         }
     }
 
-    sf::Color Genome::representation()
+    color Genome::representation()
     {
         using tools::avg;
 
@@ -67,7 +67,7 @@ namespace objects
             counter++;
         }
 
-        return sf::Color(red, green, blue);
+        return {red, green, blue, 255.};
     }
 
     double Genome::gene(std::string name)

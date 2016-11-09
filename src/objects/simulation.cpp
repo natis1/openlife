@@ -7,7 +7,7 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area)
+Simulation::Simulation(int nCells, int width, int height)
 {
     //spawn_area = set_spawn_area;
 

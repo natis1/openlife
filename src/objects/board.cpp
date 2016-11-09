@@ -31,7 +31,7 @@ void Board::_update()
     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
 }
-
+/*
 void Board::_render()
 {
     window.clear();
@@ -111,24 +111,25 @@ void Board::_pan()
         pressed(sf::Keyboard::Right))
         simulation_view.move(Board::move_amount, 0.0f);
 }
+*/
 
 // This function should really only call other functions (Similar to how no code goes in int main)
 void Board::run(int nCells, int x, int y)
 {
     using tools::getTime;
 
-    auto spawn_area = sf::RectangleShape(sf::Vector2f(x/6, y));
-    simulation = Simulation(nCells, x, y, spawn_area);
+    //auto spawn_area = sf::RectangleShape(sf::Vector2f(x/6, y));
+    simulation = Simulation(nCells, x, y);
 
-    auto view_port = sf::FloatRect(0, 0, x, y);
-    simulation_view.reset(view_port);
+    //auto view_port = sf::FloatRect(0, 0, x, y);
+    //simulation_view.reset(view_port);
 
     while (window.isOpen())
     {
         unsigned long long start_frame = getTime();
-        _handle();
+        //_handle();
         _update();
-        _render();
+        //_render();
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;

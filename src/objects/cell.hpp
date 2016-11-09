@@ -59,7 +59,7 @@ private:
 
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
-    double calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle);
+    double calculateIdealAngle(point neighborLoc, double currentAngle);
     double calculateNextAngle(double currentAngle, bool isOverpopulated);
 
 };

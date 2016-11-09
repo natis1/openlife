@@ -1,5 +1,5 @@
 #pragma once
-#include entity.hpp
+#include "entity.hpp"
 #include <unordered_map>
 
 
@@ -12,7 +12,7 @@ public:
     Genome();
     Genome(Genome& a, Genome& b);
 
-    sf::Color representation();
+    color representation();
 
     // Retrieve a gene by name
     double gene(std::string);
