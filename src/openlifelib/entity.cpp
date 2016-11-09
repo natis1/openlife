@@ -1,7 +1,5 @@
 #include "entity.hpp"
 
-namespace objects
-{
 Entity::Entity(double size, double life) : 
     sf::CircleShape(size),
     life(life),
@@ -37,5 +35,4 @@ double Entity::lifePercent()
 
 void Entity::update()
 {
-}
 }

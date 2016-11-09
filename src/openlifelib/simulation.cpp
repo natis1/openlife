@@ -1,8 +1,5 @@
 #include "simulation.hpp"
 
-namespace objects
-{
-
 const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
@@ -162,4 +159,3 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
     return cell;
 }
 
-}

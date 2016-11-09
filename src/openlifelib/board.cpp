@@ -1,8 +1,5 @@
 #include "board.hpp"
 
-namespace objects
-{
-
 const float Board::move_amount = 10.0f;
 
 Board::Board(int width, int height) :
@@ -135,4 +132,3 @@ void Board::run(int nCells, int x, int y)
     }
 }
 
-}

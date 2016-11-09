@@ -8,9 +8,6 @@
 #include "genome.hpp"
 
 
-namespace objects
-{
-
 class Cell;
 
 sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
@@ -64,4 +61,3 @@ private:
 
 };
 
-}

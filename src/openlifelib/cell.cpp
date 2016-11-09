@@ -1,8 +1,5 @@
 #include "cell.hpp"
 
-namespace objects
-{
-
 const float Cell::mate_radius      = 1.0f;
 const float Cell::neighbor_radius  = 10.0f;
 const float Cell::move_modifier    = 3.0f;
@@ -256,4 +253,3 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     return children;
 }
 
-}

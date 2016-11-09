@@ -3,9 +3,6 @@
 #include "simulation.hpp"
 #include "../tools/tools.hpp"
 
-namespace objects
-{
-
 class Board
 {
     const static float move_amount;
@@ -40,4 +37,3 @@ private:
     unsigned long long frame_time;
 };
 
-}

@@ -1,8 +1,5 @@
 #include "cell.hpp"
 
-namespace objects
-{
-
 using tools::print;
 using tools::getTime;
 
@@ -39,4 +36,3 @@ private:
     sf::CircleShape    center_marker;
 };
 
-}
