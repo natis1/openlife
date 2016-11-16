@@ -24,8 +24,8 @@ Cell::Cell() :
     Entity(Cell::standard_radius, Cell::max_life),
     genome()
 {
-    auto bounds = getLocalBounds();
-    setOrigin(bounds.width / 2, bounds.height / 2);
+    //auto bounds = getLocalBounds();
+    //setOrigin(bounds.width / 2, bounds.height / 2);
     displayAttributes();
 }
 
@@ -53,22 +53,22 @@ Cell::Cell(Cell& a, Cell& b) :
 void Cell::displayAttributes()
 {
     setFillColor(genome.representation());
-    setRadius(Cell::standard_radius * genome.gene("size") + Cell::minimum_radius);
+    setRadius( (Cell::standard_radius * genome.gene("size") + Cell::minimum_radius) );
 }
 
-void Cell::bounce(int x, int y, double width, double height)
+void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
     auto pos      = getPosition();
 
-    float normal = 0; // Angle normal to surface
-    float reflected = 0; // Angle after reflection off of surface
+    double normal = 0; // Angle normal to surface
+    double reflected = 0; // Angle after reflection off of surface
 
-    bool left   = pos.x - radius < 0;
-    bool right  = pos.x + radius > bounds.x;
-    bool top    = pos.y - radius < 0;
-    bool bottom = pos.y + radius > bounds.y;
+    bool left   = pos.x - radius < wallx;
+    bool right  = pos.x + radius > wallx + wallwidth;
+    bool top    = pos.y - radius < wally;
+    bool bottom = pos.y + radius > wally + wallheight;
 
     // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
     // Single-plane collisions use the law of reflection
@@ -76,7 +76,7 @@ void Cell::bounce(int x, int y, double width, double height)
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
     {
-        reflected = (int)(rotation + 180) % 360;
+        reflected = (int)(rotation + 180.) % 360;
         move(1.0, 1.0);
     }
     else if (left && bottom)
@@ -151,7 +151,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-double Cell::calculateIdealAngle(point neighborLoc, double currentAngle)
+double Cell::calculateIdealAngle(position neighborLoc, double currentAngle)
 {
     auto angle = atan2(getPosition().y - neighborLoc.y, 
                        getPosition().x - neighborLoc.x);
@@ -177,9 +177,9 @@ double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
     }
 }
 
-sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
+position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
 {
-    sf::Vector2f averagePoint (0, 0);
+    position averagePoint = {0, 0};
     if (cells.size() == 0)
     {
         return averagePoint;

@@ -13,7 +13,7 @@ namespace objects
 
 class Cell;
 
-sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
+position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
 class Cell : public Entity
 {
@@ -45,7 +45,7 @@ public:
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate();
 
-    void bounce(sf::Vector2f bounds);
+    void bounce(double wallx, double wally, double wallwidth, double wallheight);
 
     Genome genome;
 
@@ -59,7 +59,7 @@ private:
 
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
-    double calculateIdealAngle(point neighborLoc, double currentAngle);
+    double calculateIdealAngle(position neighborLoc, double currentAngle);
     double calculateNextAngle(double currentAngle, bool isOverpopulated);
 
 };

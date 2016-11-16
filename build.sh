@@ -12,6 +12,7 @@ SRC_PATH=$(pwd)
 BUILD_PATH="$SRC_PATH/build"
 EXE_NAME="openlife"
 TEST_NAME="openlifetests"
+LIB_NAME="libopenlife.so"
 
 mkdir "$BUILD_PATH"
 cd "$BUILD_PATH"
@@ -22,5 +23,7 @@ cmake "$SRC_PATH" -DCMAKE_BUILD_TYPE=DEBUG
 make -j $(nproc)
 chmod a+x "$EXE_NAME"
 cp "$EXE_NAME" ..
+cp "$LIB_NAME" ..
 chmod a+x "$TEST_NAME"
 cp "$TEST_NAME" ..
+rm -r "$BUILD_PATH"

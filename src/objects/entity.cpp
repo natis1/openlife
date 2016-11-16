@@ -38,6 +38,12 @@ double Entity::getRadius()
     return this->radius;
 }
 
+void Entity::setRadius(double radius)
+{
+    this->radius = radius;
+}
+
+
 position Entity::getPosition()
 {
     return this->entityLocation;
@@ -61,12 +67,17 @@ void Entity::setRotation(double theta)
 
 color Entity::getFillColor()
 {
-    return this->color;
+    return this->entityColor;
 }
 
-void Entity::setFillColor(int r, int g, int b)
+void Entity::setFillColor(double r, double g, double b, double a)
 {
-    this->color = {r, g, b};
+    this->entityColor = {r, g, b, a};
+}
+
+void Entity::setFillColor(color c)
+{
+    this->entityColor = c;
 }
 
 

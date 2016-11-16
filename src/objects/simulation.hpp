@@ -3,8 +3,8 @@
 struct rectangleShape {
     double x = 0;
     double y = 0;
-    double height;
     double width;
+    double height;
 };
 
 
@@ -38,7 +38,6 @@ private:
     bool _inBounds(Cell& cell);
     void _updateInteractions();
     position _getAverageLocation();
-    
 
     unsigned long long last_update;
     int update_count;

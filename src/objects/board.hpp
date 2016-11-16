@@ -8,7 +8,6 @@ namespace objects
 
 class Board
 {
-    const static float move_amount;
 
 public:
     Board();
@@ -37,6 +36,7 @@ private:
 
     // Timing
     unsigned long long frame_time;
+    bool simulationRunning = true;
 };
 
 }

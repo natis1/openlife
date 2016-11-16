@@ -9,6 +9,7 @@ fastbuild
 /.kdev4/
 openlife
 openlifetests
+libopenlife.so
 data
 __pycache__
 images

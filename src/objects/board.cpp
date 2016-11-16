@@ -3,33 +3,31 @@
 namespace objects
 {
 
-const float Board::move_amount = 10.0f;
 
-Board::Board(int width, int height) :
-    window(sf::VideoMode(width, height), "Life")
+Board::Board()
 {
-    auto view = window.getView();
-    simulation_view = view;
-    info_view = view;
-
+//     auto view = window.getView();
+//     simulation_view = view;
+//     info_view = view;
+/*
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
     {
         std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
-    }
-    info.setFont(font);
-    info.setCharacterSize(24);
-
-    frame_display.setFont(font);
-    frame_display.setCharacterSize(24);
-    frame_display.setPosition(0., 40.);
+    }*/
+//     info.setFont(font);
+//     info.setCharacterSize(24);
+// 
+//     frame_display.setFont(font);
+//     frame_display.setCharacterSize(24);
+//     frame_display.setPosition(0., 40.);
 }
 
 
 void Board::_update()
 {
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-    frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
+//     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
+//     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
 }
 /*
 void Board::_render()
@@ -124,7 +122,7 @@ void Board::run(int nCells, int x, int y)
     //auto view_port = sf::FloatRect(0, 0, x, y);
     //simulation_view.reset(view_port);
 
-    while (window.isOpen())
+    while (simulationRunning)
     {
         unsigned long long start_frame = getTime();
         //_handle();

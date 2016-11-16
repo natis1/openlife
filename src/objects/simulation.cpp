@@ -1,4 +1,6 @@
 #include "simulation.hpp"
+#include <algorithm>
+
 
 namespace objects
 {
@@ -31,8 +33,7 @@ int Simulation::getCellCount()
 
 float Simulation::getArea()
 {
-    auto size = border.getSize();
-    return size.x * size.y;
+    return border.width * border.height;
 }
 
 /*
@@ -48,6 +49,7 @@ void Simulation::render(sf::RenderWindow& target)
 */
 
 
+
 void Simulation::update()
 {
     updateInteractions();
@@ -59,7 +61,7 @@ void Simulation::update()
         if (not _inBounds(*cell))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(border.getSize());
+            cell->bounce(border.x, border.y, border.width, border.height);
         }
         cell->update();
         auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
@@ -131,9 +133,9 @@ void Simulation::updateInteractions()
 bool Simulation::_inBounds(Cell& cell)
 {
     // Checking x first. b.x < cell < x+width
-    return ((border.x < cell.getPosition().x && cell.getPosition().x < border.x + border.width)
-            (border.y < cell.getPosition().y && cell.getposition().y < border.y + border.height));
-    
+    position cellloc = cell.getPosition();
+    return ((border.x < cellloc.x && cellloc.x < (border.x + border.width))
+        && (border.y < cellloc.y && cellloc.y < (border.y + border.height)));
 }
 
 // Randomly generate n cells
@@ -181,8 +183,8 @@ position  Simulation::_getAverageLocation(){
     
     for (auto cell : cells)
     {
-        x += cell.getPosition.x;
-        y += cell.getPosition.y;
+        x += cell->getPosition().x;
+        y += cell->getPosition().y;
     }
     x /= cells.size();
     y /= cells.size();

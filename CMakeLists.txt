@@ -20,8 +20,8 @@ else()
     message (WARNING "You are using an unsupported compiler. GCC is recommended for this program, even on Windows. If you do have any errors, do leave a report though")
 endif()
 
-set(PROJECT_NAME openlife)
-set(PROJECT_LIB  openlifelib)
+#set(PROJECT_NAME openlifecli)
+set(PROJECT_LIB  openlife)
 set(TEST_NAME    openlifetests)
 
 file(GLOB_RECURSE LIB_SOURCES

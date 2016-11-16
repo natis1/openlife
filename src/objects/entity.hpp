@@ -9,10 +9,10 @@ struct position
 struct color
 {
     //Graphics related data. Sidenote: LAB color would be cool but I can't be bothered
-    int r;
-    int g;
-    int b;
-    int a;
+    double r;
+    double g;
+    double b;
+    double a;
 };
 
 namespace objects
@@ -32,6 +32,7 @@ public:
     
     
     double getRadius();
+    void setRadius(double radius);
     
     position getPosition();
     void setPosition(double x, double y);
@@ -40,7 +41,8 @@ public:
     void setRotation(double theta);
     
     color getFillColor();
-    void setFillColor(int r, int g, int b, int a);
+    void setFillColor(double r, double g, double b, double a);
+    void setFillColor(color c);
     
 private:
     double life;
@@ -51,7 +53,7 @@ private:
     double size;
     double rotation;
     double radius = 10;
-    color color {255,255,255,255};
+    color entityColor {255.,255.,255.,255.};
     
 };
 }
