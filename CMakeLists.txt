@@ -40,13 +40,14 @@ add_library(${PROJECT_LIB} SHARED "${LIB_SOURCES}")
 add_executable(${PROJECT_NAME} ${PROG_SOURCES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
 add_executable(${TEST_NAME} ${TEST_SOURCES})
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
+target_link_libraries(${TEST_NAME} ${PROJECT_LIB})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 find_package(SFML 2 REQUIRED system window graphics)
 if(SFML_FOUND)
   include_directories(${SFML_INCLUDE_DIR})
   target_link_libraries(${PROJECT_NAME} ${SFML_LIBRARIES})
+  target_link_libraries(${TEST_NAME} ${SFML_LIBRARIES})
 endif()
 
 

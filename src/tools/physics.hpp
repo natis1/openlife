@@ -46,6 +46,7 @@ double angle(T1& t1, T2& t2)
     if (angle > 360.) {
         angle = (int)angle % 360;
     }
+
     return angle;
 }
 
