@@ -12,3 +12,4 @@ openlifetests
 data
 __pycache__
 images
+*.png

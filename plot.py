@@ -11,24 +11,28 @@ def read_csv(filename):
         return [convert(line) for line in csvfile]
 
 
-def calc_average_loc(filename):
-    content = read_csv(filename)
-    if len(content) == 0: # Cant find the average location of 0 cells
-        return 0, 0
-    xsum = sum(point[0] for point in content)
-    ysum = sum(point[1] for point in content)
-    return xsum / len(content), ysum / len(content)
-
-def calc_density(filename):
-    content = read_csv(filename)
-    print(len(content))
-    return len(content) / 4
-
 def find_filenames():
     return ['data/' + filename for _, _, filenames in os.walk('data') for filename in filenames]
 
 def distance(x1, y1, x2, y2):
     return sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+def get_edges(filename):
+    content = read_csv(filename)
+    print('%s (%s)' % (filename, len(content)))
+
+    edges = []
+    for i, (x1, y1) in enumerate(content):
+        def score(value):
+            _, (x2, y2) = value
+            return distance(x1, y1, x2, y2)
+        others = content[:i] + content[i+1:] 
+        # Find n nearest neighbors
+        neighbors = 1
+        nearest   = sorted(enumerate(others), key=score)[:neighbors]
+        for node in nearest:
+            edges.append((i, node[0]))
+    return edges
 
 def inner_networks(edges):
     networks = []
@@ -48,20 +52,7 @@ def inner_networks(edges):
     return networks
 
 def graph(filename):
-    content = read_csv(filename)
-    print('%s (%s)' % (filename, len(content)))
-
-    edges = []
-    for i, (x1, y1) in enumerate(content):
-        def score(value):
-            _, (x2, y2) = value
-            return distance(x1, y1, x2, y2)
-        others = content[:i] + content[i+1:] 
-        # Find n nearest neighbors
-        neighbors = 1
-        nearest   = sorted(enumerate(others), key=score)[:neighbors]
-        for node in nearest:
-            edges.append((i, node[0]))
+    edges    = get_edges(filename)
     networks = inner_networks(edges)
     print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
     print(networks)
@@ -73,7 +64,7 @@ def graph(filename):
     basename = os.path.splitext(os.path.basename(filename))[0]
     plt.savefig('images/' + basename + '.png')
 
-def network():
+def build_network_video():
     try:
         filenames = find_filenames() 
         for filename in filenames:
@@ -86,9 +77,39 @@ def network():
         subprocess.run(['xdg-open', 'network.mp4'])
         os.chdir('..')
 
+def get_networks(filename):
+    content  = read_csv(filename)
+    edges    = get_edges(filename)
+    return inner_networks(edges)
+
+def calc_average_loc(filename):
+    content = read_csv(filename)
+    if len(content) == 0: # Cant find the average location of 0 cells
+        return 0, 0
+    xsum = sum(point[0] for point in content)
+    ysum = sum(point[1] for point in content)
+    return xsum / len(content), ysum / len(content)
+
+def calc_density(filename):
+    content = read_csv(filename)
+    print(len(content))
+    return len(content) / 4
+
+def calc_num_networks(filename):
+    return len(get_networks(filename))
+
+def calc_network_size(filename):
+    networks = get_networks(filename)
+    sizes    = [len(network) for network in networks]
+    if len(sizes) == 0:
+        return 0
+    return sum(sizes) / len(sizes)
+
 viewsTable = {
-    'density'  : calc_density,
-    'location' : calc_average_loc}
+    'density'      : calc_density,
+    'location'     : calc_average_loc,
+    'num_networks' : calc_num_networks,
+    'network_size' : calc_network_size}
 
 def main():
     # Recursively build list of data files
@@ -102,8 +123,9 @@ def main():
             plt.ylabel(view)
             plt.xlabel('60 iterations')
             plt.show()
+            plt.savefig(view + '.png')
         else:
-            network()
+            build_network_video()
 
 if __name__ == '__main__':
     main()
