@@ -197,10 +197,15 @@ void Cell::update()
 
     intelligentRotate(overpopulated);
     moveVec(*this, Cell::move_modifier); 
-    if (overpopulated or underpopulated)
+    if (overpopulated)
     {
-        // Apply appropriate damage to Cell
-        damage(overpopulated ? Cell::overpopulation_damage : Cell::underpopulation_damage);
+        damage(Cell::overpopulation_damage);
+        overpopulation_occurances++;
+    }
+    else if (underpopulated)
+    {
+        damage(Cell::underpopulation_damage);
+        underpopulation_occurances++;
     }
     else 
     {
@@ -211,6 +216,19 @@ void Cell::update()
     const sf::Color cellColor = getFillColor();
     // Fade on death
     setFillColor(sf::Color(cellColor.r, cellColor.g, cellColor.b, 255 * lifePercent()));
+
+    if (not alive())
+    {
+        std::string cause = "Cell died of ";
+        if (overpopulation_occurances > underpopulation_occurances)
+        {
+            print(cause + "overpopulation");
+        }
+        else
+        {
+            print(cause + "underpopulation");
+        }
+    }
 }
 
 std::string Cell::csv()

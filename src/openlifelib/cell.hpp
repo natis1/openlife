@@ -12,6 +12,8 @@ class Cell;
 
 sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
+using tools::print;
+
 class Cell : public Entity 
 {
     // Static variables don't live in class instances and therefore do not affect shared pointers
@@ -54,4 +56,7 @@ private:
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
     void intelligentRotate(bool overpopulated);
+
+    long long overpopulation_occurances  = 0;
+    long long underpopulation_occurances = 0;
 };
