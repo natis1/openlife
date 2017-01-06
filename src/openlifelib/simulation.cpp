@@ -13,8 +13,9 @@ Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
 
-    center_marker.setRadius(10);
-    center_marker.setFillColor(sf::Color(255, 0, 0));
+    center_marker.setRadius(20);
+    center_marker.setOutlineColor(sf::Color(200, 0, 200, 128));
+    center_marker.setOutlineThickness(3.0);
 
     _genCells(nCells);
     last_update = getTime();
