@@ -2,6 +2,7 @@
 
 const float Cell::mate_radius      = 250.0f;
 const float Cell::neighbor_radius  = 350.0f;
+const float Cell::search_radius    = 1000.0f;
 const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
@@ -21,7 +22,7 @@ Cell::Cell() :
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
-    displayAttributes();
+    setFillColor(genome.representation());
     debug_circle.setOutlineThickness(5.);
     debug_circle.setFillColor(sf::Color(0., 0., 0., 0.));
 }
@@ -44,7 +45,7 @@ Cell::Cell(Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
-    displayAttributes();
+    setFillColor(genome.representation());
     print("Cell born");
 }
 
@@ -66,12 +67,9 @@ void Cell::renderWith(sf::RenderWindow& target)
         target.draw(debug_circle);
         resetDebugCircle(sf::Color(0., 255., 0., 128.), mate_radius);     // Mate radius in green
         target.draw(debug_circle);
+        resetDebugCircle(sf::Color(0., 0., 255., 128.), search_radius);   // Search radius in blue
+        target.draw(debug_circle);
     }
-}
-
-void Cell::displayAttributes()
-{
-    setFillColor(genome.representation());
 }
 
 void Cell::bounce(sf::Vector2f bounds)
@@ -165,15 +163,22 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
             addNeighbor(cell);
             cell->addNeighbor(std::make_shared<Cell>(*this));
         }
+
+        if (dist < Cell::search_radius)
+        {
+            addVisible(cell);
+            cell->addVisible(std::make_shared<Cell>(*this));
+        }
     }
 }
 
 void Cell::intelligentRotate(bool overpopulated)
 {
-    if (neighbors.empty()) return;
+    // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
+    sf::Vector2f center_of_mass = neighbors.empty() ? getAverageLocation(visible)
+                                                    : getAverageLocation(neighbors);
 
-    auto center_mass   = getAverageLocation(neighbors);
-    double ideal_angle = angle(center_mass, getPosition());
+    double ideal_angle = angle(center_of_mass, getPosition());
     double current_angle = getRotation();
     if (overpopulated) ideal_angle = remainder(ideal_angle + 180., 360.);
 
@@ -203,6 +208,11 @@ sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
     averagePoint.y /= cells.size();
 
     return averagePoint;
+}
+
+void Cell::addVisible (std::shared_ptr<Cell> cell)
+{
+    visible.push_back(cell);
 }
 
 void Cell::addNeighbor(std::shared_ptr<Cell> cell)
@@ -282,6 +292,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     // Interaction finished
     mates.clear();
     neighbors.clear();
+    visible.clear();
 
     return children;
 }

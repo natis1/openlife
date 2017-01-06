@@ -19,6 +19,7 @@ class Cell : public Entity
     // Static variables don't live in class instances and therefore do not affect shared pointers
     const static float mate_radius;
     const static float neighbor_radius;
+    const static float search_radius;
     const static float move_modifier;
 
     const static int overpopulation_limit;
@@ -38,6 +39,7 @@ public:
     virtual void update();
     void interact(const std::vector<std::shared_ptr<Cell>>& cells);
     void addNeighbor(std::shared_ptr<Cell> neighbor);
+    void addVisible (std::shared_ptr<Cell> cell);
 
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate();
@@ -54,6 +56,7 @@ private:
     
     std::vector<std::shared_ptr<Cell>> mates;
     std::vector<std::shared_ptr<Cell>> neighbors;
+    std::vector<std::shared_ptr<Cell>> visible;
 
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
