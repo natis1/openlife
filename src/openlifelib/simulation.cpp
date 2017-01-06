@@ -37,7 +37,7 @@ void Simulation::render(sf::RenderWindow& target)
 {
     for (auto cell : cells)
     {
-        target.draw(*cell);
+        cell->renderWith(target);
     }
     target.draw(border);
     target.draw(center_marker);

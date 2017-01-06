@@ -21,10 +21,10 @@ class Cell : public Entity
     const static float neighbor_radius;
     const static float move_modifier;
 
-    const static int max_neighbors;
     const static int overpopulation_limit;
     const static int underpopulation_limit; 
 
+    const static double regeneration_amount;
     const static double underpopulation_damage;
     const static double overpopulation_damage;
     const static double affection_threshold;
@@ -44,6 +44,8 @@ public:
 
     void bounce(sf::Vector2f bounds);
 
+    void renderWith(sf::RenderWindow& target);
+
     Genome genome;
 
 private:
@@ -56,7 +58,10 @@ private:
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
     void intelligentRotate(bool overpopulated);
+    void resetDebugCircle(const sf::Color& color, double radius);
 
     long long overpopulation_occurances  = 0;
     long long underpopulation_occurances = 0;
+
+    sf::CircleShape debug_circle;
 };

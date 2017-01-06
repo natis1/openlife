@@ -1,18 +1,18 @@
 #include "cell.hpp"
 
-const float Cell::mate_radius      = 1.0f;
-const float Cell::neighbor_radius  = 15.0f;
+const float Cell::mate_radius      = 250.0f;
+const float Cell::neighbor_radius  = 350.0f;
 const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 10;
-const int Cell::max_neighbors = 5;
+const int Cell::overpopulation_limit  = 20;
 
-const double Cell::underpopulation_damage = 0.001;
-const double Cell::overpopulation_damage  = 0.2;
+const double Cell::regeneration_amount    = 1.;
+const double Cell::underpopulation_damage = 1.;
+const double Cell::overpopulation_damage  = 1.;
 const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = .5; // Degrees
-const double Cell::max_life  = 10.0;
+const double Cell::max_life  = 500.0;
 
 // Create initial cell
 Cell::Cell() :
@@ -22,6 +22,8 @@ Cell::Cell() :
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
     displayAttributes();
+    debug_circle.setOutlineThickness(5.);
+    debug_circle.setFillColor(sf::Color(0., 0., 0., 0.));
 }
 
 // Create child cell
@@ -43,6 +45,28 @@ Cell::Cell(Cell& a, Cell& b) :
 
     setPosition(dx, dy);
     displayAttributes();
+    print("Cell born");
+}
+
+void Cell::resetDebugCircle(const sf::Color& color, double radius)
+{
+    debug_circle.setRadius(radius);
+    debug_circle.setOutlineColor(color);
+    debug_circle.setOrigin(sf::Vector2f(radius, radius));
+}
+
+void Cell::renderWith(sf::RenderWindow& target)
+{
+    target.draw(*this);
+    bool debug = true;
+    if (debug)
+    {
+        debug_circle.setPosition(getPosition());
+        resetDebugCircle(sf::Color(255., 0., 0., 128.), neighbor_radius); // Neighbor radius in red
+        target.draw(debug_circle);
+        resetDebugCircle(sf::Color(0., 255., 0., 128.), mate_radius);     // Mate radius in green
+        target.draw(debug_circle);
+    }
 }
 
 void Cell::displayAttributes()
@@ -129,15 +153,14 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     for (auto& cell : cells)
     {
         auto dist   = distance(*this, *cell);
-        auto radius = getRadius();
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < radius * Cell::mate_radius)
+        if (dist < Cell::mate_radius)
         {
             mates.push_back(cell);
         }
 
-        if (dist < radius * Cell::neighbor_radius)
+        if (dist < Cell::neighbor_radius)
         {
             addNeighbor(cell);
             cell->addNeighbor(std::make_shared<Cell>(*this));
@@ -211,6 +234,8 @@ void Cell::update()
     {
         // Begin mating if in appropriate conditions
         affection += genome.gene("affection_prime");
+        //print("Affection increased to " + std::to_string(affection));
+        regen(Cell::regeneration_amount);
     }
 
     const sf::Color cellColor = getFillColor();
@@ -241,11 +266,10 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;
 
-    if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
+    if (mates.size() > 0)
     {
         for (auto& mate : mates)
         {
-            //The mating threshold stops 2 parents from falling too far in love.
             if (affection + mate->affection > Cell::affection_threshold)
             {
                 affection = 0;
