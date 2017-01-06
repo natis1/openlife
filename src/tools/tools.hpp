@@ -18,7 +18,6 @@ std::uniform_real_distribution<double> dist(double a, double b);
 int sign(std::mt19937);
 unsigned long long getTime();
 
-// Templatize types
 template <typename T>
 T avg (T a, T b)
 {

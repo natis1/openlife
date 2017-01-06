@@ -31,10 +31,8 @@ double distance(T1& t1, T2& t2)
 
 // Compute angle between two objects in degrees
 template <typename T1, typename T2>
-double angle(T1& t1, T2& t2)
+double angle(T1& a, T2& b)
 { 
-    auto a = t1.getPosition();
-    auto b = t2.getPosition();
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
 

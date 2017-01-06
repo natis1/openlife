@@ -1,19 +1,19 @@
 #include "cell.hpp"
 
 const float Cell::mate_radius      = 1.0f;
-const float Cell::neighbor_radius  = 10.0f;
+const float Cell::neighbor_radius  = 15.0f;
 const float Cell::move_modifier    = 3.0f;
 const float Cell::standard_radius  = 3.0f;
 const float Cell::minimum_radius   = 10.0f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 5;
+const int Cell::overpopulation_limit  = 10;
 const int Cell::max_neighbors = 5;
 
 const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
-const double Cell::turn_rate = 1.0; // Degrees
+const double Cell::turn_rate = .5; // Degrees
 const double Cell::max_life = 10.0;
 
 // Create initial cell
@@ -150,9 +150,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 
 double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
 {
-    auto angle = atan2(getPosition().y - neighborLoc.y, 
-                       getPosition().x - neighborLoc.x);
-    return degrees(angle) - 90;
+    return angle(getPosition(), neighborLoc);
 }
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
@@ -212,7 +210,9 @@ void Cell::update()
     {
         setRotation(calculateNextAngle(this->getRotation(), true));
         damage(Cell::overpopulation_damage);
-    } else {
+    } 
+    else 
+    {
         setRotation(calculateNextAngle(this->getRotation(), false));
         affection += genome.gene("affection_prime");
     }

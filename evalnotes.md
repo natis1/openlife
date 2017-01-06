@@ -20,3 +20,5 @@ Ex: Life's 2x2 square
 
 Unit tests for features once they are fixed
 
+Ex: Two cells not close enough to be neighbors, should move towards one another
+
