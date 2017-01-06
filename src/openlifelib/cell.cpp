@@ -3,8 +3,6 @@
 const float Cell::mate_radius      = 1.0f;
 const float Cell::neighbor_radius  = 15.0f;
 const float Cell::move_modifier    = 3.0f;
-const float Cell::standard_radius  = 3.0f;
-const float Cell::minimum_radius   = 10.0f;
 
 const int Cell::underpopulation_limit = 2;
 const int Cell::overpopulation_limit  = 10;
@@ -14,11 +12,11 @@ const double Cell::underpopulation_damage = 0.001;
 const double Cell::overpopulation_damage  = 0.2;
 const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = .5; // Degrees
-const double Cell::max_life = 10.0;
+const double Cell::max_life  = 10.0;
 
 // Create initial cell
 Cell::Cell() :
-    Entity(Cell::standard_radius, Cell::max_life),
+    Entity(10, Cell::max_life),
     genome()
 {
     auto bounds = getLocalBounds();
@@ -50,7 +48,6 @@ Cell::Cell(Cell& a, Cell& b) :
 void Cell::displayAttributes()
 {
     setFillColor(genome.representation());
-    setRadius(Cell::standard_radius * genome.gene("size") + Cell::minimum_radius);
 }
 
 void Cell::bounce(sf::Vector2f bounds)
@@ -199,27 +196,27 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 void Cell::update()
 {
     auto radius = getRadius();
-    moveVec(*this, Cell::move_modifier * (Cell::standard_radius / radius)); // As radius increases, speed decreases
 
-    if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
+    // Declare boolean values to make code more understandable
+    bool underpopulated = neighbors.size() < Cell::underpopulation_limit;
+    bool overpopulated  = neighbors.size() > Cell::overpopulation_limit;
+
+    setRotation(calculateNextAngle(getRotation(), overpopulated));
+    moveVec(*this, Cell::move_modifier); 
+    if (overpopulated or underpopulated)
     {
-        setRotation(calculateNextAngle(this->getRotation(), false));
-        damage(Cell::underpopulation_damage);
+        // Apply appropriate damage to Cell
+        damage(overpopulated ? Cell::overpopulation_damage : Cell::underpopulation_damage);
     }
-    else if (neighbors.size() > Cell::overpopulation_limit) // Overpopulation
-    {
-        setRotation(calculateNextAngle(this->getRotation(), true));
-        damage(Cell::overpopulation_damage);
-    } 
     else 
     {
-        setRotation(calculateNextAngle(this->getRotation(), false));
+        // Begin mating if in appropriate conditions
         affection += genome.gene("affection_prime");
     }
 
-    const sf::Color *cellColor = &getFillColor();
+    const sf::Color cellColor = getFillColor();
     // Fade on death
-    setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
+    setFillColor(sf::Color(cellColor.r, cellColor.g, cellColor.b, 255 * lifePercent()));
 }
 
 std::string Cell::csv()

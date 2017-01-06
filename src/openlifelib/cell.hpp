@@ -18,8 +18,6 @@ class Cell : public Entity
     const static float mate_radius;
     const static float neighbor_radius;
     const static float move_modifier; // How fast a cell moves relative to its size
-    const static float standard_radius; // The size of an average cell
-    const static float minimum_radius;
 
     const static int max_neighbors;
     const static int overpopulation_limit;
