@@ -2,7 +2,7 @@
 
 const float Cell::mate_radius      = 1.0f;
 const float Cell::neighbor_radius  = 15.0f;
-const float Cell::move_modifier    = 3.0f;
+const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
 const int Cell::overpopulation_limit  = 10;
@@ -145,27 +145,21 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
+void Cell::intelligentRotate(bool overpopulated)
 {
-    return angle(getPosition(), neighborLoc);
-}
+    if (neighbors.empty()) return;
 
-double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
-{
-    if (neighbors.empty())
-    {
-        return currentAngle;
-    }
+    auto center_mass   = getAverageLocation(neighbors);
+    double ideal_angle = angle(center_mass, getPosition());
+    double current_angle = getRotation();
+    if (overpopulated) ideal_angle = remainder(ideal_angle + 180., 360.);
 
-    double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
-    if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
-
-    if (idealAngle > currentAngle + turn_rate) {
-        return currentAngle + turn_rate;
-    } else if (idealAngle < currentAngle - turn_rate) {
-        return currentAngle - turn_rate;
+    if (ideal_angle > current_angle + turn_rate) {
+        rotate(turn_rate);
+    } else if (ideal_angle < current_angle - turn_rate) {
+        rotate(-turn_rate);
     } else {
-        return idealAngle;
+        rotate(ideal_angle);
     }
 }
 
@@ -201,7 +195,7 @@ void Cell::update()
     bool underpopulated = neighbors.size() < Cell::underpopulation_limit;
     bool overpopulated  = neighbors.size() > Cell::overpopulation_limit;
 
-    setRotation(calculateNextAngle(getRotation(), overpopulated));
+    intelligentRotate(overpopulated);
     moveVec(*this, Cell::move_modifier); 
     if (overpopulated or underpopulated)
     {

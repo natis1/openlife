@@ -6,6 +6,7 @@
 #include <memory>
 #include <sys/time.h> // To keep constant frametime
 #include <unistd.h>
+#include <math.h>
 #include "physics.hpp"
 
 namespace tools

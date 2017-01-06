@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <tuple>
 #include <iostream>
+#include <math.h>
 
 // Can't move templates to body files 
 // (There are cases where we can, but we really shouldn't : http://stackoverflow.com/questions/5612791/c-template-and-header-files)
@@ -36,14 +37,11 @@ double angle(T1& a, T2& b)
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
 
-    
     if (angle < 0) {
         angle = 360. + angle;
     }
     
-    if (angle > 360.) {
-        angle = (int)angle % 360;
-    }
+    angle = remainder(angle, 360.);
 
     return angle;
 }
