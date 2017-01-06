@@ -15,6 +15,10 @@ const double Cell::affection_threshold = 1000.;
 const double Cell::turn_rate = .5; // Degrees
 const double Cell::max_life  = 500.0;
 
+int Cell::overpopulation_deaths  = 0;
+int Cell::underpopulation_deaths = 0;
+int Cell::births                 = 0;
+
 // Create initial cell
 Cell::Cell() :
     Entity(10, Cell::max_life),
@@ -46,7 +50,7 @@ Cell::Cell(Cell& a, Cell& b) :
 
     setPosition(dx, dy);
     setFillColor(genome.representation());
-    print("Cell born");
+    Cell::births++;
 }
 
 void Cell::resetDebugCircle(const sf::Color& color, double radius)
@@ -254,14 +258,13 @@ void Cell::update()
 
     if (not alive())
     {
-        std::string cause = "Cell died of ";
         if (overpopulation_occurances > underpopulation_occurances)
         {
-            print(cause + "overpopulation");
+            Cell::overpopulation_deaths++;
         }
         else
         {
-            print(cause + "underpopulation");
+            Cell::underpopulation_deaths++;
         }
     }
 }
@@ -295,5 +298,12 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     visible.clear();
 
     return children;
+}
+
+std::tuple<int, int, int> Cell::getCellStatistics()
+{
+    return std::make_tuple(Cell::births,
+                           Cell::overpopulation_deaths,
+                           Cell::underpopulation_deaths);
 }
 

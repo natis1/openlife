@@ -10,6 +10,7 @@ struct Simulation
 
     Simulation();
     Simulation(int nCells, int width, int height, sf::RectangleShape spawn_area);
+    ~Simulation();
 
     void update();
     void updateInteractions();

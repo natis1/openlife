@@ -50,6 +50,8 @@ public:
 
     Genome genome;
 
+    static std::tuple<int, int, int> getCellStatistics();
+
 private:
     // After this reaches a threshhold a stork comes down and provides the cells with babies
     double affection = 0;
@@ -67,4 +69,8 @@ private:
     long long underpopulation_occurances = 0;
 
     sf::CircleShape debug_circle;
+
+    static int overpopulation_deaths;
+    static int underpopulation_deaths;
+    static int births;
 };
