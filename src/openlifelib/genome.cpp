@@ -35,6 +35,9 @@ Genome::Genome(Genome& a, Genome& b)
 
 sf::Color Genome::representation()
 {
+    return sf::Color(195.f, 127.f, 255.f);
+    // If there are ever more genes, this representation function will make more sense
+    /*
     using tools::avg;
 
     std::vector<double> components;
@@ -44,28 +47,40 @@ sf::Color Genome::representation()
     }
 
     // Initial color gets averaged with gene values * 255
-    double red   = 128.;
-    double green = 128.;
-    double blue  = 128.;
+    double red   = 0.;
+    double green = 0.;
+    double blue  = 0.;
+
+    // Lambda for factoring in intensities for a particular color (code re-use)
+    const auto factorComponent= [](double& color, const double& intensity)
+    {
+        // Either average the existing color with an intensity, or set the color to its initial value
+        color = color > 1. ? avg(intensity, color) : intensity;
+    };
 
     // Make color represent the average of all gene components
     int counter = 0;
     for (double component : components)
     {
+        double intensity = 255. * component;
         if (counter == 0)
-            red = avg(255. * component, red);
+        {
+            factorComponent(red,   intensity);
+        }
         else if (counter == 1)
-            green = avg(255. * component, green);
+        {
+            factorComponent(green, intensity);
+        }
         else if (counter == 2)
         {
-            blue = avg(255. * component, blue);
-            counter = 0; // Cycle back to red
+            factorComponent(blue,  intensity);
+            counter = -1; // Cycle back to red
         }
-
         counter++;
     }
 
     return sf::Color(red, green, blue);
+    */
 }
 
 double Genome::gene(std::string name)

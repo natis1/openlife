@@ -5,6 +5,7 @@ Entity::Entity(double size, double life) :
     life(life),
     total_life(life)
 {
+    setOrigin(sf::Vector2f(size, size));
 }
 
 bool Entity::alive()

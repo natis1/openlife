@@ -9,13 +9,13 @@ class Board
 
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100, int x=1000, int y=1000);
+    void run(int nCells=100, int x=1000, int y=1000, bool debug=false, bool show_sim=true);
 
 private:
     // Helper functions / Internal methods
 
     void _update();
-    void _render();
+    void _render(bool debug=false, bool show_sim=true);
     void _handle();
 
     void _zoom(sf::Event& event);

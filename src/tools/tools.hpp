@@ -6,6 +6,7 @@
 #include <memory>
 #include <sys/time.h> // To keep constant frametime
 #include <unistd.h>
+#include <math.h>
 #include "physics.hpp"
 
 namespace tools
@@ -18,7 +19,6 @@ std::uniform_real_distribution<double> dist(double a, double b);
 int sign(std::mt19937);
 unsigned long long getTime();
 
-// Templatize types
 template <typename T>
 T avg (T a, T b)
 {

@@ -4,7 +4,7 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area)
+Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area) 
 {
     spawn_area = set_spawn_area;
 
@@ -13,12 +13,22 @@ Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
 
-    center_marker.setRadius(10);
-    center_marker.setFillColor(sf::Color(255, 0, 0));
+    center_marker.setRadius(20);
+    center_marker.setOutlineColor(sf::Color(200, 0, 200, 128));
+    center_marker.setOutlineThickness(3.0);
 
     _genCells(nCells);
     last_update = getTime();
     update_count = 0;
+}
+
+Simulation::~Simulation()
+{
+    auto statistics = Cell::getCellStatistics();
+    print("Statistics from simulation:");
+    print("Births:                 " + std::to_string(std::get<0>(statistics)));
+    print("Overpopulation deaths:  " + std::to_string(std::get<1>(statistics)));
+    print("Underpopulation deaths: " + std::to_string(std::get<2>(statistics)));
 }
 
 int Simulation::getCellCount()
@@ -32,11 +42,11 @@ float Simulation::getArea()
     return size.x * size.y;
 }
 
-void Simulation::render(sf::RenderWindow& target)
+void Simulation::render(sf::RenderWindow& target, bool debug)
 {
     for (auto cell : cells)
     {
-        target.draw(*cell);
+        cell->renderWith(target, debug);
     }
     target.draw(border);
     target.draw(center_marker);

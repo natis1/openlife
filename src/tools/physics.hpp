@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <tuple>
 #include <iostream>
+#include <math.h>
 
 // Can't move templates to body files 
 // (There are cases where we can, but we really shouldn't : http://stackoverflow.com/questions/5612791/c-template-and-header-files)
@@ -31,21 +32,16 @@ double distance(T1& t1, T2& t2)
 
 // Compute angle between two objects in degrees
 template <typename T1, typename T2>
-double angle(T1& t1, T2& t2)
+double angle(T1& a, T2& b)
 { 
-    auto a = t1.getPosition();
-    auto b = t2.getPosition();
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
 
-    
     if (angle < 0) {
         angle = 360. + angle;
     }
     
-    if (angle > 360.) {
-        angle = (int)angle % 360;
-    }
+    angle = remainder(angle, 360.);
 
     return angle;
 }
