@@ -11,3 +11,6 @@ openlife
 openlifetests
 data
 __pycache__
+images
+*.png
+libopenlife.so

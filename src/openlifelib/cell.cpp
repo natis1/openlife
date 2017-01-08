@@ -1,32 +1,34 @@
 #include "cell.hpp"
 
-namespace objects
-{
-
-const float Cell::mate_radius      = 1.0f;
-const float Cell::neighbor_radius  = 10.0f;
-const float Cell::move_modifier    = 3.0f;
-const float Cell::standard_radius  = 3.0f;
-const float Cell::minimum_radius   = 10.0f;
+const float Cell::mate_radius      = 250.0f;
+const float Cell::neighbor_radius  = 350.0f;
+const float Cell::search_radius    = 1000.0f;
+const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 5;
-const int Cell::max_neighbors = 5;
+const int Cell::overpopulation_limit  = 20;
 
-const double Cell::underpopulation_damage = 0.001;
-const double Cell::overpopulation_damage  = 0.2;
+const double Cell::regeneration_amount    = 1.;
+const double Cell::underpopulation_damage = 1.;
+const double Cell::overpopulation_damage  = 1.;
 const double Cell::affection_threshold = 1000.;
-const double Cell::turn_rate = 1.0; // Degrees
-const double Cell::max_life = 10.0;
+const double Cell::turn_rate = .5; // Degrees
+const double Cell::max_life  = 500.0;
+
+int Cell::overpopulation_deaths  = 0;
+int Cell::underpopulation_deaths = 0;
+int Cell::births                 = 0;
 
 // Create initial cell
 Cell::Cell() :
-    Entity(Cell::standard_radius, Cell::max_life),
+    Entity(10, Cell::max_life),
     genome()
 {
     auto bounds = getLocalBounds();
     setOrigin(bounds.width / 2, bounds.height / 2);
-    displayAttributes();
+    setFillColor(genome.representation());
+    debug_circle.setOutlineThickness(5.);
+    debug_circle.setFillColor(sf::Color(0., 0., 0., 0.));
 }
 
 // Create child cell
@@ -47,13 +49,30 @@ Cell::Cell(Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
-    displayAttributes();
+    setFillColor(genome.representation());
+    Cell::births++;
 }
 
-void Cell::displayAttributes()
+void Cell::resetDebugCircle(const sf::Color& color, double radius)
 {
-    setFillColor(genome.representation());
-    setRadius(Cell::standard_radius * genome.gene("size") + Cell::minimum_radius);
+    debug_circle.setRadius(radius);
+    debug_circle.setOutlineColor(color);
+    debug_circle.setOrigin(sf::Vector2f(radius, radius));
+}
+
+void Cell::renderWith(sf::RenderWindow& target, bool debug)
+{
+    target.draw(*this);
+    if (debug)
+    {
+        debug_circle.setPosition(getPosition());
+        resetDebugCircle(sf::Color(255., 0., 0., 128.), neighbor_radius); // Neighbor radius in red
+        target.draw(debug_circle);
+        resetDebugCircle(sf::Color(0., 255., 0., 128.), mate_radius);     // Mate radius in green
+        target.draw(debug_circle);
+        resetDebugCircle(sf::Color(0., 0., 255., 128.), search_radius);   // Search radius in blue
+        target.draw(debug_circle);
+    }
 }
 
 void Cell::bounce(sf::Vector2f bounds)
@@ -135,45 +154,43 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     for (auto& cell : cells)
     {
         auto dist   = distance(*this, *cell);
-        auto radius = getRadius();
 
         // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < radius * Cell::mate_radius)
+        if (dist < Cell::mate_radius)
         {
             mates.push_back(cell);
         }
 
-        if (dist < radius * Cell::neighbor_radius)
+        if (dist < Cell::neighbor_radius)
         {
             addNeighbor(cell);
             cell->addNeighbor(std::make_shared<Cell>(*this));
         }
+
+        if (dist < Cell::search_radius)
+        {
+            addVisible(cell);
+            cell->addVisible(std::make_shared<Cell>(*this));
+        }
     }
 }
 
-double Cell::calculateIdealAngle(sf::Vector2f neighborLoc, double currentAngle)
+void Cell::intelligentRotate(bool overpopulated)
 {
-    auto angle = atan2(getPosition().y - neighborLoc.y, 
-                       getPosition().x - neighborLoc.x);
-    return degrees(angle) - 90;
-}
+    // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
+    sf::Vector2f center_of_mass = neighbors.empty() ? getAverageLocation(visible)
+                                                    : getAverageLocation(neighbors);
 
-double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
-{
-    if (neighbors.empty())
-    {
-        return currentAngle;
-    }
+    double ideal_angle = angle(center_of_mass, getPosition());
+    double current_angle = getRotation();
+    if (overpopulated) ideal_angle = remainder(ideal_angle + 180., 360.);
 
-    double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
-    if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
-
-    if (idealAngle > currentAngle + turn_rate) {
-        return currentAngle + turn_rate;
-    } else if (idealAngle < currentAngle - turn_rate) {
-        return currentAngle - turn_rate;
+    if (ideal_angle > current_angle + turn_rate) {
+        rotate(turn_rate);
+    } else if (ideal_angle < current_angle - turn_rate) {
+        rotate(-turn_rate);
     } else {
-        return idealAngle;
+        rotate(ideal_angle);
     }
 }
 
@@ -196,6 +213,11 @@ sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
     return averagePoint;
 }
 
+void Cell::addVisible (std::shared_ptr<Cell> cell)
+{
+    visible.push_back(cell);
+}
+
 void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 {
     neighbors.push_back(cell);
@@ -204,25 +226,46 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 void Cell::update()
 {
     auto radius = getRadius();
-    moveVec(*this, Cell::move_modifier * (Cell::standard_radius / radius)); // As radius increases, speed decreases
 
-    if (neighbors.size() < Cell::underpopulation_limit)     // Underpopulation
+    // Declare boolean values to make code more understandable
+    bool underpopulated = neighbors.size() < Cell::underpopulation_limit;
+    bool overpopulated  = neighbors.size() > Cell::overpopulation_limit;
+
+    intelligentRotate(overpopulated);
+    moveVec(*this, Cell::move_modifier); 
+    if (overpopulated)
     {
-        setRotation(calculateNextAngle(this->getRotation(), false));
-        damage(Cell::underpopulation_damage);
-    }
-    else if (neighbors.size() > Cell::overpopulation_limit) // Overpopulation
-    {
-        setRotation(calculateNextAngle(this->getRotation(), true));
         damage(Cell::overpopulation_damage);
-    } else {
-        setRotation(calculateNextAngle(this->getRotation(), false));
+        overpopulation_occurances++;
+    }
+    else if (underpopulated)
+    {
+        damage(Cell::underpopulation_damage);
+        underpopulation_occurances++;
+    }
+    else 
+    {
+        // Begin mating if in appropriate conditions
         affection += genome.gene("affection_prime");
+        //print("Affection increased to " + std::to_string(affection));
+        regen(Cell::regeneration_amount);
     }
 
-    const sf::Color *cellColor = &getFillColor();
+    const sf::Color cellColor = getFillColor();
     // Fade on death
-    setFillColor(sf::Color(cellColor->r, cellColor->g, cellColor->b, 255 * lifePercent()));
+    setFillColor(sf::Color(cellColor.r, cellColor.g, cellColor.b, 255 * lifePercent()));
+
+    if (not alive())
+    {
+        if (overpopulation_occurances > underpopulation_occurances)
+        {
+            Cell::overpopulation_deaths++;
+        }
+        else
+        {
+            Cell::underpopulation_deaths++;
+        }
+    }
 }
 
 std::string Cell::csv()
@@ -235,11 +278,10 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
 {
     std::vector<std::shared_ptr<Cell>> children;
 
-    if (mates.size() > 0 and neighbors.size() < Cell::max_neighbors)
+    if (mates.size() > 0)
     {
         for (auto& mate : mates)
         {
-            //The mating threshold stops 2 parents from falling too far in love.
             if (affection + mate->affection > Cell::affection_threshold)
             {
                 affection = 0;
@@ -252,8 +294,15 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     // Interaction finished
     mates.clear();
     neighbors.clear();
+    visible.clear();
 
     return children;
 }
 
+std::tuple<int, int, int> Cell::getCellStatistics()
+{
+    return std::make_tuple(Cell::births,
+                           Cell::overpopulation_deaths,
+                           Cell::underpopulation_deaths);
 }
+

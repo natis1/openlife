@@ -1,12 +1,11 @@
 #include "entity.hpp"
 
-namespace objects
-{
 Entity::Entity(double size, double life) : 
     sf::CircleShape(size),
     life(life),
     total_life(life)
 {
+    setOrigin(sf::Vector2f(size, size));
 }
 
 bool Entity::alive()
@@ -37,5 +36,4 @@ double Entity::lifePercent()
 
 void Entity::update()
 {
-}
 }

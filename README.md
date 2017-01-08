@@ -1,10 +1,15 @@
 # openlife
 
-The ultimate life simulator
+Simulation for studying sustained complexity of deterministic rule based systems
 
 Main dependency is [SFML](http://www.sfml-dev.org/license.php)
 
-![Cell Grouping](http://i.imgur.com/XflwKHx.png)
+![Main Sim](http://i.imgur.com/jgBq3Nx.png)
+
+Debug mode:
+
+![Debug Mode](http://i.imgur.com/bkwnTHQ.png)
+
 
 ### A density graph (Basic analysis):
 

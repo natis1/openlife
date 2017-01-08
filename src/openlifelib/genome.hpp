@@ -2,9 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
-namespace objects
-{
-
 class Genome
 {
 public:
@@ -21,5 +18,4 @@ private:
     std::unordered_map<std::string, double> modifiers; // Dictionary string : double where double is a constant that gets multiplied by the gene
 };
 
-}
 

@@ -1,10 +1,9 @@
-#include "objects/board.hpp"
+#include "openlifelib/board.hpp"
 
 int main()
 {
-    using objects::Board;
     Board board;
-    board.run(50, 2000, 2000); // Initial simulation with 50 starting cells
+    board.run(50, 2000, 2000, true); // Initial simulation with 50 starting cells, with debug information hidden
 
     return 0;
 }

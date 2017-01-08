@@ -1,9 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-namespace objects
-{
-class Entity : public sf::CircleShape
+class Entity : public sf::CircleShape 
 {
 
 public:
@@ -18,5 +16,3 @@ private:
     double life;
     double total_life;
 };
-}
-

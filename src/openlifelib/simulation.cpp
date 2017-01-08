@@ -1,24 +1,32 @@
 #include "simulation.hpp"
 
-namespace objects
-{
-
-const int Simulation::csv_save_period = 60;
+const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height)
+Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area) 
 {
     border = sf::RectangleShape(sf::Vector2f(width, height));
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
 
-    center_marker.setRadius(10);
-    center_marker.setFillColor(sf::Color(255, 0, 0));
+    center_marker.setRadius(20);
+    center_marker.setOutlineColor(sf::Color(200, 0, 200, 128));
+    center_marker.setOutlineThickness(3.0);
 
     _genCells(nCells);
-    update_count = 1;
+    last_update = getTime();
+    update_count = 0;
+}
+
+Simulation::~Simulation()
+{
+    auto statistics = Cell::getCellStatistics();
+    print("Statistics from simulation:");
+    print("Births:                 " + std::to_string(std::get<0>(statistics)));
+    print("Overpopulation deaths:  " + std::to_string(std::get<1>(statistics)));
+    print("Underpopulation deaths: " + std::to_string(std::get<2>(statistics)));
 }
 
 int Simulation::getCellCount()
@@ -32,11 +40,11 @@ float Simulation::getArea()
     return size.x * size.y;
 }
 
-void Simulation::render(sf::RenderWindow& target)
+void Simulation::render(sf::RenderWindow& target, bool debug)
 {
     for (auto cell : cells)
     {
-        target.draw(*cell);
+        cell->renderWith(target, debug);
     }
     target.draw(border);
     target.draw(center_marker);
@@ -67,13 +75,20 @@ void Simulation::update()
             cells.end());
 
     center_marker.setPosition(getAverageLocation(cells));
-    if (update_count % Simulation::csv_save_period == 0)
+    unsigned long long time_diff = getTime() - last_update;
+    if (time_diff > Simulation::csv_save_period)
     {
-        std::string filename = "data/simulation_" + std::to_string(update_count / Simulation::csv_save_period) + ".csv";
+        std::string count = std::to_string(update_count);
+        for (int i = count.size(); i < 5; i++)
+        {
+            count = "0" + count;
+        }
+        std::string filename = "data/simulation_" + count + ".csv";
         //print(filename);
         tools::writeCSV(filename, cells);
+        last_update = getTime();
+        update_count++;
     }
-    update_count++;
 }
 
 void Simulation::updateInteractions()
@@ -152,4 +167,3 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
     return cell;
 }
 
-}
