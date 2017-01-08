@@ -60,10 +60,9 @@ void Cell::resetDebugCircle(const sf::Color& color, double radius)
     debug_circle.setOrigin(sf::Vector2f(radius, radius));
 }
 
-void Cell::renderWith(sf::RenderWindow& target)
+void Cell::renderWith(sf::RenderWindow& target, bool debug)
 {
     target.draw(*this);
-    bool debug = true;
     if (debug)
     {
         debug_circle.setPosition(getPosition());

@@ -46,7 +46,7 @@ public:
 
     void bounce(sf::Vector2f bounds);
 
-    void renderWith(sf::RenderWindow& target);
+    void renderWith(sf::RenderWindow& target, bool debug=false);
 
     Genome genome;
 

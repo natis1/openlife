@@ -26,17 +26,20 @@ void Board::_update()
 {
     simulation.update();
     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-    frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
+    frame_display.setString( "Drawtime: " + std::to_string(frame_time / 1000) + "ms");
 }
 
-void Board::_render()
+void Board::_render(bool debug, bool show_sim)
 {
     window.clear();
 
     window.setView(simulation_view);
 
     // Simulation
-    simulation.render(window);
+    if (show_sim)
+    {
+        simulation.render(window, debug);
+    }
 
     // Gui/Info
     window.setView(info_view);
@@ -110,7 +113,7 @@ void Board::_pan()
 }
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Board::run(int nCells, int x, int y)
+void Board::run(int nCells, int x, int y, bool debug, bool show_sim)
 {
     using tools::getTime;
 
@@ -125,7 +128,7 @@ void Board::run(int nCells, int x, int y)
         unsigned long long start_frame = getTime();
         _handle();
         _update();
-        _render();
+        _render(debug, show_sim);
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;

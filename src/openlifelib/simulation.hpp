@@ -14,7 +14,7 @@ struct Simulation
 
     void update();
     void updateInteractions();
-    void render(sf::RenderWindow& target);
+    void render(sf::RenderWindow& target, bool debug=false);
 
     int getCellCount();
     float getArea();
@@ -29,6 +29,7 @@ private:
 
     unsigned long long last_update;
     int update_count;
+    bool debug = false;
 
     // Simulation backend
     std::vector<std::shared_ptr<Cell>> cells;

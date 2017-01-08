@@ -4,7 +4,7 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area)
+Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area) 
 {
     spawn_area = set_spawn_area;
 
@@ -42,11 +42,11 @@ float Simulation::getArea()
     return size.x * size.y;
 }
 
-void Simulation::render(sf::RenderWindow& target)
+void Simulation::render(sf::RenderWindow& target, bool debug)
 {
     for (auto cell : cells)
     {
-        cell->renderWith(target);
+        cell->renderWith(target, debug);
     }
     target.draw(border);
     target.draw(center_marker);
