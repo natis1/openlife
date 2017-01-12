@@ -13,6 +13,8 @@ objects::Simulation::Simulation(int nCells, double width, double height)
 {
     //spawn_area = set_spawn_area;
     
+    std::cout << "creating Simulation" << std::endl;
+    
     border.x = 0.; border.y = 0.;
     border.width = width;
     border.height = height;
@@ -86,6 +88,9 @@ void Simulation::update()
         last_update = getTime();
         update_count++;
     }
+    
+    
+    std::cout << "update success" << std::endl;
 }
 
 void Simulation::updateInteractions()

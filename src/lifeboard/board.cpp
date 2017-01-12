@@ -12,8 +12,10 @@ Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
 {
     
-    Board::border = sf::RectangleShape(sf::Vector2f(width, height));
     
+    border.setFillColor(sf::Color(0, 0, 0, 0));
+    border.setOutlineColor(sf::Color(200, 0, 200, 128));
+    border.setOutlineThickness(10.0);
     
     auto view = window.getView();
     simulation_view = view;
@@ -71,11 +73,11 @@ void Board::_drawSimulation()
         cellCircle.setFillColor(sf::Color(cell->getApproximateFillColor()));
         window.draw(cellCircle);
         
-        averageLocation[0] += cell->getPosition().x;
-        averageLocation[1] += cell->getPosition().y;
+        averageLocation[0] += (float) cell->getPosition().x;
+        averageLocation[1] += (float) cell->getPosition().y;
     }
-    averageLocation[0] /= simulation.cells.size();
-    averageLocation[1] /= simulation.cells.size();
+    averageLocation[0] = averageLocation[0] / simulation.cells.size();
+    averageLocation[1] = averageLocation[1] / simulation.cells.size();
     
     sf::CircleShape averagePoint = sf::CircleShape(circle_size + 2.);
     averagePoint.setFillColor(sf::Color(0xFF0000FF));
@@ -156,6 +158,8 @@ void Board::_pan()
 
 
 void Board::run(int nCells, int x, int y) {
+    simulation = Simulation(nCells, (double) x, (double) y);
+    Board::border = sf::RectangleShape(sf::Vector2f(width, height));
     
     while (window.isOpen())
     {
@@ -166,6 +170,11 @@ void Board::run(int nCells, int x, int y) {
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;
+        
+        if (frame_time < 1000000/60) {
+            usleep((int) (1000000/60) - frame_time);
+        }
+        
     }
     
     

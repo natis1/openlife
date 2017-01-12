@@ -122,12 +122,10 @@ void Arena::run(int nCells, int x, int y)
     //auto view_port = sf::FloatRect(0, 0, x, y);
     //simulation_view.reset(view_port);
 
-    while (simulationRunning)
+    while (true)
     {
         unsigned long long start_frame = getTime();
-        //_handle();
         _update();
-        //_render();
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;
