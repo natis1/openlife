@@ -33,6 +33,13 @@ double Entity::lifePercent()
     return life / total_life;
 }
 
+void Entity::move(double dx, double dy)
+{
+    this->entityLocation.x += dx;
+    this->entityLocation.y += dy;
+}
+
+
 double Entity::getRadius()
 {
     return this->radius;
@@ -69,6 +76,20 @@ color Entity::getFillColor()
 {
     return this->entityColor;
 }
+
+int Entity::getApproximateFillColor()
+{
+    unsigned char colors[4];
+    
+    colors[0] = (char) this->entityColor.r;
+    colors[1] = (char) this->entityColor.g;
+    colors[2] = (char) this->entityColor.b;
+    colors[3] = (char) this->entityColor.a;
+    
+    // Big|little endian independant, thankfully.
+    return (colors[0] << 24) | (colors[1] << 16) | (colors[2] << 8) | colors[3];
+}
+
 
 void Entity::setFillColor(double r, double g, double b, double a)
 {

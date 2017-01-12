@@ -13,3 +13,5 @@ libopenlife.so
 data
 __pycache__
 images
+openlifegui
+openlifecli

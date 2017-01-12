@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-#include "../tools/tools.hpp"
+#include "tools.hpp"
 
 #include "entity.hpp"
 #include "genome.hpp"

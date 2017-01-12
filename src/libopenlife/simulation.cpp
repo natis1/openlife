@@ -9,17 +9,13 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height)
+objects::Simulation::Simulation(int nCells, double width, double height)
 {
     //spawn_area = set_spawn_area;
-
-    //border = sf::RectangleShape(sf::Vector2f(width, height));
-    //border.setFillColor(sf::Color(0, 0, 0, 0));
-    //border.setOutlineColor(sf::Color(200, 0, 200, 128));
-    //border.setOutlineThickness(10.0);
-
-    //center_marker.setRadius(10);
-    //center_marker.setFillColor(sf::Color(255, 0, 0));
+    
+    border.x = 0.; border.y = 0.;
+    border.width = width;
+    border.height = height;
 
     _genCells(nCells);
     last_update = getTime();

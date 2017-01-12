@@ -10,20 +10,24 @@ cd $(dirname $0)
 
 SRC_PATH=$(pwd)
 BUILD_PATH="$SRC_PATH/build"
-EXE_NAME="openlife"
+EXE_NAME="openlifecli"
 TEST_NAME="openlifetests"
 LIB_NAME="libopenlife.so"
+GUI_NAME="openlifegui"
 
+rm -r "$BUILD_PATH"
 mkdir "$BUILD_PATH"
 cd "$BUILD_PATH"
 
 #TODO: add any possible cmake variables here
 cmake "$SRC_PATH" -DCMAKE_BUILD_TYPE=DEBUG
 
-make -j $(nproc)
+make -j $(nproc) $@
 chmod a+x "$EXE_NAME"
 cp "$EXE_NAME" ..
 cp "$LIB_NAME" ..
+cp "$GUI_NAME" ..
 chmod a+x "$TEST_NAME"
 cp "$TEST_NAME" ..
-rm -r "$BUILD_PATH"
+
+#rm -r "$BUILD_PATH"

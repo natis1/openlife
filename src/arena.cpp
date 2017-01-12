@@ -1,10 +1,10 @@
-#include "board.hpp"
+#include "arena.hpp"
 
 namespace objects
 {
 
 
-Board::Board()
+Arena::Arena()
 {
 //     auto view = window.getView();
 //     simulation_view = view;
@@ -23,7 +23,7 @@ Board::Board()
 }
 
 
-void Board::_update()
+void Arena::_update()
 {
     simulation.update();
 //     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
@@ -112,7 +112,7 @@ void Board::_pan()
 */
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Board::run(int nCells, int x, int y)
+void Arena::run(int nCells, int x, int y)
 {
     using tools::getTime;
 

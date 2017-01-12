@@ -27,6 +27,7 @@ public:
     void damage(double n=1.);
     void regen(double n=1.);
     double lifePercent();
+    
     void move(double dx, double dy);
     
     
@@ -41,6 +42,7 @@ public:
     void setRotation(double theta);
     
     color getFillColor();
+    int getApproximateFillColor();
     void setFillColor(double r, double g, double b, double a);
     void setFillColor(color c);
     

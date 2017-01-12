@@ -20,15 +20,19 @@ struct Simulation
     const static int csv_save_period;
 
     Simulation();
-    Simulation(int nCells, int width, int height);
+    Simulation(int nCells, double width, double height);
 
     void update();
     void updateInteractions();
     
     //void render(sf::RenderWindow& target);
+    
+    std::vector<std::shared_ptr<Cell>> cells;
 
     int getCellCount();
     float getArea();
+    
+    position center_marker;
 
 private:
     // Functions for generating random cells
@@ -38,18 +42,14 @@ private:
     bool _inBounds(Cell& cell);
     void _updateInteractions();
     position _getAverageLocation();
+    
+    rectangleShape border;
 
     unsigned long long last_update;
     int update_count;
-
-    // Simulation backend
-    std::vector<std::shared_ptr<Cell>> cells;
     
     
-    //Graphics BS
     
-    rectangleShape border;
-    position center_marker;
 };
 
 }
