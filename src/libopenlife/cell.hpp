@@ -14,7 +14,7 @@ position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
 using tools::print;
 
-class Cell : public Entity 
+class Cell : public objects::Entity 
 {
     // Static variables don't live in class instances and therefore do not affect shared pointers
     const static float mate_radius;
@@ -46,8 +46,6 @@ public:
 
     void bounce(double wallx, double wally, double wallwidth, double wallheight);
 
-    void renderWith(sf::RenderWindow& target, bool debug=false);
-
     Genome genome;
 
     static std::tuple<int, int, int> getCellStatistics();
@@ -66,8 +64,6 @@ private:
 
     long long overpopulation_occurances  = 0;
     long long underpopulation_occurances = 0;
-
-    sf::CircleShape debug_circle;
 
     static int overpopulation_deaths;
     static int underpopulation_deaths;

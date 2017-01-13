@@ -1,0 +1,33 @@
+In file included from /home/lucas/Projects/openlife/src/libopenlife/simulation.hpp:1:0,
+                 from /home/lucas/Projects/openlife/src/libopenlife/simulation.cpp:1:
+/home/lucas/Projects/openlife/src/libopenlife/cell.hpp:18:1: error: expected class-name before ‘{’ token
+ {
+ ^
+/home/lucas/Projects/openlife/src/libopenlife/cell.hpp:49:21: error: ‘sf’ has not been declared
+     void renderWith(sf::RenderWindow& target, bool debug=false);
+                     ^
+/home/lucas/Projects/openlife/src/libopenlife/cell.hpp:49:37: error: expected ‘,’ or ‘...’ before ‘&’ token
+     void renderWith(sf::RenderWindow& target, bool debug=false);
+                                     ^
+/home/lucas/Projects/openlife/src/libopenlife/genome.cpp:7:20: error: definition of ‘Genome::Genome()’ is not in namespace enclosing ‘Genome’ [-fpermissive]
+     Genome::Genome() 
+                    ^
+/home/lucas/Projects/openlife/src/libopenlife/cell.hpp:70:5: error: ‘sf’ does not name a type
+     sf::CircleShape debug_circle;
+     ^
+In file included from /home/lucas/Projects/openlife/src/libopenlife/simulation.cpp:1:0:
+/home/lucas/Projects/openlife/src/libopenlife/simulation.hpp:3:1: error: expected unqualified-id before ‘<<’ token
+ <<<<<<< HEAD:src/libopenlife/simulation.hpp
+ ^
+/home/lucas/Projects/openlife/src/libopenlife/simulation.hpp:16:1: error: expected unqualified-id before ‘>>’ token
+ >>>>>>> nogui:src/libopenlife/simulation.hpp
+ ^
+/home/lucas/Projects/openlife/src/libopenlife/simulation.hpp:47:5: error: ‘rectangleShape’ does not name a type
+     rectangleShape border;
+     ^
+In file included from /usr/include/c++/5/bits/stl_algo.h:60:0,
+                 from /usr/include/c++/5/algorithm:62,
+                 from /home/lucas/Projects/openlife/src/libopenlife/simulation.cpp:2:
+/usr/include/c++/5/bits/algorithmfwd.h:233:5: error: ‘pair’ does not name a type
+     pair<_FIter, _FIter>
+
