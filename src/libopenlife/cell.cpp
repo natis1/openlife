@@ -3,19 +3,19 @@
 namespace objects
 {
 
-const float Cell::mate_radius      = 1.0f;
-const float Cell::neighbor_radius  = 10.0f;
+const float Cell::mate_radius      = 7.0f;
+const float Cell::neighbor_radius  = 20.0f;
 const float Cell::move_modifier    = 3.0f;
 const float Cell::standard_radius  = 3.0f;
 const float Cell::minimum_radius   = 10.0f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 5;
-const int Cell::max_neighbors = 5;
+const int Cell::overpopulation_limit  = 10;
+const int Cell::max_neighbors = 10;
 
 const double Cell::underpopulation_damage = 0.001;
-const double Cell::overpopulation_damage  = 0.2;
-const double Cell::affection_threshold = 1000.;
+const double Cell::overpopulation_damage  = 0.005;
+const double Cell::affection_threshold = 50.;
 const double Cell::turn_rate = 1.0; // Degrees
 const double Cell::max_life = 10.0;
 
@@ -160,6 +160,9 @@ double Cell::calculateIdealAngle(position neighborLoc, double currentAngle)
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
+    //This might just work
+    isOverpopulated = !isOverpopulated;
+    
     if (neighbors.empty())
     {
         return currentAngle;

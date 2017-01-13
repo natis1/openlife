@@ -6,6 +6,7 @@ namespace objects
 
 const float Board::move_amount = 25.0f;
 const float Board::circle_size = 10.0f;
+const int Board::updates_per_frame = 10;
 
 
 Board::Board(int width, int height) :
@@ -13,9 +14,7 @@ Board::Board(int width, int height) :
 {
     
     
-    border.setFillColor(sf::Color(0, 0, 0, 0));
-    border.setOutlineColor(sf::Color(200, 0, 200, 128));
-    border.setOutlineThickness(10.0);
+    
     
     auto view = window.getView();
     simulation_view = view;
@@ -37,8 +36,7 @@ Board::Board(int width, int height) :
 void Board::_update()
 {
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-    frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
+    
 }
 
 void Board::_render()
@@ -79,9 +77,12 @@ void Board::_drawSimulation()
     averageLocation[0] = averageLocation[0] / simulation.cells.size();
     averageLocation[1] = averageLocation[1] / simulation.cells.size();
     
-    sf::CircleShape averagePoint = sf::CircleShape(circle_size + 2.);
+    sf::CircleShape averagePoint = sf::CircleShape(circle_size);
     averagePoint.setFillColor(sf::Color(0xFF0000FF));
+    averagePoint.setPosition(averageLocation[0] + circle_size/2, averageLocation[1] + circle_size/2);
     
+    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
+    frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
     
     window.draw(border);
     window.draw(averagePoint);
@@ -122,11 +123,13 @@ void Board::_zoom(sf::Event& event)
             int amount = event.mouseWheelScroll.delta;
             if (amount == 1)
             {
-                simulation_view.zoom(0.95f);
+                simulation_view.zoom(0.955f);
+                Board::border.setOutlineThickness(Board::border.getOutlineThickness() * 0.955f);
             }
             else
             {
                 simulation_view.zoom(1.05f);
+                Board::border.setOutlineThickness(Board::border.getOutlineThickness() * 1.05f);
             }
         }
     }
@@ -160,12 +163,27 @@ void Board::_pan()
 void Board::run(int nCells, int x, int y) {
     simulation = Simulation(nCells, (double) x, (double) y);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));
+    Board::border.setFillColor(sf::Color(0x00000000));
+    Board::border.setOutlineColor(sf::Color(200, 0, 200, 128));
+    Board::border.setOutlineThickness(4.0);
     
     while (window.isOpen())
     {
         unsigned long long start_frame = getTime();
         _handle();
+        //This update outside the for loop ensures that, no matter how laggy it is, it will at least update
+        //once every frame
         _update();
+        
+        for (int i = 1; i < Board::updates_per_frame; i++){
+            frame_time = getTime() - start_frame;
+            // Give computer 100us to vsync
+            if (frame_time > (1000000/60 - 100)){
+                break;
+            }
+            
+            _update();
+        }
         _render();
 
         if (simulation.getCellCount() == 0) break;

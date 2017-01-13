@@ -13,6 +13,7 @@ class Board
 {
     const static float move_amount;
     const static float circle_size;
+    const static int updates_per_frame;
     sf::RectangleShape border;
 
 public:
