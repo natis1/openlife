@@ -1,4 +1,5 @@
 #pragma once
+#include <math.h>
 
 struct position
 {
@@ -40,6 +41,8 @@ public:
     
     double getRotation();
     void setRotation(double theta);
+
+    void rotate(double theta);
     
     color getFillColor();
     int getApproximateFillColor();

@@ -32,7 +32,7 @@ double distance(T1& t1, T2& t2)
 
 // Compute angle between two objects in degrees
 template <typename T1, typename T2>
-double angle(T1& a, T2& b)
+double angle(T1 a, T2 b)
 { 
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);

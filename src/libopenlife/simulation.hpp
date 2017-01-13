@@ -1,5 +1,7 @@
 #include "cell.hpp"
-
+#include <iostream>
+#include <vector>
+#include <memory>
 
 struct rectangleShape {
     double x = 0;
@@ -8,9 +10,6 @@ struct rectangleShape {
     double height;
 };
 
-
-namespace objects
-{
 
 using tools::print;
 using tools::getTime;
@@ -22,6 +21,7 @@ struct Simulation
 
     Simulation();
     Simulation(int nCells, double width, double height);
+    ~Simulation();
 
     void update();
     void updateInteractions();
@@ -47,4 +47,3 @@ private:
     unsigned long long last_update;
     int update_count;
 };
-

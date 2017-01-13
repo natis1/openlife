@@ -1,5 +1,6 @@
 #include "catch.hpp"
 #include "../src/libopenlife/tools.hpp"
+#include "../src/libopenlife/cell.hpp"
 
 TEST_CASE( "tools package works" )
 {

@@ -58,8 +58,6 @@ private:
     std::vector<std::shared_ptr<Cell>> neighbors;
     std::vector<std::shared_ptr<Cell>> visible;
 
-    void displayAttributes(); // Convert genome values to visible aspects, like size or color.
-    
     void intelligentRotate(bool overpopulated);
 
     long long overpopulation_occurances  = 0;

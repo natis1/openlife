@@ -24,9 +24,6 @@ Cell::Cell() :
     Entity(10, Cell::max_life),
     genome()
 {
-    //auto bounds = getLocalBounds();
-    //setOrigin(bounds.width / 2, bounds.height / 2);
-    displayAttributes();
 }
 
 // Create child cell
@@ -154,8 +151,8 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
 void Cell::intelligentRotate(bool overpopulated)
 {
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
-    sf::Vector2f center_of_mass = neighbors.empty() ? getAverageLocation(visible)
-                                                    : getAverageLocation(neighbors);
+    auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
+                                            : getAverageLocation(neighbors);
 
     double ideal_angle = angle(center_of_mass, getPosition());
     double current_angle = getRotation();

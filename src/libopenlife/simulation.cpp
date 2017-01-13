@@ -1,12 +1,11 @@
 #include "simulation.hpp"
 #include <algorithm>
 
-
 const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-objects::Simulation::Simulation(int nCells, double width, double height)
+Simulation::Simulation(int nCells, double width, double height)
 {
     //spawn_area = set_spawn_area;
     
@@ -180,6 +179,4 @@ position  Simulation::_getAverageLocation(){
     y /= cells.size();
     
     return {x, y};
-}
-
 }
