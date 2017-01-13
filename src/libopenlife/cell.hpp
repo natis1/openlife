@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-#include "../tools/tools.hpp"
+#include "tools.hpp"
 
 #include "entity.hpp"
 #include "genome.hpp"
@@ -10,7 +10,7 @@
 
 class Cell;
 
-sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
+position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
 using tools::print;
 
@@ -44,7 +44,7 @@ public:
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate();
 
-    void bounce(sf::Vector2f bounds);
+    void bounce(double wallx, double wally, double wallwidth, double wallheight);
 
     void renderWith(sf::RenderWindow& target, bool debug=false);
 
@@ -63,7 +63,6 @@ private:
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
     void intelligentRotate(bool overpopulated);
-    void resetDebugCircle(const sf::Color& color, double radius);
 
     long long overpopulation_occurances  = 0;
     long long underpopulation_occurances = 0;

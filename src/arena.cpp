@@ -1,45 +1,43 @@
-#include "board.hpp"
+#include "arena.hpp"
 
-const float Board::move_amount = 10.0f;
-
-Board::Board(int width, int height) :
-    window(sf::VideoMode(width, height), "Life")
+namespace objects
 {
-    auto view = window.getView();
-    simulation_view = view;
-    info_view = view;
 
+
+Arena::Arena()
+{
+//     auto view = window.getView();
+//     simulation_view = view;
+//     info_view = view;
+/*
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
     {
         std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
-    }
-    info.setFont(font);
-    info.setCharacterSize(24);
-
-    frame_display.setFont(font);
-    frame_display.setCharacterSize(24);
-    frame_display.setPosition(0., 40.);
+    }*/
+//     info.setFont(font);
+//     info.setCharacterSize(24);
+// 
+//     frame_display.setFont(font);
+//     frame_display.setCharacterSize(24);
+//     frame_display.setPosition(0., 40.);
 }
 
 
-void Board::_update()
+void Arena::_update()
 {
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-    frame_display.setString( "Drawtime: " + std::to_string(frame_time / 1000) + "ms");
+//     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
+//     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
 }
-
-void Board::_render(bool debug, bool show_sim)
+/*
+void Board::_render()
 {
     window.clear();
 
     window.setView(simulation_view);
 
     // Simulation
-    if (show_sim)
-    {
-        simulation.render(window, debug);
-    }
+    simulation.render(window);
 
     // Gui/Info
     window.setView(info_view);
@@ -111,27 +109,27 @@ void Board::_pan()
         pressed(sf::Keyboard::Right))
         simulation_view.move(Board::move_amount, 0.0f);
 }
+*/
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Board::run(int nCells, int x, int y, bool debug, bool show_sim)
+void Arena::run(int nCells, int x, int y)
 {
     using tools::getTime;
 
-    auto spawn_area = sf::RectangleShape(sf::Vector2f(x, y));
-    simulation = Simulation(nCells, x, y, spawn_area);
+    //auto spawn_area = sf::RectangleShape(sf::Vector2f(x/6, y));
+    simulation = Simulation(nCells, x, y);
 
-    auto view_port = sf::FloatRect(0, 0, x, y);
-    simulation_view.reset(view_port);
+    //auto view_port = sf::FloatRect(0, 0, x, y);
+    //simulation_view.reset(view_port);
 
-    while (window.isOpen())
+    while (true)
     {
         unsigned long long start_frame = getTime();
-        _handle();
         _update();
-        _render(debug, show_sim);
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;
     }
 }
 
+}

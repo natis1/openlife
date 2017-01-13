@@ -44,7 +44,7 @@ void writeCSV(std::string filename, std::vector<T> items)
     csvfile.open(filename);
     for (const auto& item : items)
     {
-        auto line = item->csv();
+        std::string line = item->csv() + " " ;
         csvfile << line + "\n";
     }
     csvfile.close();

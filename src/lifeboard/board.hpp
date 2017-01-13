@@ -1,22 +1,31 @@
 #pragma once
-#include "cell.hpp"
-#include "simulation.hpp"
-#include "../tools/tools.hpp"
+#include "../libopenlife/cell.hpp"
+#include "../libopenlife/simulation.hpp"
+#include "../libopenlife/tools.hpp"
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+
+namespace objects
+{
 
 class Board
 {
     const static float move_amount;
+    const static float circle_size;
+    sf::RectangleShape border;
 
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100, int x=1000, int y=1000, bool debug=false, bool show_sim=true);
-
+    void run(int nCells=100, int x=1000, int y=1000);
+    
 private:
     // Helper functions / Internal methods
 
     void _update();
-    void _render(bool debug=false, bool show_sim=true);
+    void _render();
     void _handle();
+    void _drawSimulation();
 
     void _zoom(sf::Event& event);
     void _pan();
@@ -29,6 +38,8 @@ private:
 
     sf::View simulation_view;
     sf::View info_view;
+    
+    
 
     // Simulation backend
     Simulation simulation;
@@ -37,3 +48,4 @@ private:
     unsigned long long frame_time;
 };
 
+}

@@ -24,11 +24,9 @@ Cell::Cell() :
     Entity(10, Cell::max_life),
     genome()
 {
-    auto bounds = getLocalBounds();
-    setOrigin(bounds.width / 2, bounds.height / 2);
-    setFillColor(genome.representation());
-    debug_circle.setOutlineThickness(5.);
-    debug_circle.setFillColor(sf::Color(0., 0., 0., 0.));
+    //auto bounds = getLocalBounds();
+    //setOrigin(bounds.width / 2, bounds.height / 2);
+    displayAttributes();
 }
 
 // Create child cell
@@ -39,10 +37,10 @@ Cell::Cell(Cell& a, Cell& b) :
 
     genome = Genome(a.genome, b.genome);
 
-    setRotation(a.getRotation() + 90);
+    setRotation(a.getRotation() + 90.);
 
-    auto posA = a.getPosition();
-    auto posB = b.getPosition();
+    position posA = a.getPosition();
+    position posB = b.getPosition();
 
     // Spawn location for child cells
     auto dx = avg(posA.x, posB.x);
@@ -53,41 +51,19 @@ Cell::Cell(Cell& a, Cell& b) :
     Cell::births++;
 }
 
-void Cell::resetDebugCircle(const sf::Color& color, double radius)
-{
-    debug_circle.setRadius(radius);
-    debug_circle.setOutlineColor(color);
-    debug_circle.setOrigin(sf::Vector2f(radius, radius));
-}
-
-void Cell::renderWith(sf::RenderWindow& target, bool debug)
-{
-    target.draw(*this);
-    if (debug)
-    {
-        debug_circle.setPosition(getPosition());
-        resetDebugCircle(sf::Color(255., 0., 0., 128.), neighbor_radius); // Neighbor radius in red
-        target.draw(debug_circle);
-        resetDebugCircle(sf::Color(0., 255., 0., 128.), mate_radius);     // Mate radius in green
-        target.draw(debug_circle);
-        resetDebugCircle(sf::Color(0., 0., 255., 128.), search_radius);   // Search radius in blue
-        target.draw(debug_circle);
-    }
-}
-
-void Cell::bounce(sf::Vector2f bounds)
+void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
     auto pos      = getPosition();
 
-    float normal = 0; // Angle normal to surface
-    float reflected = 0; // Angle after reflection off of surface
+    double normal = 0; // Angle normal to surface
+    double reflected = 0; // Angle after reflection off of surface
 
-    bool left   = pos.x - radius < 0;
-    bool right  = pos.x + radius > bounds.x;
-    bool top    = pos.y - radius < 0;
-    bool bottom = pos.y + radius > bounds.y;
+    bool left   = pos.x - radius < wallx;
+    bool right  = pos.x + radius > wallx + wallwidth;
+    bool top    = pos.y - radius < wally;
+    bool bottom = pos.y + radius > wally + wallheight;
 
     // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
     // Single-plane collisions use the law of reflection
@@ -95,7 +71,7 @@ void Cell::bounce(sf::Vector2f bounds)
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
     {
-        reflected = (int)(rotation + 180) % 360;
+        reflected = (int)(rotation + 180.) % 360;
         move(1.0, 1.0);
     }
     else if (left && bottom)
@@ -194,9 +170,9 @@ void Cell::intelligentRotate(bool overpopulated)
     }
 }
 
-sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
+position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)
 {
-    sf::Vector2f averagePoint (0, 0);
+    position averagePoint = {0, 0};
     if (cells.size() == 0)
     {
         return averagePoint;
@@ -250,11 +226,6 @@ void Cell::update()
         //print("Affection increased to " + std::to_string(affection));
         regen(Cell::regeneration_amount);
     }
-
-    const sf::Color cellColor = getFillColor();
-    // Fade on death
-    setFillColor(sf::Color(cellColor.r, cellColor.g, cellColor.b, 255 * lifePercent()));
-
     if (not alive())
     {
         if (overpopulation_occurances > underpopulation_occurances)
@@ -266,6 +237,8 @@ void Cell::update()
             Cell::underpopulation_deaths++;
         }
     }
+    // Fade on death
+    setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
 }
 
 std::string Cell::csv()

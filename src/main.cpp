@@ -1,9 +1,10 @@
-#include "openlifelib/board.hpp"
+#include "arena.hpp"
 
 int main()
 {
-    Board board;
-    board.run(50, 2000, 2000); // Initial simulation with 50 starting cells, with debug information hidden
+    using objects::Arena;
+    Arena arena;
+    arena.run(50, 2000, 2000); // Initial simulation with 50 starting cells
 
     return 0;
 }

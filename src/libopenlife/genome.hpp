@@ -1,6 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include "entity.hpp"
 #include <unordered_map>
+#include "tools.hpp"
+
 
 class Genome
 {
@@ -8,7 +10,7 @@ public:
     Genome();
     Genome(Genome& a, Genome& b);
 
-    sf::Color representation();
+    color representation();
 
     // Retrieve a gene by name
     double gene(std::string);
