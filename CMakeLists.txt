@@ -50,9 +50,7 @@ add_library(${PROJECT_LIB} SHARED "${LIB_SOURCES}")
 add_executable(${PROJECT_NAME} ${PROG_SOURCES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
 
-
-
-#add_executable(${TEST_NAME} ${TEST_SOURCES})
+add_executable(${TEST_NAME} ${TEST_SOURCES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 

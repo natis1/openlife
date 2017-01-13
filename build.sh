@@ -27,7 +27,7 @@ chmod a+x "$EXE_NAME"
 cp "$EXE_NAME" ..
 cp "$LIB_NAME" ..
 cp "$GUI_NAME" ..
-chmod a+x "$TEST_NAME"
 cp "$TEST_NAME" ..
+chmod a+x "$TEST_NAME"
 
 #rm -r "$BUILD_PATH"

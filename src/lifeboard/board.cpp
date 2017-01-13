@@ -159,7 +159,7 @@ void Board::_pan()
 
 void Board::run(int nCells, int x, int y) {
     simulation = Simulation(nCells, (double) x, (double) y);
-    Board::border = sf::RectangleShape(sf::Vector2f(width, height));
+    Board::border = sf::RectangleShape(sf::Vector2f(x, y));
     
     while (window.isOpen())
     {

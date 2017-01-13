@@ -76,7 +76,7 @@ void Simulation::update()
     unsigned long long time_diff = getTime() - last_update;
     if (time_diff > Simulation::csv_save_period)
     {
-        print(time_diff);
+        //print(time_diff);
         std::string count = std::to_string(update_count);
         for (int i = count.size(); i < 5; i++)
         {
@@ -88,9 +88,6 @@ void Simulation::update()
         last_update = getTime();
         update_count++;
     }
-    
-    
-    std::cout << "update success" << std::endl;
 }
 
 void Simulation::updateInteractions()
