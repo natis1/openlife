@@ -72,6 +72,11 @@ void Entity::setRotation(double theta)
     this->rotation = theta;
 }
 
+void Entity::rotate(double theta)
+{
+    setRotation(remainder(getRotation() + theta, 360.));
+}
+
 color Entity::getFillColor()
 {
     return this->entityColor;
