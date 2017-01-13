@@ -1,7 +1,6 @@
 #include "cell.hpp"
 
-<<<<<<< HEAD:src/libopenlife/simulation.hpp
-=======
+
 struct rectangleShape {
     double x = 0;
     double y = 0;
@@ -13,7 +12,6 @@ struct rectangleShape {
 namespace objects
 {
 
->>>>>>> nogui:src/libopenlife/simulation.hpp
 using tools::print;
 using tools::getTime;
 
