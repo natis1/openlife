@@ -175,7 +175,7 @@ void Board::run(int nCells, int x, int y) {
         //once every frame
         _update();
         
-        for (int i = 1; i < Board::updates_per_frame; i++){
+        for (int i = 1; i < Board::max_updates_per_frame; i++){
             frame_time = getTime() - start_frame;
             // Give computer 100us to vsync
             if (frame_time > (1000000/60 - 100)){

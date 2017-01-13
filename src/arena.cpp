@@ -3,31 +3,19 @@
 namespace objects
 {
 
+    //Alert the cli user every n timesteps
+    const int Arena::timestep_print_period = 10000;
 
 Arena::Arena()
 {
-//     auto view = window.getView();
-//     simulation_view = view;
-//     info_view = view;
-/*
-    if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
-    {
-        std::cout << "Failed to load font: Was the program run from the openlife directory?" << std::endl;
-    }*/
-//     info.setFont(font);
-//     info.setCharacterSize(24);
-// 
-//     frame_display.setFont(font);
-//     frame_display.setCharacterSize(24);
-//     frame_display.setPosition(0., 40.);
+    
 }
 
 
 void Arena::_update()
 {
     simulation.update();
-//     info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-//     frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
+    
 }
 /*
 void Board::_render()
@@ -126,6 +114,11 @@ void Arena::run(int nCells, int x, int y)
     {
         unsigned long long start_frame = getTime();
         _update();
+        Arena::simulationTimestep++;
+        
+        if (Arena::simulationTimestep % Arena::timestep_print_period == 0){
+            std::cout << "Timestep: " << Arena::simulationTimestep << std::endl;
+        }
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;

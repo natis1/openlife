@@ -7,13 +7,14 @@ namespace objects
 
 const int Simulation::csv_save_period = 500000;
 
+
 Simulation::Simulation(){}
 
 objects::Simulation::Simulation(int nCells, double width, double height)
 {
     //spawn_area = set_spawn_area;
     
-    std::cout << "creating Simulation" << std::endl;
+    std::cout << "Creating simulation" << std::endl;
     
     border.x = 0.; border.y = 0.;
     border.width = width;

@@ -18,7 +18,8 @@ class Arena
 public:
     Arena();
     void run(int nCells=100, int x=1000, int y=1000);
-
+    
+    
 private:
     // Helper functions / Internal methods
 
@@ -28,6 +29,9 @@ private:
     // Timing
     unsigned long long frame_time;
     bool simulationRunning = true;
+    long simulationTimestep = 0;
+    
+    const static int timestep_print_period;
 };
 
 }
