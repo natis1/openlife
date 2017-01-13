@@ -8,8 +8,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     #GCC with c++14 support (I think 4.9) required
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.9)
-        message(FATAL_ERROR "GCC version must be at least 4.9. Sorry. I might make one that works on c++11 but not right now.")
+        message(FATAL_ERROR "GCC version must be at least 4.9.")
     endif()
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -nostartfiles -g")
+
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "CLANG")
     #CLANG with c++14 support for auto is 3.8 methinks
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.8)
@@ -20,34 +22,46 @@ else()
     message (WARNING "You are using an unsupported compiler. GCC is recommended for this program, even on Windows. If you do have any errors, do leave a report though")
 endif()
 
-set(PROJECT_NAME openlife)
-set(PROJECT_LIB  openlifelib)
+set(PROJECT_NAME openlifecli)
+set(PROJECT_LIB  openlife)
 set(TEST_NAME    openlifetests)
+set(PROJECT_GUI  openlifegui)
 
-file(GLOB_RECURSE LIB_SOURCES
-  "${CMAKE_SOURCE_DIR}/src/*/*.cpp"
-  "${CMAKE_SOURCE_DIR}/src/*/*.hpp")
 
-file (GLOB_RECURSE PROG_SOURCES
+file(GLOB LIB_SOURCES
+  "${CMAKE_SOURCE_DIR}/src/libopenlife/*.cpp"
+  "${CMAKE_SOURCE_DIR}/src/libopenlife/*.hpp")
+
+file (GLOB PROG_SOURCES
     "${CMAKE_SOURCE_DIR}/src/main.cpp"
-    "${CMAKE_SOURCE_DIR}/src/main.hpp")
+    "${CMAKE_SOURCE_DIR}/src/arena.cpp"
+    "${CMAKE_SOURCE_DIR}/src/arena.hpp")
 
-file (GLOB_RECURSE TEST_SOURCES
+file (GLOB TEST_SOURCES
     "${CMAKE_SOURCE_DIR}/tests/*.cpp" # Skip Compiler.hpp and Compiler.cpp, which include int main()
     "${CMAKE_SOURCE_DIR}/tests/*.hpp")
+
+file (GLOB GUI_SOURCES
+    "${CMAKE_SOURCE_DIR}/src/lifeboard/*.cpp"
+    "${CMAKE_SOURCE_DIR}/src/lifeboard/*.hpp")
+
 
 add_library(${PROJECT_LIB} SHARED "${LIB_SOURCES}")
 add_executable(${PROJECT_NAME} ${PROG_SOURCES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIB})
-add_executable(${TEST_NAME} ${TEST_SOURCES})
-target_link_libraries(${TEST_NAME} ${PROJECT_LIB})
+#add_executable(${TEST_NAME} ${TEST_SOURCES})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
-find_package(SFML 2 REQUIRED system window graphics)
+
+### We can print out our own warning. This isn't really an error.
+find_package(SFML 2 QUIET OPTIONAL_COMPONENTS system window graphics)
 if(SFML_FOUND)
-  include_directories(${SFML_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} ${SFML_LIBRARIES})
-  target_link_libraries(${TEST_NAME} ${SFML_LIBRARIES})
+    add_executable(${PROJECT_GUI} ${GUI_SOURCES})
+    include_directories(${SFML_INCLUDE_DIR})
+    target_link_libraries(${PROJECT_GUI} ${PROJECT_LIB})
+    target_link_libraries(${PROJECT_GUI} ${SFML_LIBRARIES})
+else()
+    message(WARNING "SFML 2 not found. Will NOT compile the gui version")
 endif()
 
 

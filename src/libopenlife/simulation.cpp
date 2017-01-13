@@ -1,34 +1,27 @@
 #include "simulation.hpp"
+#include <algorithm>
+
+
+namespace objects
+{
 
 const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-Simulation::Simulation(int nCells, int width, int height, sf::RectangleShape set_spawn_area) 
+objects::Simulation::Simulation(int nCells, double width, double height)
 {
-    spawn_area = set_spawn_area;
-
-    border = sf::RectangleShape(sf::Vector2f(width, height));
-    border.setFillColor(sf::Color(0, 0, 0, 0));
-    border.setOutlineColor(sf::Color(200, 0, 200, 128));
-    border.setOutlineThickness(10.0);
-
-    center_marker.setRadius(20);
-    center_marker.setOutlineColor(sf::Color(200, 0, 200, 128));
-    center_marker.setOutlineThickness(3.0);
+    //spawn_area = set_spawn_area;
+    
+    std::cout << "creating Simulation" << std::endl;
+    
+    border.x = 0.; border.y = 0.;
+    border.width = width;
+    border.height = height;
 
     _genCells(nCells);
     last_update = getTime();
     update_count = 0;
-}
-
-Simulation::~Simulation()
-{
-    auto statistics = Cell::getCellStatistics();
-    print("Statistics from simulation:");
-    print("Births:                 " + std::to_string(std::get<0>(statistics)));
-    print("Overpopulation deaths:  " + std::to_string(std::get<1>(statistics)));
-    print("Underpopulation deaths: " + std::to_string(std::get<2>(statistics)));
 }
 
 int Simulation::getCellCount()
@@ -38,19 +31,22 @@ int Simulation::getCellCount()
 
 float Simulation::getArea()
 {
-    auto size = border.getSize();
-    return size.x * size.y;
+    return border.width * border.height;
 }
 
-void Simulation::render(sf::RenderWindow& target, bool debug)
+/*
+void Simulation::render(sf::RenderWindow& target)
 {
     for (auto cell : cells)
     {
-        cell->renderWith(target, debug);
+        target.draw(*cell);
     }
     target.draw(border);
     target.draw(center_marker);
 }
+*/
+
+
 
 void Simulation::update()
 {
@@ -63,7 +59,7 @@ void Simulation::update()
         if (not _inBounds(*cell))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(border.getSize());
+            cell->bounce(border.x, border.y, border.width, border.height);
         }
         cell->update();
         auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
@@ -76,10 +72,11 @@ void Simulation::update()
                     [](const auto & e) { return not e->alive(); }),
             cells.end());
 
-    center_marker.setPosition(getAverageLocation(cells));
+    center_marker = getAverageLocation(cells);
     unsigned long long time_diff = getTime() - last_update;
     if (time_diff > Simulation::csv_save_period)
     {
+        print(time_diff);
         std::string count = std::to_string(update_count);
         for (int i = count.size(); i < 5; i++)
         {
@@ -91,16 +88,21 @@ void Simulation::update()
         last_update = getTime();
         update_count++;
     }
+    
+    
+    std::cout << "update success" << std::endl;
 }
 
 void Simulation::updateInteractions()
 {
     std::vector<std::shared_ptr<Cell>> remaining;
-    remaining.reserve(cells.size()); // No allocation problems :)
+    remaining.reserve(cells.size()); // speeds up allocation :)
     /* ~Efficiently build the list of neighbors/mates
     
+    
     If you simplify O(n + E(1, n, n-1)), it becomes O((n / 2) * n), which is O(n^2)
-    What I actually meant is that this algorithm is more efficient than T = n^2:
+    What I actually meant is that this algorithm is ~more~ AS efficient AS T = n^2:
+    
     
     Values / Instructions / n^2
     1      / 1            / 1
@@ -111,6 +113,9 @@ void Simulation::updateInteractions()
     10     / 55           / 100
     100    / 5050         / 10000
     1000   / 500500       / 1000000
+    Difference between any value: n^2 - (n-1)^2
+    Thereby these two functions are basically as efficient even if one is twice as fast.
+    
     
     http://stackoverflow.com/questions/11032015/how-to-find-time-complexity-of-an-algorithm
     
@@ -128,7 +133,10 @@ void Simulation::updateInteractions()
 
 bool Simulation::_inBounds(Cell& cell)
 {
-    return border.getGlobalBounds().contains(cell.getPosition());
+    // Checking x first. b.x < cell < x+width
+    position cellloc = cell.getPosition();
+    return ((border.x < cellloc.x && cellloc.x < (border.x + border.width))
+        && (border.y < cellloc.y && cellloc.y < (border.y + border.height)));
 }
 
 // Randomly generate n cells
@@ -150,14 +158,15 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
 
     std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
 
-    auto radius = cell->getRadius();
-    auto size   = spawn_area.getSize();
+    //double radius = cell->getRadius();
+    
+    position size {300, 300};
     // Distributions for initial random settings
     auto widthDist  = dist(0, (int)size.x);
     auto heightDist = dist(0, (int)size.y);
     auto angleDist  = dist(0, 360);
 
-    // An alternative to providing a seed
+    // Mersenne Twister :)
     auto generator  = randomGenerator();
 
     int x = widthDist(generator);
@@ -169,3 +178,19 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
     return cell;
 }
 
+position  Simulation::_getAverageLocation(){
+    double x = 0.;
+    double y = 0.;
+    
+    for (auto cell : cells)
+    {
+        x += cell->getPosition().x;
+        y += cell->getPosition().y;
+    }
+    x /= cells.size();
+    y /= cells.size();
+    
+    return {x, y};
+}
+
+}

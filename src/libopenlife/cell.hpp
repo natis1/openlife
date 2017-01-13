@@ -2,30 +2,32 @@
 #include <vector>
 #include <iostream>
 
-#include "../tools/tools.hpp"
+#include "tools.hpp"
 
 #include "entity.hpp"
 #include "genome.hpp"
 
 
+namespace objects
+{
+
 class Cell;
 
-sf::Vector2f getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
+position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells);
 
-using tools::print;
-
-class Cell : public Entity 
+class Cell : public Entity
 {
     // Static variables don't live in class instances and therefore do not affect shared pointers
     const static float mate_radius;
     const static float neighbor_radius;
-    const static float search_radius;
-    const static float move_modifier;
+    const static float move_modifier; // How fast a cell moves relative to its size
+    const static float standard_radius; // The size of an average cell
+    const static float minimum_radius;
 
+    const static int max_neighbors;
     const static int overpopulation_limit;
     const static int underpopulation_limit; 
 
-    const static double regeneration_amount;
     const static double underpopulation_damage;
     const static double overpopulation_damage;
     const static double affection_threshold;
@@ -39,38 +41,27 @@ public:
     virtual void update();
     void interact(const std::vector<std::shared_ptr<Cell>>& cells);
     void addNeighbor(std::shared_ptr<Cell> neighbor);
-    void addVisible (std::shared_ptr<Cell> cell);
 
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate();
 
-    void bounce(sf::Vector2f bounds);
-
-    void renderWith(sf::RenderWindow& target, bool debug=false);
+    void bounce(double wallx, double wally, double wallwidth, double wallheight);
 
     Genome genome;
 
-    static std::tuple<int, int, int> getCellStatistics();
-
 private:
+
     // After this reaches a threshhold a stork comes down and provides the cells with babies
     double affection = 0;
     
     std::vector<std::shared_ptr<Cell>> mates;
     std::vector<std::shared_ptr<Cell>> neighbors;
-    std::vector<std::shared_ptr<Cell>> visible;
 
     void displayAttributes(); // Convert genome values to visible aspects, like size or color.
     
-    void intelligentRotate(bool overpopulated);
-    void resetDebugCircle(const sf::Color& color, double radius);
+    double calculateIdealAngle(position neighborLoc, double currentAngle);
+    double calculateNextAngle(double currentAngle, bool isOverpopulated);
 
-    long long overpopulation_occurances  = 0;
-    long long underpopulation_occurances = 0;
-
-    sf::CircleShape debug_circle;
-
-    static int overpopulation_deaths;
-    static int underpopulation_deaths;
-    static int births;
 };
+
+}
