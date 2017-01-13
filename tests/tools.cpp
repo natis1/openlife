@@ -1,8 +1,8 @@
 #include "catch.hpp"
-#include "../src/tools/tools.hpp"
-#include "../src/openlifelib/cell.hpp"
-
+#include "../src/libopenlife/tools.hpp"
+#include "../src/libopenlife/cell.hpp"
 using namespace tools;
+using namespace objects;
 
 TEST_CASE( "tools package works" )
 {
