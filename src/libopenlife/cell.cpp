@@ -160,16 +160,14 @@ double Cell::calculateIdealAngle(position neighborLoc, double currentAngle)
 
 double Cell::calculateNextAngle(double currentAngle, bool isOverpopulated)
 {
-    //This might just work
-    isOverpopulated = !isOverpopulated;
-    
+
     if (neighbors.empty())
     {
         return currentAngle;
     }
 
     double idealAngle = calculateIdealAngle(getAverageLocation(neighbors), currentAngle);
-    if (isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
+    if (!isOverpopulated) idealAngle = fmod((idealAngle + 180), 360);
 
     if (idealAngle > currentAngle + turn_rate) {
         return currentAngle + turn_rate;

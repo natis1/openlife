@@ -6,7 +6,7 @@ namespace objects
 
 const float Board::move_amount = 25.0f;
 const float Board::circle_size = 10.0f;
-const int Board::updates_per_frame = 10;
+const int Board::max_updates_per_frame = 10;
 
 
 Board::Board(int width, int height) :
