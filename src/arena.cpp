@@ -117,7 +117,7 @@ void Arena::run(int nCells, int x, int y)
         Arena::simulationTimestep++;
         
         if (Arena::simulationTimestep % Arena::timestep_print_period == 0){
-            std::cout << "Timestep: " << Arena::simulationTimestep << std::endl;
+            std::cout << "Timestep: " << Arena::simulationTimestep << " | Cells: " << simulation.getCellCount() << std::endl;
         }
 
         if (simulation.getCellCount() == 0) break;
