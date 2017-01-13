@@ -1,5 +1,19 @@
 #include "cell.hpp"
 
+<<<<<<< HEAD:src/libopenlife/simulation.hpp
+=======
+struct rectangleShape {
+    double x = 0;
+    double y = 0;
+    double width;
+    double height;
+};
+
+
+namespace objects
+{
+
+>>>>>>> nogui:src/libopenlife/simulation.hpp
 using tools::print;
 using tools::getTime;
 
@@ -9,15 +23,17 @@ struct Simulation
     const static int csv_save_period;
 
     Simulation();
-    Simulation(int nCells, int width, int height, sf::RectangleShape spawn_area);
-    ~Simulation();
+    Simulation(int nCells, double width, double height);
 
     void update();
     void updateInteractions();
-    void render(sf::RenderWindow& target, bool debug=false);
+    
+    std::vector<std::shared_ptr<Cell>> cells;
 
     int getCellCount();
     float getArea();
+    
+    position center_marker;
 
 private:
     // Functions for generating random cells
@@ -26,15 +42,11 @@ private:
     
     bool _inBounds(Cell& cell);
     void _updateInteractions();
+    position _getAverageLocation();
+    
+    rectangleShape border;
 
     unsigned long long last_update;
     int update_count;
-    bool debug = false;
-
-    // Simulation backend
-    std::vector<std::shared_ptr<Cell>> cells;
-    sf::RectangleShape border;
-    sf::RectangleShape spawn_area;
-    sf::CircleShape    center_marker;
 };
 
