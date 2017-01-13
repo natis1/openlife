@@ -3,7 +3,7 @@
 cmake_minimum_required (VERSION 2.8.10)
 cmake_policy(VERSION 2.8.10)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -O2")
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     #GCC with c++14 support (I think 4.9) required
