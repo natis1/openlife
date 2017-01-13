@@ -8,7 +8,7 @@ const float Cell::move_modifier    = 1.5f;
 const int Cell::underpopulation_limit = 2;
 const int Cell::overpopulation_limit  = 20;
 
-const double Cell::regeneration_amount    = 0.01;
+const double Cell::regeneration_amount    = 0;//0.01;
 const double Cell::underpopulation_damage = 1.;
 const double Cell::overpopulation_damage  = 1.;
 const double Cell::affection_threshold = 1000.;
