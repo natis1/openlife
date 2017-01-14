@@ -36,6 +36,9 @@ class Cell : public objects::Entity
 public:
     Cell();
     Cell(Cell& a, Cell& b);
+    
+    float overpopulation_damage_taken  = 0.f;
+    float underpopulation_damage_taken = 0.f;
 
     virtual void update();
     void interact(const std::vector<std::shared_ptr<Cell>>& cells);
@@ -49,8 +52,6 @@ public:
 
     Genome genome;
 
-    static std::tuple<int, int, int> getCellStatistics();
-
 private:
     // After this reaches a threshhold a stork comes down and provides the cells with babies
     double affection = 0;
@@ -60,11 +61,5 @@ private:
     std::vector<std::shared_ptr<Cell>> visible;
 
     void intelligentRotate(bool overpopulated);
-
-    long long overpopulation_occurances  = 0;
-    long long underpopulation_occurances = 0;
-
-    static int overpopulation_deaths;
-    static int underpopulation_deaths;
-    static int births;
+    
 };

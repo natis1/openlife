@@ -20,13 +20,16 @@ public:
     void run(int nCells=100, int x=1000, int y=1000);
 
 private:
+    const static int logging_timesteps;
+    long timestepsCompleted = 0;
+    
     // Helper functions / Internal methods
-
     void _update();
     Simulation simulation;
 
     // Timing
     unsigned long long frame_time;
+    
     bool simulationRunning = true;
 };
 

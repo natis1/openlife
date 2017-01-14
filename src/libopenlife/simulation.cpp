@@ -20,6 +20,13 @@ Simulation::Simulation(int nCells, double width, double height)
     update_count = 0;
 }
 
+statistics Simulation::getStatistics()
+{
+    return simulationStatus;
+}
+
+
+/*
 Simulation::~Simulation()
 {
     auto statistics = Cell::getCellStatistics();
@@ -28,6 +35,7 @@ Simulation::~Simulation()
     print("Overpopulation deaths:  " + std::to_string(std::get<1>(statistics)));
     print("Underpopulation deaths: " + std::to_string(std::get<2>(statistics)));
 }
+*/
 
 int Simulation::getCellCount()
 {
@@ -43,7 +51,7 @@ float Simulation::getArea()
 void Simulation::update()
 {
     updateInteractions();
-
+    
     // Interact with neighbors, mate with mates
     std::vector<std::shared_ptr<Cell>> new_generation;
     for (auto cell : cells)
@@ -55,6 +63,18 @@ void Simulation::update()
         }
         cell->update();
         auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
+        
+        //Save 16 bytes in Cell() by storing births and deaths in Simulation instead.
+        simulationStatus.births += children.size();
+        if (!cell->alive()) {
+            simulationStatus.deaths++;
+            if (cell->overpopulation_damage_taken >= cell->underpopulation_damage_taken) {
+                simulationStatus.overpopdeaths++;
+            } else {
+                simulationStatus.underpopdeaths++;
+            }
+        }
+        
         new_generation.insert(new_generation.end(), children.begin(), children.end());
     }
     cells.insert(cells.end(), new_generation.begin(), new_generation.end());
@@ -100,10 +120,7 @@ void Simulation::updateInteractions()
     ...
     10     / 55           / 100
     100    / 5050         / 10000
-    1000   / 500500       / 1000000
-    Difference between any value: n^2 - (n-1)^2
-    Thereby these two functions are basically as efficient even if one is twice as fast.
-    
+    1000   / 500500       / 1000000    
     
     http://stackoverflow.com/questions/11032015/how-to-find-time-complexity-of-an-algorithm
     
@@ -112,9 +129,9 @@ void Simulation::updateInteractions()
     while (it != cells.end())
     {
         auto cell = *it;
-        remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
+        //remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
 
-        cell->interact(remaining);
+        cell->interact(cells);
         it++;
     }
 }

@@ -10,6 +10,14 @@ struct rectangleShape {
     double height;
 };
 
+struct statistics {
+    int births = 0;
+    int deaths = 0;
+    int overpopdeaths = 0;
+    int underpopdeaths = 0;
+    
+};
+
 
 using tools::print;
 using tools::getTime;
@@ -21,7 +29,9 @@ struct Simulation
 
     Simulation();
     Simulation(int nCells, double width, double height);
-    ~Simulation();
+    //~Simulation();
+    statistics getStatistics();
+    
 
     void update();
     void updateInteractions();
@@ -43,6 +53,7 @@ private:
     position _getAverageLocation();
     
     rectangleShape border;
+    statistics simulationStatus;
 
     unsigned long long last_update;
     int update_count;

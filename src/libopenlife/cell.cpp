@@ -1,12 +1,12 @@
 #include "cell.hpp"
 
-const float Cell::mate_radius      = 70.0f;
-const float Cell::neighbor_radius  = 100.0f;
+const float Cell::mate_radius      = 40.0f;
+const float Cell::neighbor_radius  = 70.0f;
 const float Cell::search_radius    = 400.0f;
 const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 14;
+const int Cell::overpopulation_limit  = 12;
 const int Cell::crowded_number = 10;
 
 const double Cell::regeneration_amount    = 0;//0.01;
@@ -16,9 +16,6 @@ const double Cell::affection_threshold = 100.;
 const double Cell::turn_rate = 1.5; // Degrees
 const double Cell::max_life  = 500.0;
 
-int Cell::overpopulation_deaths  = 0;
-int Cell::underpopulation_deaths = 0;
-int Cell::births                 = 0;
 
 // Create initial cell
 Cell::Cell() :
@@ -46,7 +43,6 @@ Cell::Cell(Cell& a, Cell& b) :
 
     setPosition(dx, dy);
     setFillColor(genome.representation());
-    Cell::births++;
 }
 
 void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight)
@@ -212,12 +208,12 @@ void Cell::update()
     if (overpopulated)
     {
         damage(Cell::overpopulation_damage);
-        overpopulation_occurances++;
+        overpopulation_damage_taken += overpopulation_damage;        
     }
     else if (underpopulated)
     {
         damage(Cell::underpopulation_damage);
-        underpopulation_occurances++;
+        underpopulation_damage_taken += underpopulation_damage;
     }
     else 
     {
@@ -226,18 +222,6 @@ void Cell::update()
         //print("Affection increased to " + std::to_string(affection));
         regen(Cell::regeneration_amount);
     }
-    if (not alive())
-    {
-        if (overpopulation_occurances > underpopulation_occurances)
-        {
-            Cell::overpopulation_deaths++;
-        }
-        else
-        {
-            Cell::underpopulation_deaths++;
-        }
-    }
-    // Fade on death
     setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
 }
 
@@ -272,10 +256,5 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     return children;
 }
 
-std::tuple<int, int, int> Cell::getCellStatistics()
-{
-    return std::make_tuple(Cell::births,
-                           Cell::overpopulation_deaths,
-                           Cell::underpopulation_deaths);
-}
+
 
