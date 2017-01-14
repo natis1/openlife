@@ -23,7 +23,8 @@ class Cell : public objects::Entity
     const static float move_modifier;
 
     const static int overpopulation_limit;
-    const static int underpopulation_limit; 
+    const static int underpopulation_limit;
+    const static int crowded_number;
 
     const static double regeneration_amount;
     const static double underpopulation_damage;

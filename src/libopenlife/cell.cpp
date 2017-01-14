@@ -1,18 +1,19 @@
 #include "cell.hpp"
 
-const float Cell::mate_radius      = 250.0f;
-const float Cell::neighbor_radius  = 350.0f;
-const float Cell::search_radius    = 1000.0f;
+const float Cell::mate_radius      = 70.0f;
+const float Cell::neighbor_radius  = 100.0f;
+const float Cell::search_radius    = 400.0f;
 const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 20;
+const int Cell::overpopulation_limit  = 14;
+const int Cell::crowded_number = 10;
 
 const double Cell::regeneration_amount    = 0;//0.01;
 const double Cell::underpopulation_damage = 1.;
 const double Cell::overpopulation_damage  = 1.;
-const double Cell::affection_threshold = 1000.;
-const double Cell::turn_rate = .5; // Degrees
+const double Cell::affection_threshold = 100.;
+const double Cell::turn_rate = 1.5; // Degrees
 const double Cell::max_life  = 500.0;
 
 int Cell::overpopulation_deaths  = 0;
@@ -203,8 +204,10 @@ void Cell::update()
     // Declare boolean values to make code more understandable
     bool underpopulated = neighbors.size() < Cell::underpopulation_limit;
     bool overpopulated  = neighbors.size() > Cell::overpopulation_limit;
+    
+    bool crowded = neighbors.size() > Cell::crowded_number;
 
-    intelligentRotate(overpopulated);
+    intelligentRotate(crowded);
     moveVec(*this, Cell::move_modifier); 
     if (overpopulated)
     {

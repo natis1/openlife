@@ -148,10 +148,10 @@ std::shared_ptr<Cell> Simulation::_generateRandomCell()
 
     //double radius = cell->getRadius();
     
-    position size {300, 300};
+    position size {border.width, border.height};
     // Distributions for initial random settings
-    auto widthDist  = dist(0, (int)size.x);
-    auto heightDist = dist(0, (int)size.y);
+    auto widthDist  = dist((int)border.x, (int)size.x);
+    auto heightDist = dist((int)border.y, (int)size.y);
     auto angleDist  = dist(0, 360);
 
     // Mersenne Twister :)
