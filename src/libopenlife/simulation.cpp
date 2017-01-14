@@ -105,26 +105,14 @@ void Simulation::updateInteractions()
 {
     std::vector<std::shared_ptr<Cell>> remaining;
     remaining.reserve(cells.size()); // speeds up allocation :)
-    /* ~Efficiently build the list of neighbors/mates
     
+    /*
+     * TODO: Figure out if there's any good way to optimize this/ add multithreading
+     * 
+     * 
+     * 
+     */
     
-    If you simplify O(n + E(1, n, n-1)), it becomes O((n / 2) * n), which is O(n^2)
-    What I actually meant is that this algorithm is ~more~ AS efficient AS T = n^2:
-    
-    
-    Values / Instructions / n^2
-    1      / 1            / 1
-    2      / 3            / 4
-    3      / 6            / 9
-    4      / 10           / 16
-    ...
-    10     / 55           / 100
-    100    / 5050         / 10000
-    1000   / 500500       / 1000000    
-    
-    http://stackoverflow.com/questions/11032015/how-to-find-time-complexity-of-an-algorithm
-    
-    I've chosen to use iterators because it makes slicing possible, which is where the efficiency gains come from */
     auto it = cells.begin();
     while (it != cells.end())
     {
