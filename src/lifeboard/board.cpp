@@ -7,7 +7,6 @@ namespace objects
 const float Board::move_amount = 25.0f;
 const float Board::circle_size = 10.0f;
 
-
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
 {
@@ -81,7 +80,7 @@ void Board::_drawSimulation()
     
     sf::CircleShape averagePoint = sf::CircleShape(circle_size + 2.);
     averagePoint.setFillColor(sf::Color(0xFF0000FF));
-    
+    averagePoint.setPosition(averageLocation[0] + circle_size/2, averageLocation[1] + circle_size/2); 
     
     window.draw(border);
     window.draw(averagePoint);
@@ -123,10 +122,12 @@ void Board::_zoom(sf::Event& event)
             if (amount == 1)
             {
                 simulation_view.zoom(0.95f);
+                Board::border.setOutlineThickness(Board::border.getOutlineThickness() * 0.95f);
             }
             else
             {
                 simulation_view.zoom(1.05f);
+                Board::border.setOutlineThickness(Board::border.getOutlineThickness() * 1.05f);
             }
         }
     }
@@ -160,6 +161,9 @@ void Board::_pan()
 void Board::run(int nCells, int x, int y) {
     simulation = Simulation(nCells, (double) x, (double) y);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));
+    Board::border.setFillColor(sf::Color(0x00000000));
+    Board::border.setOutlineColor(sf::Color(200, 0, 200, 128));
+    Board::border.setOutlineThickness(4.0);
     
     while (window.isOpen())
     {
