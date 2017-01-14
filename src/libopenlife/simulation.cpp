@@ -26,16 +26,6 @@ statistics Simulation::getStatistics()
 }
 
 
-/*
-Simulation::~Simulation()
-{
-    auto statistics = Cell::getCellStatistics();
-    print("Statistics from simulation:");
-    print("Births:                 " + std::to_string(std::get<0>(statistics)));
-    print("Overpopulation deaths:  " + std::to_string(std::get<1>(statistics)));
-    print("Underpopulation deaths: " + std::to_string(std::get<2>(statistics)));
-}
-*/
 
 int Simulation::getCellCount()
 {
@@ -68,7 +58,7 @@ void Simulation::update()
         simulationStatus.births += children.size();
         if (!cell->alive()) {
             simulationStatus.deaths++;
-            if (cell->overpopulation_damage_taken >= cell->underpopulation_damage_taken) {
+            if (cell->overpopulation_damage_taken > cell->underpopulation_damage_taken) {
                 simulationStatus.overpopdeaths++;
             } else {
                 simulationStatus.underpopdeaths++;

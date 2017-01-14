@@ -6,12 +6,12 @@ const float Cell::search_radius    = 400.0f;
 const float Cell::move_modifier    = 1.5f;
 
 const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 12;
+const int Cell::overpopulation_limit  = 14;
 const int Cell::crowded_number = 10;
 
 const double Cell::regeneration_amount    = 0;//0.01;
-const double Cell::underpopulation_damage = 1.;
-const double Cell::overpopulation_damage  = 1.;
+const double Cell::underpopulation_damage = 5.;
+const double Cell::overpopulation_damage  = 5.;
 const double Cell::affection_threshold = 100.;
 const double Cell::turn_rate = 1.5; // Degrees
 const double Cell::max_life  = 500.0;
@@ -208,12 +208,12 @@ void Cell::update()
     if (overpopulated)
     {
         damage(Cell::overpopulation_damage);
-        overpopulation_damage_taken += overpopulation_damage;        
+        overpopulation_damage_taken += (float) overpopulation_damage;        
     }
     else if (underpopulated)
     {
         damage(Cell::underpopulation_damage);
-        underpopulation_damage_taken += underpopulation_damage;
+        underpopulation_damage_taken += (float) underpopulation_damage;
     }
     else 
     {

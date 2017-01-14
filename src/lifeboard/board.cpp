@@ -6,6 +6,8 @@ namespace objects
 
 const float Board::move_amount = 25.0f;
 const float Board::circle_size = 10.0f;
+const int Board::logging_timesteps = 250;
+
 
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
@@ -165,11 +167,15 @@ void Board::run(int nCells, int x, int y) {
     Board::border.setOutlineColor(sf::Color(200, 0, 200, 128));
     Board::border.setOutlineThickness(4.0);
     
+    unsigned long long logTime = getTime();
+    
     while (window.isOpen())
     {
         unsigned long long start_frame = getTime();
         _handle();
         _update();
+        timestepsCompleted++;
+        
         _render();
 
         if (simulation.getCellCount() == 0) break;
@@ -178,6 +184,20 @@ void Board::run(int nCells, int x, int y) {
         if (frame_time < 1000000/60) {
             usleep((int) (1000000/60) - frame_time);
         }
+        
+        
+
+        if (Board::timestepsCompleted % Board::logging_timesteps == 0){
+            
+            statistics s = simulation.getStatistics();
+            
+            std::cout << "Timestep: " << Board::timestepsCompleted << std::endl;
+            std::cout << "Processed " << Board::logging_timesteps << " steps in " << std::to_string((getTime() - logTime)/1000) << "ms" << std::endl;
+            std::cout << "Alive: " << simulation.getCellCount() << " total births: " << s.births << " total deaths: " << s.deaths << std::endl;
+            std::cout << "Overpopulation deaths: " << s.overpopdeaths << " underpopulation deaths: " << s.underpopdeaths << std::endl;
+            logTime = getTime();
+        }
+        
         
     }
     

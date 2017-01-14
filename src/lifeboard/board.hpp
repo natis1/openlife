@@ -13,6 +13,8 @@ class Board
 {
     const static float move_amount;
     const static float circle_size;
+    const static int logging_timesteps;
+
     sf::RectangleShape border;
 
 public:
@@ -21,6 +23,8 @@ public:
     
 private:
     // Helper functions / Internal methods
+    
+    long timestepsCompleted = 0;
 
     void _update();
     void _render();
