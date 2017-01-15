@@ -94,7 +94,7 @@ void Simulation::update()
 void Simulation::updateInteractions()
 {
     std::vector<std::shared_ptr<Cell>> remaining;
-    remaining.reserve(cells.size()); // speeds up allocation :)
+    remaining.reserve(cells.size()); 
     
     /*
      * TODO: Figure out if there's any good way to optimize this/ add multithreading
@@ -107,11 +107,18 @@ void Simulation::updateInteractions()
     while (it != cells.end())
     {
         auto cell = *it;
-        //remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
-
-        cell->interact(cells);
+        remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
+        cell->interact(remaining);
         it++;
     }
+
+    /*
+     * If cells interacting twice per timestep is the desired behavior, do it like this:
+     * for (auto& cell : cells)
+     * {
+     *     cell->interact(cells);
+     * }
+     */
 }
 
 bool Simulation::_inBounds(Cell& cell)
