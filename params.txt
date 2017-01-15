@@ -1,0 +1,12 @@
+mate_radius            40.0
+neighbor_radius        70.0
+search_radius          400.0
+move_modifier          1.5
+underpopulation_limit  2
+overpopulation_limit   14
+crowded_limit          10
+regeneration_amount    0
+underpopulation_damage 5.
+overpopulation_damage  5.
+affection_threshold    100.
+turn_rate              1.5

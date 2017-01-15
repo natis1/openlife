@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 #include <algorithm>
 
+
 const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
@@ -18,6 +19,8 @@ Simulation::Simulation(int nCells, double width, double height)
     _genCells(nCells);
     last_update = getTime();
     update_count = 0;
+
+    simulation_params = ParamDict("params.txt");
 }
 
 statistics Simulation::getStatistics()
@@ -51,8 +54,8 @@ void Simulation::update()
             // Modify the cell to push it into bounds
             cell->bounce(border.x, border.y, border.width, border.height);
         }
-        cell->update();
-        auto children = cell->mate(); // Produce children with current set of mates, then clear list of mates
+        cell->update(simulation_params);
+        auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates
         
         //Save 16 bytes in Cell() by storing births and deaths in Simulation instead.
         simulationStatus.births += children.size();
@@ -108,7 +111,7 @@ void Simulation::updateInteractions()
     {
         auto cell = *it;
         remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
-        cell->interact(remaining);
+        cell->interact(remaining, simulation_params);
         it++;
     }
 

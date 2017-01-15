@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,8 @@ std::uniform_int_distribution<std::mt19937::result_type> dist(int a, int b);
 std::uniform_real_distribution<double> dist(double a, double b);
 int sign(std::mt19937);
 unsigned long long getTime();
+void writeFile(std::vector<std::string> content, std::string filename);
+std::vector<std::string> readFile(std::string filename);
 
 template <typename T>
 T avg (T a, T b)

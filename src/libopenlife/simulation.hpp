@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include "paramdict.hpp"
 
 struct rectangleShape {
     double x = 0;
@@ -57,4 +58,6 @@ private:
 
     unsigned long long last_update;
     int update_count;
+
+    ParamDict simulation_params;
 };
