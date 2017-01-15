@@ -58,4 +58,6 @@ private:
 
     unsigned long long last_update;
     int update_count;
+
+    ParamDict simulation_params;
 };

@@ -1,25 +1,8 @@
 #include "cell.hpp"
 
-const float Cell::mate_radius      = 40.0f;
-const float Cell::neighbor_radius  = 70.0f;
-const float Cell::search_radius    = 400.0f;
-const float Cell::move_modifier    = 1.5f;
-
-const int Cell::underpopulation_limit = 2;
-const int Cell::overpopulation_limit  = 14;
-const int Cell::crowded_number = 10;
-
-const double Cell::regeneration_amount    = 0;//0.01;
-const double Cell::underpopulation_damage = 5.;
-const double Cell::overpopulation_damage  = 5.;
-const double Cell::affection_threshold = 100.;
-const double Cell::turn_rate = 1.5; // Degrees
-const double Cell::max_life  = 500.0;
-
-
 // Create initial cell
 Cell::Cell() :
-    Entity(10, Cell::max_life),
+    Entity(10, 500.),
     genome()
 {
 }
@@ -119,25 +102,24 @@ void Cell::bounce(double wallx, double wally, double wallwidth, double wallheigh
 
 
 // Build a list/count of neighbors and mates
-void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
+void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells, ParamDict& simulation_params)
 {
     for (auto& cell : cells)
     {
         auto dist   = distance(*this, *cell);
 
-        // Mate with closer cells, treat further ones as neighbors, and ignore the rest
-        if (dist < Cell::mate_radius)
+        if (dist < simulation_params.get("mate_radius"))
         {
             mates.push_back(cell);
         }
 
-        if (dist < Cell::neighbor_radius)
+        if (dist < simulation_params.get("neighbor_radius"))
         {
             addNeighbor(cell);
             cell->addNeighbor(std::make_shared<Cell>(*this));
         }
 
-        if (dist < Cell::search_radius)
+        if (dist < simulation_params.get("search_radius"))
         {
             addVisible(cell);
             cell->addVisible(std::make_shared<Cell>(*this));
@@ -145,7 +127,7 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells)
     }
 }
 
-void Cell::intelligentRotate(bool overpopulated)
+void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
 {
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
     auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
@@ -155,6 +137,7 @@ void Cell::intelligentRotate(bool overpopulated)
     double current_angle = getRotation();
     if (overpopulated) ideal_angle = remainder(ideal_angle + 180., 360.);
 
+    auto turn_rate = simulation_params.get("turn_rate");
     if (ideal_angle > current_angle + turn_rate) {
         rotate(turn_rate);
     } else if (ideal_angle < current_angle - turn_rate) {
@@ -193,34 +176,34 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
     neighbors.push_back(cell);
 }
 
-void Cell::update()
+void Cell::update(ParamDict& simulation_params)
 {
     auto radius = getRadius();
 
     // Declare boolean values to make code more understandable
-    bool underpopulated = neighbors.size() < Cell::underpopulation_limit;
-    bool overpopulated  = neighbors.size() > Cell::overpopulation_limit;
+    bool underpopulated = neighbors.size() < (int)simulation_params.get("underpopulation_limit");
+    bool overpopulated  = neighbors.size() > (int)simulation_params.get("overpopulation_limit");
     
-    bool crowded = neighbors.size() > Cell::crowded_number;
+    bool crowded = neighbors.size() > (int)simulation_params.get("crowded_limit");
 
-    intelligentRotate(crowded);
-    moveVec(*this, Cell::move_modifier); 
+    intelligentRotate(crowded, simulation_params);
+    moveVec(*this, simulation_params.get("move_modifier")); 
     if (overpopulated)
     {
-        damage(Cell::overpopulation_damage);
-        overpopulation_damage_taken += (float) overpopulation_damage;        
+        damage(simulation_params.get("overpopulation_damage"));
+        overpopulation_damage_taken += (float) simulation_params.get("overpopulation_damage");        
     }
     else if (underpopulated)
     {
-        damage(Cell::underpopulation_damage);
-        underpopulation_damage_taken += (float) underpopulation_damage;
+        damage(simulation_params.get("underpopulation_damage"));
+        underpopulation_damage_taken += (float) simulation_params.get("underpopulation_damage");
     }
     else 
     {
         // Begin mating if in appropriate conditions
         affection += genome.gene("affection_prime");
         //print("Affection increased to " + std::to_string(affection));
-        regen(Cell::regeneration_amount);
+        regen(simulation_params.get("regeneration_amount"));
     }
     setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
 }
@@ -231,7 +214,7 @@ std::string Cell::csv()
     return std::to_string(position.x) + "," + std::to_string(position.y);
 }
 
-std::vector<std::shared_ptr<Cell>> Cell::mate()
+std::vector<std::shared_ptr<Cell>> Cell::mate(ParamDict& simulation_params)
 {
     std::vector<std::shared_ptr<Cell>> children;
 
@@ -239,7 +222,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate()
     {
         for (auto& mate : mates)
         {
-            if (affection + mate->affection > Cell::affection_threshold)
+            if (affection + mate->affection > simulation_params.get("affection_threshold"))
             {
                 affection = 0;
                 mate->affection = 0;

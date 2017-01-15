@@ -1,3 +1,4 @@
+#pragma once
 #include <unordered_map>
 #include <string>
 #include <tuple>
@@ -9,6 +10,7 @@ class ParamDict
 {
 public:
     ParamDict(std::string filename);
+    ParamDict();
     double get(std::string param);
 
 private:
