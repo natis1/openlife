@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include "paramdict.hpp"
 
 struct rectangleShape {
     double x = 0;

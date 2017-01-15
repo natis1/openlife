@@ -1,6 +1,7 @@
 #include "simulation.hpp"
 #include <algorithm>
 
+
 const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
@@ -18,6 +19,8 @@ Simulation::Simulation(int nCells, double width, double height)
     _genCells(nCells);
     last_update = getTime();
     update_count = 0;
+
+    ParamDict("params.txt");
 }
 
 statistics Simulation::getStatistics()
