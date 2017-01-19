@@ -30,6 +30,9 @@ struct Simulation
 
     Simulation();
     Simulation(int nCells, double width, double height);
+    Simulation(std::vector<std::shared_ptr<Cell>> inputCells, double width, double height);
+    Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize);
+    
     //~Simulation();
     statistics getStatistics();
     
@@ -45,9 +48,9 @@ struct Simulation
     position center_marker;
 
 private:
-    // Functions for generating random cells
-    void _genCells(int nCells);
-    std::shared_ptr<Cell> _generateRandomCell();
+    // Functions for generating random cells    
+    void _generateManyRandomCells(int nCells, int spawnXSize, int spawnYSize);
+    
     
     bool _inBounds(Cell& cell);
     void _updateInteractions();

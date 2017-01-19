@@ -13,7 +13,6 @@ Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life")
 {
     
-    
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
