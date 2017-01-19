@@ -6,22 +6,49 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
+
+Simulation::Simulation(std::vector<std::shared_ptr<Cell> > inputCells, double width, double height)
+{
+    //Spawn border
+    border.x = 0.; border.y = 0.;
+    border.width = width;
+    border.height = height;
+    
+    //reserve cells
+    cells.reserve(inputCells.size());
+    std::copy(std::begin(inputCells), std::end(inputCells), std::begin(cells));
+    last_update = getTime();
+}
+
+
 Simulation::Simulation(int nCells, double width, double height)
 {
     //spawn_area = set_spawn_area;
     
-    std::cout << "creating Simulation" << std::endl;
-    
     border.x = 0.; border.y = 0.;
     border.width = width;
     border.height = height;
-
-    _genCells(nCells);
+    
+    // Spawn area defaults to whole board unless specified otherwise
+    _generateManyRandomCells(nCells, (int) width, (int) height);
     last_update = getTime();
     update_count = 0;
-
+    
     simulation_params = ParamDict("params.txt");
 }
+
+Simulation::Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize)
+{
+    border.x = 0.; border.y = 0.;
+    border.width = width;
+    border.height = height;
+    
+    _generateManyRandomCells(nCells, spawnXSize, spawnYSize);
+    simulation_params = ParamDict("params.txt");
+    last_update = getTime();
+    update_count = 0;
+}
+
 
 statistics Simulation::getStatistics()
 {
@@ -114,14 +141,6 @@ void Simulation::updateInteractions()
         cell->interact(remaining, simulation_params);
         it++;
     }
-
-    /*
-     * If cells interacting twice per timestep is the desired behavior, do it like this:
-     * for (auto& cell : cells)
-     * {
-     *     cell->interact(cells);
-     * }
-     */
 }
 
 bool Simulation::_inBounds(Cell& cell)
@@ -132,44 +151,38 @@ bool Simulation::_inBounds(Cell& cell)
         && (border.y < cellloc.y && cellloc.y < (border.y + border.height)));
 }
 
-// Randomly generate n cells
-void Simulation::_genCells(int nCells)
-{
-    for (unsigned i = 0; i < nCells; i++)
-    {
-        // Generates a new cell randomly
-        cells.push_back(_generateRandomCell());
-    }
-}
 
-// Randomly generate a single cell
-std::shared_ptr<Cell> Simulation::_generateRandomCell()
+void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnYSize)
 {
-    // Explicitly import names
+    
     using tools::dist;
     using tools::randomGenerator;
-
-    std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
-
-    //double radius = cell->getRadius();
     
-    position size {border.width, border.height};
+    
     // Distributions for initial random settings
-    auto widthDist  = dist((int)border.x, (int)size.x);
-    auto heightDist = dist((int)border.y, (int)size.y);
+    auto widthDist  = dist((int)border.x, spawnXSize - (int) border.x);
+    auto heightDist = dist((int)border.y, spawnYSize - (int) border.y);
     auto angleDist  = dist(0, 360);
-
-    // Mersenne Twister :)
-    auto generator  = randomGenerator();
-
-    int x = widthDist(generator);
-    int y = heightDist(generator);
-
-    cell->setPosition(x, y);
-    cell->setRotation(angleDist(generator));
     
-    return cell;
+    
+    // Use generation method specified in tools - Default: Mersenne Twister
+    auto generator  = randomGenerator();
+    
+    cells.reserve(nCells);
+    
+    
+    for (int i = 0; i < nCells; i++)
+    {
+        std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
+        cell->setPosition(widthDist(generator), heightDist(generator));
+        cell->setRotation(angleDist(generator));
+        cells.push_back(cell);
+    }
+    
+    
+
 }
+
 
 position  Simulation::_getAverageLocation(){
     double x = 0.;

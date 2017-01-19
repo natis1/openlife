@@ -1,3 +1,6 @@
+//Openlifecli is, like all of openlife, licensed under the GPLv3 or later.
+
+
 #include "arena.hpp"
 
 int main()
