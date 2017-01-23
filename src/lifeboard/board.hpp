@@ -42,6 +42,8 @@ private:
 
     sf::View simulation_view;
     sf::View info_view;
+
+    sf::CircleShape averagePoint;
     
     
 

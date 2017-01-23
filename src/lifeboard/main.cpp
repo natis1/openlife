@@ -8,7 +8,7 @@
 int main()
 {
     using objects::Board;
-    Board board;
+    Board board(2000, 2000);
     board.run(200, 2000, 2000); // Initial simulation with 50 starting cells
 
     return 0;

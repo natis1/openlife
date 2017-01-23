@@ -10,9 +10,9 @@ const int Board::logging_timesteps = 250;
 
 
 Board::Board(int width, int height) :
-    window(sf::VideoMode(width, height), "Life")
+    window(sf::VideoMode(width, height), "Life"),
+    averagePoint(circle_size + 2)
 {
-    
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
     border.setOutlineThickness(10.0);
@@ -31,14 +31,27 @@ Board::Board(int width, int height) :
     frame_display.setFont(font);
     frame_display.setCharacterSize(24);
     frame_display.setPosition(0., 40.);
+
+    averagePoint.setFillColor(sf::Color(0xFF0000FF));
+    averagePoint.setOrigin(sf::Vector2f(circle_size + 2, circle_size + 2));
 }
 
 
 void Board::_update()
 {
+    using std::to_string;
     simulation.update();
-    info.setString("Cells: " + std::to_string(simulation.getCellCount()) + " Density: " + (std::to_string(simulation.getCellCount() * 1000000 / simulation.getArea())));
-    frame_display.setString( "Drawtime: " + std::to_string(frame_time) + "us");
+
+    auto size       = sqrt(simulation.getArea()) / 2.0;
+    auto averageLoc = averagePoint.getPosition();
+    auto x_dev      = size + averageLoc.x;
+    auto y_dev      = size + averageLoc.y;
+
+    info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
+                  " Density: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
+                  " Average center deviation: " + to_string(x_dev) + ", " + to_string(y_dev));
+
+    frame_display.setString( "Drawtime: " + to_string(frame_time/1000.) + "ms");
 }
 
 void Board::_render()
@@ -79,8 +92,6 @@ void Board::_drawSimulation()
     averageLocation[0] = averageLocation[0] / simulation.cells.size();
     averageLocation[1] = averageLocation[1] / simulation.cells.size();
     
-    sf::CircleShape averagePoint = sf::CircleShape(circle_size + 2.);
-    averagePoint.setFillColor(sf::Color(0xFF0000FF));
     averagePoint.setPosition(averageLocation[0] + circle_size/2, averageLocation[1] + circle_size/2); 
     
     window.draw(border);
