@@ -130,8 +130,10 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells, ParamDict& 
 void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
 {
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
-    auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
-                                            : getAverageLocation(neighbors);
+    //auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
+    //                                        : getAverageLocation(neighbors);
+    // Alternatively, just rotate based on visible cells always
+    auto center_of_mass = getAverageLocation(visible);
 
     double ideal_angle = angle(center_of_mass, getPosition());
     double current_angle = getRotation();
