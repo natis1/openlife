@@ -19,7 +19,7 @@ std::tuple<std::string, double> sepParamLine(std::string line)
                 continue;
             } else if (*it == EOF) {
                 std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("INVALID_TUPLE", 0.0);
             } else {
                 startkey = it;
                 //Protects against keys with a length of 1
@@ -38,7 +38,7 @@ std::tuple<std::string, double> sepParamLine(std::string line)
                 continue;
             } else {
                 std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("INVALID_TUPLE", 0.0);
             }
             
             // !islookingatdata and foundString are implicit in this else if
@@ -52,10 +52,10 @@ std::tuple<std::string, double> sepParamLine(std::string line)
                 foundDouble = true;
             } else if (*it != EOF) {
                 std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("INVALID_TUPLE", 0.0);
             } else {
                 std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("INVALID_TUPLE", 0.0);
             }
         } else {
             if (*it == ' ' || *it == '\t') {
@@ -65,10 +65,10 @@ std::tuple<std::string, double> sepParamLine(std::string line)
                 continue;
             } else if (*it != EOF) {
                 std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("INVALID_TUPLE", 0.0);
             } else {
                 std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return {"INVALID_TUPLE", 0.0};
+                return std::make_tuple("invalid_tuple", 0.0);
             }
             
         }
@@ -76,7 +76,7 @@ std::tuple<std::string, double> sepParamLine(std::string line)
     
     if (line.length() == 0) {
         std::cerr << "Found a blank line?! This should NEVER happen!!" << std::endl << "If you haven't modified the code, then please alert us at https://github.com/natis1/openlife/issues" << std::endl;
-        return {"INVALID_TUPLE", 0.0};
+        return std::make_tuple("invalid_tuple", 0.0);
     }
     
     // Check if user made a valid double
@@ -88,7 +88,7 @@ std::tuple<std::string, double> sepParamLine(std::string line)
     //Will be true if the operation fails
     if (*validDouble) {
         std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-        return {"INVALID_TUPLE", 0.0};
+        return std::make_tuple("invalid_tuple", 0.0);
     }
     else {
         std::string key(startkey, endkey);
