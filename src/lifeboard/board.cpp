@@ -44,8 +44,8 @@ void Board::_update()
 
     auto size       = sqrt(simulation.getArea()) / 2.0;
     auto averageLoc = averagePoint.getPosition();
-    auto x_dev      = size + averageLoc.x;
-    auto y_dev      = size + averageLoc.y;
+    auto x_dev      = size - averageLoc.x;
+    auto y_dev      = size - averageLoc.y;
 
     info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
                   " Density: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
