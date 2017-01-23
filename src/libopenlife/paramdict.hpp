@@ -4,6 +4,10 @@
 #include <tuple>
 #include "tools.hpp"
 
+//provides isDigit and digit checking
+#include <locale>
+#include <stdlib.h>
+
 using tools::print;
 
 class ParamDict

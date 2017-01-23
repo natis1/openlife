@@ -1,3 +1,7 @@
+/*
+ * While openlifegui is licensed under the GPL, it requires SFML, a library with its own licensing.
+ * As such, SFML is a prerequisite which must be obtained by the end user.
+ */
  
 #include "board.hpp"
 

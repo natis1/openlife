@@ -1,5 +1,5 @@
 mate_radius            40.0
-neighbor_radius        70.0
+neighbor_radius        70.0 
 search_radius          400.0
 move_modifier          1.5
 underpopulation_limit  2
@@ -10,3 +10,14 @@ underpopulation_damage 5.
 overpopulation_damage  5.
 affection_threshold    100.
 turn_rate              1.5
+unusedvar              9.52
+monsterwhousestabs	1232
+   earlywhitespace     314159.265
+
+
+testingundefined       .
+null                   
+invalid                Hellotesting
+linewithmultiple       2.33         ignoremeIshouldn'tbehere 4.32
+repeat                 3.22
+repeat                 99.421
