@@ -9,4 +9,4 @@ regeneration_amount    .001
 underpopulation_damage 4.
 overpopulation_damage  5.
 affection_threshold    100.
-turn_rate              .1
+turn_rate              5
