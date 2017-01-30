@@ -69,12 +69,12 @@ double Entity::getRotation()
 
 void Entity::setRotation(double theta)
 {
-    this->rotation = theta;
+    this->rotation = modAngle(theta);
 }
 
 void Entity::rotate(double theta)
 {
-    setRotation(remainder(getRotation() + theta, 360.));
+    setRotation(modAngle(getRotation() + theta));
 }
 
 color Entity::getFillColor()

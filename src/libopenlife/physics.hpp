@@ -38,7 +38,6 @@ double angle(T1 a, T2 b)
 { 
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
-
     return modAngle(angle);
 }
 

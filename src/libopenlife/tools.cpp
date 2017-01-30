@@ -67,15 +67,27 @@ void writeFile(std::vector<std::string> content, std::string filename)
     file.close();
 }
 
-double getTurnAngle(double ideal, double current, double limit)
+double getLimitedAngle(double ideal, double current, double limit)
 {
-    if (ideal > modAngle(current + limit)) {
-        return limit;
-    } else if (ideal < modAngle(current - limit)) {
-        return -limit;
-    } else {
+    auto opposite = modAngle(current + 180.);
+    auto diff = angleDiff(ideal, current);
+    if (diff < limit)
+    {
         return ideal;
     }
+    else if (ideal > current and ideal < opposite)
+    {
+        return current + limit;
+    }
+    else
+    {
+        return current - limit;
+    }
+}
+
+double angleDiff(double a, double b)
+{
+    return std::min( abs(a - b), abs(a - b - 360.) );
 }
 
 }

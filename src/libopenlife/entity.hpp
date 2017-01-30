@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 
+#include "physics.hpp"
+
 struct position
 {
     double x; 

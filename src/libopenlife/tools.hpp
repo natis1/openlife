@@ -8,6 +8,8 @@
 #include <sys/time.h> // To keep constant frametime
 #include <unistd.h>
 #include <math.h>
+#include <algorithm>
+
 #include "physics.hpp"
 
 namespace tools
@@ -53,6 +55,7 @@ void writeCSV(std::string filename, std::vector<T> items)
     csvfile.close();
 }
 
-double getTurnAngle(double ideal, double current, double limit);
+double getLimitedAngle(double ideal, double current, double limit);
+double angleDiff(double a, double b);
 
 }

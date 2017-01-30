@@ -3,30 +3,43 @@
 #include "../src/libopenlife/cell.hpp"
 
 using tools::print;
-
-TEST_CASE( "tools package works" )
-{
-    SECTION("Angle and distance formulas work")
+const auto almostEqual = [](auto a, auto b)
+{ 
+    bool equal = abs(a - b) < 0.0000001; 
+    if (not equal)
     {
-        const auto almostEqual = [](auto a, auto b)
-        { 
-            bool equal = abs(a - b) < 0.0000001; 
-            if (not equal)
-            {
-                print(std::to_string(a) + " is not equal to " + std::to_string(b));
-            }
-            return equal;
-        };
+        print(std::to_string(a) + " is not equal to " + std::to_string(b));
+    }
+    return equal;
+};
+
+const auto requireEq = [](auto a, auto b)
+{
+    REQUIRE( almostEqual(a, b));
+};
+
+TEST_CASE( "tools package" )
+{
+    SECTION("Angle and distance formulas")
+    {
 
         Cell a, b;
-        REQUIRE(almostEqual(distance(a, b), 0.));
+        requireEq(distance(a, b), 0.);
         a.move(1, 0); // Move right 1
-        REQUIRE(almostEqual(distance(a, b), 1.) );
-        REQUIRE(almostEqual(angle(a.getPosition(), b.getPosition()), 0.) );
+        requireEq(distance(a, b), 1.);
+        requireEq(angle(a.getPosition(), b.getPosition()), 0.);
         a.move(0, 1); // Move up 1
-        REQUIRE(almostEqual(angle(a.getPosition(), b.getPosition()), 45.) );
+        requireEq(angle(a.getPosition(), b.getPosition()), 45.);
         a.move(-2, -2.); // Move to fourth quadrant 
-        REQUIRE(almostEqual(angle(a.getPosition(), b.getPosition()), 225.) );
+        requireEq(angle(a.getPosition(), b.getPosition()), 225.);
+    }
+
+    SECTION("Turn rate limiting code")
+    {
+        using tools::getLimitedAngle;
+        requireEq(getLimitedAngle(0., 10., 5.) ,  5.);
+        requireEq(getLimitedAngle(350., 0., 5.), -5.);
+        requireEq(getLimitedAngle(73., 00., 360.1) ,  73.);
     }
 }
 
