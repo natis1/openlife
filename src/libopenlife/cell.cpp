@@ -135,14 +135,14 @@ void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
     // Alternatively, just rotate based on visible cells always
     auto center_of_mass = getAverageLocation(visible);
 
-    double ideal_angle = angle(center_of_mass, getPosition());
+    double ideal_angle = angle(getPosition(), center_of_mass);
     double current_angle = getRotation();
-    if (overpopulated) ideal_angle = remainder(ideal_angle + 180., 360.);
+    if (overpopulated) ideal_angle = modAngle(ideal_angle + 180.);
 
     auto turn_rate = simulation_params.get("turn_rate");
-    if (ideal_angle > current_angle + turn_rate) {
+    if (ideal_angle > modAngle(current_angle + turn_rate)) {
         rotate(turn_rate);
-    } else if (ideal_angle < current_angle - turn_rate) {
+    } else if (ideal_angle < modAngle(current_angle - turn_rate)) {
         rotate(-turn_rate);
     } else {
         rotate(ideal_angle);
