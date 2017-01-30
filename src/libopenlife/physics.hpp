@@ -7,6 +7,8 @@
 // Can't move templates to body files 
 // (There are cases where we can, but we really shouldn't : http://stackoverflow.com/questions/5612791/c-template-and-header-files)
 
+double modAngle(double theta);
+
 // Conversions
 template <typename T>
 T degrees(T t)
@@ -37,13 +39,7 @@ double angle(T1 a, T2 b)
     double angle = atan2(a.y - b.y, a.x - b.x);
     angle = degrees(angle);
 
-    if (angle < 0) {
-        angle = 360. + angle;
-    }
-    
-    angle = remainder(angle, 360.);
-
-    return angle;
+    return modAngle(angle);
 }
 
 // Move on a vector with magnitude amount along current rotation
