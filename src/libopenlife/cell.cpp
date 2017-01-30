@@ -140,13 +140,8 @@ void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
     if (overpopulated) ideal_angle = modAngle(ideal_angle + 180.);
 
     auto turn_rate = simulation_params.get("turn_rate");
-    if (ideal_angle > modAngle(current_angle + turn_rate)) {
-        rotate(turn_rate);
-    } else if (ideal_angle < modAngle(current_angle - turn_rate)) {
-        rotate(-turn_rate);
-    } else {
-        rotate(ideal_angle);
-    }
+
+    rotate(tools::getTurnAngle(ideal_angle, current_angle, turn_rate));
 }
 
 position getAverageLocation(std::vector<std::shared_ptr<Cell>> cells)

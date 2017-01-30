@@ -67,4 +67,15 @@ void writeFile(std::vector<std::string> content, std::string filename)
     file.close();
 }
 
+double getTurnAngle(double ideal, double current, double limit)
+{
+    if (ideal > modAngle(current + limit)) {
+        return limit;
+    } else if (ideal < modAngle(current - limit)) {
+        return -limit;
+    } else {
+        return ideal;
+    }
+}
+
 }
