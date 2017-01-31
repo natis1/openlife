@@ -198,3 +198,9 @@ position  Simulation::_getAverageLocation(){
     
     return {x, y};
 }
+
+
+double Simulation::get_param(std::string param)
+{
+    return simulation_params.get(param);
+}

@@ -32,8 +32,18 @@ Board::Board(int width, int height) :
     frame_display.setCharacterSize(24);
     frame_display.setPosition(0., 40.);
 
-    averagePoint.setFillColor(sf::Color(0xFF0000FF));
+    averagePoint.setFillColor(sf::Color(0xff0000ff));
     averagePoint.setOrigin(sf::Vector2f(circle_size + 2, circle_size + 2));
+
+    search_radius.setFillColor(sf::Color(0, 0, 0, 0));
+    search_radius.setOutlineColor(sf::Color(0, 0, 255, 255));
+    search_radius.setOutlineThickness(5.0);
+    neighbor_radius.setFillColor(sf::Color(0, 0, 0, 0));
+    neighbor_radius.setOutlineColor(sf::Color(255, 0, 0, 255));
+    neighbor_radius.setOutlineThickness(5.0);
+    mate_radius.setFillColor(sf::Color(0, 0, 0, 0));
+    mate_radius.setOutlineColor(sf::Color(0, 255, 0, 255));
+    mate_radius.setOutlineThickness(5.0);
 }
 
 
@@ -54,14 +64,14 @@ void Board::_update()
     frame_display.setString( "Drawtime: " + to_string(frame_time/1000.) + "ms");
 }
 
-void Board::_render()
+void Board::_render(bool debug)
 {
     window.clear();
 
     window.setView(simulation_view);
 
     // Simulation
-    _drawSimulation();
+    _drawSimulation(debug);
 
     // Gui/Info
     window.setView(info_view);
@@ -72,7 +82,7 @@ void Board::_render()
     window.display(); // For organization
 }
 
-void Board::_drawSimulation()
+void Board::_drawSimulation(bool debug)
 {
     
     float averageLocation [2];
@@ -81,13 +91,23 @@ void Board::_drawSimulation()
     
     for (auto cell : simulation.cells)
     {
+        auto pos = cell->getPosition(); 
         sf::CircleShape cellCircle = sf::CircleShape(circle_size);
-        cellCircle.setPosition((float) cell->getPosition().x, (float) cell->getPosition().y );
+        cellCircle.setPosition((float) pos.x, (float) pos.y );
         cellCircle.setFillColor(sf::Color(cell->getApproximateFillColor()));
         window.draw(cellCircle);
         
         averageLocation[0] += (float) cell->getPosition().x;
         averageLocation[1] += (float) cell->getPosition().y;
+        if (debug)
+        {
+            search_radius.setPosition(pos.x, pos.y);
+            window.draw(search_radius);
+            mate_radius.setPosition(pos.x, pos.y);
+            window.draw(mate_radius);
+            neighbor_radius.setPosition(pos.x, pos.y);
+            window.draw(neighbor_radius);
+        }
     }
     averageLocation[0] = averageLocation[0] / simulation.cells.size();
     averageLocation[1] = averageLocation[1] / simulation.cells.size();
@@ -170,12 +190,24 @@ void Board::_pan()
 // This function should really only call other functions (Similar to how no code goes in int main)
 
 
-void Board::run(int nCells, int x, int y) {
+void Board::run(int nCells, int x, int y, bool debug) 
+{
     simulation = Simulation(nCells, (double) x, (double) y);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));
     Board::border.setFillColor(sf::Color(0x00000000));
     Board::border.setOutlineColor(sf::Color(200, 0, 200, 128));
     Board::border.setOutlineThickness(4.0);
+
+    double radius;
+    radius = simulation.get_param("search_radius");
+    search_radius.setRadius(radius);
+    search_radius.setOrigin(sf::Vector2f(radius, radius));
+    radius = simulation.get_param("neighbor_radius");
+    neighbor_radius.setRadius(radius);
+    neighbor_radius.setOrigin(sf::Vector2f(radius, radius));
+    radius = simulation.get_param("mate_radius");
+    mate_radius.setRadius(radius);
+    mate_radius.setOrigin(sf::Vector2f(radius, radius));
     
     unsigned long long logTime = getTime();
     
@@ -184,9 +216,9 @@ void Board::run(int nCells, int x, int y) {
         unsigned long long start_frame = getTime();
         _handle();
         _update();
+        _render(debug);
+
         timestepsCompleted++;
-        
-        _render();
 
         if (simulation.getCellCount() == 0) break;
         frame_time = getTime() - start_frame;

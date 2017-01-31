@@ -19,7 +19,7 @@ class Board
 
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100, int x=1000, int y=1000);
+    void run(int nCells=100, int x=1000, int y=1000, bool debug=false);
     
 private:
     // Helper functions / Internal methods
@@ -27,9 +27,9 @@ private:
     long timestepsCompleted = 0;
 
     void _update();
-    void _render();
+    void _render(bool debug=false);
     void _handle();
-    void _drawSimulation();
+    void _drawSimulation(bool debug=false);
 
     void _zoom(sf::Event& event);
     void _pan();
@@ -44,8 +44,10 @@ private:
     sf::View info_view;
 
     sf::CircleShape averagePoint;
-    
-    
+
+    sf::CircleShape search_radius;
+    sf::CircleShape neighbor_radius;
+    sf::CircleShape mate_radius;
 
     // Simulation backend
     Simulation simulation;

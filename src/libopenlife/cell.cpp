@@ -2,7 +2,7 @@
 
 // Create initial cell
 Cell::Cell() :
-    Entity(10, 500.),
+    Entity(10, 100.),
     genome()
 {
 }
@@ -131,8 +131,9 @@ void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
 {
     using tools::getLimitedAngle;
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
-    auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
-                                            : getAverageLocation(neighbors);
+    //auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
+    //                                        : getAverageLocation(neighbors);
+    auto center_of_mass = getAverageLocation(visible);
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();
@@ -174,31 +175,28 @@ void Cell::addNeighbor(std::shared_ptr<Cell> cell)
 
 void Cell::update(ParamDict& simulation_params)
 {
-    auto radius = getRadius();
-
-    // Declare boolean values to make code more understandable
     bool underpopulated = neighbors.size() < (int)simulation_params.get("underpopulation_limit");
     bool overpopulated  = neighbors.size() > (int)simulation_params.get("overpopulation_limit");
-    
-    bool crowded = neighbors.size() > (int)simulation_params.get("crowded_limit");
+    bool crowded        = neighbors.size() > (int)simulation_params.get("crowded_limit");
 
     intelligentRotate(crowded, simulation_params);
     moveVec(*this, simulation_params.get("move_modifier")); 
+
     if (overpopulated)
     {
-        damage(simulation_params.get("overpopulation_damage"));
-        overpopulation_damage_taken += (float) simulation_params.get("overpopulation_damage");        
+        auto overpop_damage = simulation_params.get("overpopulation_damage");
+        damage(overpop_damage);
+        overpopulation_damage_taken += (float) overpop_damage;        
     }
     else if (underpopulated)
     {
-        damage(simulation_params.get("underpopulation_damage"));
-        underpopulation_damage_taken += (float) simulation_params.get("underpopulation_damage");
+        auto underpop_damage = simulation_params.get("underpopulation_damage");
+        damage(underpop_damage);
+        underpopulation_damage_taken += (float) underpop_damage;
     }
     else 
     {
-        // Begin mating if in appropriate conditions
         affection += genome.gene("affection_prime");
-        //print("Affection increased to " + std::to_string(affection));
         regen(simulation_params.get("regeneration_amount"));
     }
     setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
