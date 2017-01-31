@@ -36,7 +36,7 @@ double distance(T1& t1, T2& t2)
 template <typename T1, typename T2>
 double angle(T1 a, T2 b)
 { 
-    double angle = atan2(a.y - b.y, a.x - b.x);
+    double angle = atan2(b.y - a.y, b.x - a.x);
     angle = degrees(angle);
     return modAngle(angle);
 }

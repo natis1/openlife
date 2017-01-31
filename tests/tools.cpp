@@ -27,11 +27,11 @@ TEST_CASE( "tools package" )
         requireEq(distance(a, b), 0.);
         a.move(1, 0); // Move right 1
         requireEq(distance(a, b), 1.);
-        requireEq(angle(a.getPosition(), b.getPosition()), 0.);
+        requireEq(angle(b.getPosition(), a.getPosition()), 0.);
         a.move(0, 1); // Move up 1
-        requireEq(angle(a.getPosition(), b.getPosition()), 45.);
+        requireEq(angle(b.getPosition(), a.getPosition()), 45.);
         a.move(-2, -2.); // Move to fourth quadrant 
-        requireEq(angle(a.getPosition(), b.getPosition()), 225.);
+        requireEq(angle(b.getPosition(), a.getPosition()), 225.);
     }
 
     SECTION("Turn rate limiting code")

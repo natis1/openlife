@@ -127,19 +127,18 @@ void Cell::interact(const std::vector<std::shared_ptr<Cell>>& cells, ParamDict& 
     }
 }
 
-void Cell::intelligentRotate(bool overpopulated, ParamDict& simulation_params)
+void Cell::intelligentRotate(bool underpopulated, bool crowded, ParamDict& simulation_params)
 {
     using tools::getLimitedAngle;
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
-    //auto center_of_mass = neighbors.empty() ? getAverageLocation(visible)
-    //                                        : getAverageLocation(neighbors);
-    auto center_of_mass = getAverageLocation(visible);
+    auto center_of_mass = neighbors.empty() or underpopulated ? getAverageLocation(visible)
+                                                              : getAverageLocation(neighbors);
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();
     double limit   = simulation_params.get("turn_rate");
 
-    if (overpopulated) ideal = modAngle(ideal + 180.);
+    if (crowded) ideal = modAngle(ideal + 180.);
 
     setRotation(getLimitedAngle(ideal, current, limit));
 }
@@ -179,7 +178,7 @@ void Cell::update(ParamDict& simulation_params)
     bool overpopulated  = neighbors.size() > (int)simulation_params.get("overpopulation_limit");
     bool crowded        = neighbors.size() > (int)simulation_params.get("crowded_limit");
 
-    intelligentRotate(crowded, simulation_params);
+    intelligentRotate(underpopulated, crowded, simulation_params);
     moveVec(*this, simulation_params.get("move_modifier")); 
 
     if (overpopulated)

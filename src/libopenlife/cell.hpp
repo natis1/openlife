@@ -46,5 +46,5 @@ private:
     std::vector<std::shared_ptr<Cell>> neighbors;
     std::vector<std::shared_ptr<Cell>> visible;
 
-    void intelligentRotate(bool overpopulated, ParamDict& simulation_params);
+    void intelligentRotate(bool underpopulated, bool crowded, ParamDict& simulation_params);
 };
