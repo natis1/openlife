@@ -1,11 +1,11 @@
 mate_radius            50.0
 neighbor_radius        200.0 
 search_radius          500.0
-move_modifier          3
+move_modifier          6
 underpopulation_limit  2
 overpopulation_limit   14
-crowded_limit          14
-regeneration_amount    .001
+crowded_limit          10
+regeneration_amount    1.
 underpopulation_damage 1.
 overpopulation_damage  1.
 affection_threshold    100.
