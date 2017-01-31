@@ -37,13 +37,13 @@ Board::Board(int width, int height) :
 
     search_radius.setFillColor(sf::Color(0, 0, 0, 0));
     search_radius.setOutlineColor(sf::Color(0, 0, 255, 255));
-    search_radius.setOutlineThickness(5.0);
+    search_radius.setOutlineThickness(3.0);
     neighbor_radius.setFillColor(sf::Color(0, 0, 0, 0));
     neighbor_radius.setOutlineColor(sf::Color(255, 0, 0, 255));
-    neighbor_radius.setOutlineThickness(5.0);
+    neighbor_radius.setOutlineThickness(3.0);
     mate_radius.setFillColor(sf::Color(0, 0, 0, 0));
     mate_radius.setOutlineColor(sf::Color(0, 255, 0, 255));
-    mate_radius.setOutlineThickness(5.0);
+    mate_radius.setOutlineThickness(3.0);
 }
 
 
@@ -89,12 +89,13 @@ void Board::_drawSimulation(bool debug)
     averageLocation[0] = 0.;
     averageLocation[1] = 0.;
     
+    sf::CircleShape cellCircle = sf::CircleShape(circle_size);
+    cellCircle.setOrigin(sf::Vector2f(circle_size, circle_size));
     for (auto cell : simulation.cells)
     {
         auto pos = cell->getPosition(); 
-        sf::CircleShape cellCircle = sf::CircleShape(circle_size);
-        cellCircle.setPosition((float) pos.x, (float) pos.y );
         cellCircle.setFillColor(sf::Color(cell->getApproximateFillColor()));
+        cellCircle.setPosition((float) pos.x, (float) pos.y );
         window.draw(cellCircle);
         
         averageLocation[0] += (float) cell->getPosition().x;
