@@ -28,10 +28,6 @@ Board::Board(int width, int height) :
     info.setFont(font);
     info.setCharacterSize(24);
 
-    frame_display.setFont(font);
-    frame_display.setCharacterSize(24);
-    frame_display.setPosition(0., 40.);
-
     averagePoint.setFillColor(sf::Color(255, 102, 0));
     averagePoint.setOrigin(sf::Vector2f(circle_size + 2, circle_size + 2));
 
@@ -65,11 +61,10 @@ void Board::_update()
     average_rotation /= simulation.cells.size();
 
     info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
-                  " Density: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
-                  " Average center deviation: " + to_string(x_dev) + ", " + to_string(y_dev) + 
-                  " Average rotation: " + to_string(average_rotation));
-
-    frame_display.setString( "Drawtime: " + to_string(frame_time/1000.) + "ms");
+                  "\nDensity: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
+                  "\nAverage center deviation: " + to_string(x_dev) + ", " + to_string(y_dev) + 
+                  "\nAverage rotation: " + to_string(average_rotation) + 
+                  "\nDrawtime: " + to_string(frame_time/1000.) + "ms");
 }
 
 void Board::_render(bool debug)
@@ -85,7 +80,6 @@ void Board::_render(bool debug)
     window.setView(info_view);
 
     window.draw(info);
-    window.draw(frame_display);
 
     window.display(); // For organization
 }

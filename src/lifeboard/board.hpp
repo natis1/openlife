@@ -38,7 +38,6 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     sf::Text info;
-    sf::Text frame_display;
 
     sf::View simulation_view;
     sf::View info_view;
