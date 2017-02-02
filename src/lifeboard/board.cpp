@@ -57,9 +57,17 @@ void Board::_update()
     auto x_dev      = averageLoc.x - size;
     auto y_dev      = averageLoc.y - size;
 
+    double average_rotation = 0;
+    for (auto cell : simulation.cells)
+    {
+        average_rotation += cell->getRotation();
+    }
+    average_rotation /= simulation.cells.size();
+
     info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
                   " Density: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
-                  " Average center deviation: " + to_string(x_dev) + ", " + to_string(y_dev));
+                  " Average center deviation: " + to_string(x_dev) + ", " + to_string(y_dev) + 
+                  " Average rotation: " + to_string(average_rotation));
 
     frame_display.setString( "Drawtime: " + to_string(frame_time/1000.) + "ms");
 }
