@@ -179,7 +179,7 @@ void Cell::update(ParamDict& simulation_params)
     bool crowded        = neighbors.size() > (int)simulation_params.get("crowded_limit");
 
     intelligentRotate(underpopulated, crowded, simulation_params);
-    moveVec(*this, simulation_params.get("move_modifier")); 
+    //moveVec(*this, simulation_params.get("move_modifier")); 
 
     if (overpopulated)
     {

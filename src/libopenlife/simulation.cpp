@@ -141,6 +141,14 @@ void Simulation::updateInteractions()
         cell->interact(remaining, simulation_params);
         it++;
     }
+    it = cells.begin();
+    while (it != cells.end())
+    {
+        moveVec(**it, simulation_params.get("move_modifier"));
+        it++;
+    }
+    
+    
 }
 
 bool Simulation::_inBounds(Cell& cell)
