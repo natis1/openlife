@@ -28,14 +28,14 @@ Cell::Cell(Cell& a, Cell& b) :
     setFillColor(genome.representation());
 }
 
-void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight)
+void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
     auto pos      = getPosition();
 
     double normal = 0; // Angle normal to surface
-    double reflected = 0; // Angle after reflection off of surface
+    double reflected = modAngle(rotation + 180.); // Angle after reflection off of surface (default = 180)
 
     bool left   = pos.x - radius < wallx;
     bool right  = pos.x + radius > wallx + wallwidth;
@@ -48,23 +48,19 @@ void Cell::bounce(double wallx, double wally, double wallwidth, double wallheigh
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
     {
-        reflected = (int)(rotation + 180.) % 360;
-        move(1.0, 1.0);
+        move(move_amount, move_amount);
     }
     else if (left && bottom)
     {
-        move(1.0, -1.0);
-        reflected = (int)(rotation + 180) % 360;
+        move(move_amount, -move_amount);
     }
     else if (right && top)
     {
-        move(-1.0, 1.0);
-        reflected = (int)(rotation + 180) % 360;
+        move(-move_amount, move_amount);
     }
     else if (right && bottom)
     {
-        move(-1.0, -1.0);
-        reflected = (int)(rotation + 180) % 360;
+        move(-move_amount, -move_amount);
     }
 
     // Edge cases
@@ -73,31 +69,32 @@ void Cell::bounce(double wallx, double wally, double wallwidth, double wallheigh
         if (left)       
         {
             normal = 0;
-            move(1.0, 0);
+            move(move_amount, 0);
         }
         else if (right) 
         {
-            normal = 180;
-            move(-1.0, 0);
+            normal = move_amount;
+            move(-move_amount, 0);
         }
         else if (top) 
         {
             normal = 90;
-            move(0, 1.0);
+            move(0, move_amount);
         }
         else if (bottom) 
         {
             normal = 270;
-            move(0, -1.0);
+            move(0, -move_amount);
         }
 
-        float inverse_normal = (int)(normal + 180) % 360;
-        float incidence      = rotation - inverse_normal;
+        float inverse_normal = modAngle(normal + 180);
+        float incidence      = modAngle(rotation - inverse_normal);
 
-        reflected = normal - incidence;
+        reflected = modAngle(normal - incidence);
     }
 
     setRotation(reflected);
+    moveVec(*this, move_amount);
 }
 
 

@@ -79,7 +79,7 @@ void Simulation::update()
         if (not _inBounds(*cell))
         {
             // Modify the cell to push it into bounds
-            cell->bounce(border.x, border.y, border.width, border.height);
+            cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
         }
         cell->update(simulation_params);
         auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates
@@ -128,27 +128,18 @@ void Simulation::updateInteractions()
     
     /*
      * TODO: Figure out if there's any good way to optimize this/ add multithreading
-     * 
-     * 
-     * 
      */
     
-    auto it = cells.begin();
-    while (it != cells.end())
+    for (auto it = cells.begin(); it != cells.end(); it++)
     {
         auto cell = *it;
         remaining = std::vector<std::shared_ptr<Cell>>(it + 1, cells.end()); // Slice off the first element of the vector
         cell->interact(remaining, simulation_params);
-        it++;
     }
-    it = cells.begin();
-    while (it != cells.end())
+    for (auto& cell : cells)
     {
-        moveVec(**it, simulation_params.get("move_modifier"));
-        it++;
+        moveVec(*cell, simulation_params.get("move_modifier"));
     }
-    
-    
 }
 
 bool Simulation::_inBounds(Cell& cell)

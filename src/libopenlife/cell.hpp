@@ -34,7 +34,7 @@ public:
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate(ParamDict& simulation_params);
 
-    void bounce(double wallx, double wally, double wallwidth, double wallheight);
+    void bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount);
 
     Genome genome;
 
