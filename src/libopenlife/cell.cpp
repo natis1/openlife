@@ -1,15 +1,15 @@
 #include "cell.hpp"
 
 // Create initial cell
-Cell::Cell() :
-    Entity(10, 100.),
+Cell::Cell(double size, double life) :
+    Entity(size, life),
     genome()
 {
 }
 
 // Create child cell
-Cell::Cell(Cell& a, Cell& b) :
-    Cell::Cell()
+Cell::Cell(double size, double life, Cell& a, Cell& b) :
+    Cell::Cell(size, life)
 {
     using tools::avg;
 
@@ -130,11 +130,11 @@ void Cell::intelligentRotate(bool underpopulated, bool crowded, ParamDict& simul
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
     auto visible_center  = getAverageLocation(visible);
     auto neighbor_center = getAverageLocation(neighbors);
-    auto center_of_mass  = neighbors.empty() ? visible_center 
+    auto center_of_mass  = neighbors.empty() ? visible_center :
+                           // If crowded, turn away from midpoint between neighbor and visible centers
+                           crowded           ? position{(visible_center.x + neighbor_center.x) / 2.0
+                                                      , (visible_center.y + neighbor_center.y) / 2.0}
                                              : neighbor_center; 
-                                             // Midpoint of centers
-                                             //: position{(visible_center.x + neighbor_center.x) / 2.0
-                                             //         , (visible_center.y + neighbor_center.y) / 2.0};
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();
@@ -221,7 +221,7 @@ std::vector<std::shared_ptr<Cell>> Cell::mate(ParamDict& simulation_params)
             {
                 affection = 0;
                 mate->affection = 0;
-                children.push_back(std::make_shared<Cell>(Cell(*this, *mate)));
+                children.push_back(std::make_shared<Cell>(Cell(getRadius(), total_life, *this, *mate)));
             }
         }
     }

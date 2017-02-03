@@ -23,6 +23,7 @@ Simulation::Simulation(std::vector<std::shared_ptr<Cell> > inputCells, double wi
 
 Simulation::Simulation(int nCells, double width, double height, const ParamDict& set_params)
 {
+    simulation_params = set_params;
     //spawn_area = set_spawn_area;
     
     border.x = 0.; border.y = 0.;
@@ -34,7 +35,6 @@ Simulation::Simulation(int nCells, double width, double height, const ParamDict&
     last_update = getTime();
     update_count = 0;
     
-    simulation_params = set_params;
 }
 
 Simulation::Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize)
@@ -172,14 +172,11 @@ void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnY
     
     for (int i = 0; i < nCells; i++)
     {
-        std::shared_ptr<Cell> cell = std::make_shared<Cell>(Cell());
+        auto cell = std::make_shared<Cell>(Cell(simulation_params.get("cell_size"), simulation_params.get("cell_life")));
         cell->setPosition(widthDist(generator), heightDist(generator));
         cell->setRotation(angleDist(generator));
         cells.push_back(cell);
     }
-    
-    
-
 }
 
 
@@ -199,7 +196,3 @@ position  Simulation::_getAverageLocation(){
 }
 
 
-double Simulation::get_param(std::string param)
-{
-    return simulation_params.get(param);
-}

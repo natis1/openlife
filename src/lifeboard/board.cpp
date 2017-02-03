@@ -4,14 +4,14 @@
 namespace objects
 {
 
+const float Board::marker_size = 25.0f;
 const float Board::move_amount = 25.0f;
-const float Board::circle_size = 10.0f;
 const int Board::logging_timesteps = 250;
 
 
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life"),
-    averagePoint(circle_size + 2)
+    averagePoint(marker_size)
 {
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
@@ -29,7 +29,7 @@ Board::Board(int width, int height) :
     info.setCharacterSize(24);
 
     averagePoint.setFillColor(sf::Color(255, 102, 0));
-    averagePoint.setOrigin(sf::Vector2f(circle_size + 2, circle_size + 2));
+    averagePoint.setOrigin(sf::Vector2f(marker_size, marker_size));
 
     search_radius.setFillColor(sf::Color(0, 0, 0, 0));
     search_radius.setOutlineColor(sf::Color(0, 0, 255, 128));
@@ -54,16 +54,21 @@ void Board::_update()
     auto y_dev      = averageLoc.y - size;
 
     double average_rotation = 0;
+    double average_life = 0;
     for (auto cell : simulation.cells)
     {
         average_rotation += cell->getRotation();
+        average_life += cell->lifePercent();
     }
     average_rotation /= simulation.cells.size();
+    average_life /= simulation.cells.size();
+
 
     info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
                   "\nDensity: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
                   "\nAverage center deviation: " + to_string(x_dev) + ", " + to_string(y_dev) + 
-                  "\nAverage rotation: " + to_string(average_rotation) + 
+                  "\nAverage rotation: " + to_string(average_rotation) +
+                  "\nAverage life percent: " + to_string(average_life) + 
                   "\nDrawtime: " + to_string(frame_time/1000.) + "ms");
 }
 
@@ -91,8 +96,9 @@ void Board::_drawSimulation(bool debug)
     averageLocation[0] = 0.;
     averageLocation[1] = 0.;
     
-    sf::CircleShape cellCircle = sf::CircleShape(circle_size);
-    cellCircle.setOrigin(sf::Vector2f(circle_size, circle_size));
+    auto radius = params.get("cell_size");
+    sf::CircleShape cellCircle = sf::CircleShape(radius);
+    cellCircle.setOrigin(sf::Vector2f(radius, radius));
     // Two loops so that cells get drawn above debug info
     // Debug info first
     for (auto cell : simulation.cells)
@@ -123,7 +129,7 @@ void Board::_drawSimulation(bool debug)
     averageLocation[0] = averageLocation[0] / simulation.cells.size();
     averageLocation[1] = averageLocation[1] / simulation.cells.size();
     
-    averagePoint.setPosition(averageLocation[0] + circle_size/2, averageLocation[1] + circle_size/2); 
+    averagePoint.setPosition(averageLocation[0] + marker_size/2, averageLocation[1] + marker_size/2); 
     
     window.draw(border);
     window.draw(averagePoint);
@@ -201,11 +207,12 @@ void Board::_pan()
 // This function should really only call other functions (Similar to how no code goes in int main)
 
 
-void Board::run(int nCells, int x, int y, bool debug) 
+void Board::run(int nCells, int x, int y) 
 {
     using std::to_string;
 
-    ParamDict params("params.txt");
+    params = ParamDict("params.txt");
+    bool debug = params.get("debug") > .5;
 
     simulation = Simulation(nCells, (double) x, (double) y, params);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));
@@ -214,13 +221,13 @@ void Board::run(int nCells, int x, int y, bool debug)
     Board::border.setOutlineThickness(4.0);
 
     double radius;
-    radius = simulation.get_param("search_radius");
+    radius = params.get("search_radius");
     search_radius.setRadius(radius);
     search_radius.setOrigin(sf::Vector2f(radius, radius));
-    radius = simulation.get_param("neighbor_radius");
+    radius = params.get("neighbor_radius");
     neighbor_radius.setRadius(radius);
     neighbor_radius.setOrigin(sf::Vector2f(radius, radius));
-    radius = simulation.get_param("mate_radius");
+    radius = params.get("mate_radius");
     mate_radius.setRadius(radius);
     mate_radius.setOrigin(sf::Vector2f(radius, radius));
     

@@ -51,7 +51,7 @@ public:
     void setFillColor(double r, double g, double b, double a);
     void setFillColor(color c);
     
-private:
+protected:
     double life;
     double total_life;
     

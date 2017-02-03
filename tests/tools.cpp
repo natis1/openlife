@@ -23,7 +23,8 @@ TEST_CASE( "tools package" )
     SECTION("Angle and distance formulas")
     {
 
-        Cell a, b;
+        Cell a(10, 10);
+        Cell b(10, 10);
         requireEq(distance(a, b), 0.);
         a.move(1, 0); // Move right 1
         requireEq(distance(a, b), 1.);

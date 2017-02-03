@@ -47,8 +47,6 @@ struct Simulation
     
     position center_marker;
 
-    double get_param(std::string param);
-
 private:
     // Functions for generating random cells    
     void _generateManyRandomCells(int nCells, int spawnXSize, int spawnYSize);

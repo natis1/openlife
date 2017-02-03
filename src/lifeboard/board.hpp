@@ -11,19 +11,17 @@ namespace objects
 
 class Board
 {
+    const static float marker_size;
     const static float move_amount;
-    const static float circle_size;
     const static int logging_timesteps;
 
     sf::RectangleShape border;
 
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100, int x=1000, int y=1000, bool debug=false);
+    void run(int nCells=100, int x=1000, int y=1000);
     
 private:
-    // Helper functions / Internal methods
-    
     long timestepsCompleted = 0;
 
     void _update();
@@ -50,6 +48,7 @@ private:
 
     // Simulation backend
     Simulation simulation;
+    ParamDict  params;
 
     // Timing
     unsigned long long frame_time;

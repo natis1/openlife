@@ -20,8 +20,8 @@ class Cell : public objects::Entity
 
 public:
 
-    Cell();
-    Cell(Cell& a, Cell& b);
+    Cell(double size, double life);
+    Cell(double size, double life, Cell& a, Cell& b);
     
     float overpopulation_damage_taken  = 0.f;
     float underpopulation_damage_taken = 0.f;
