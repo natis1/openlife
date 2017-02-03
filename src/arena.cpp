@@ -20,7 +20,8 @@ void Arena::run(int nCells, int x, int y)
 {
     using tools::getTime;
 
-    simulation = Simulation(nCells, x, y);
+    ParamDict params("params.txt");
+    simulation = Simulation(nCells, x, y, params);
     unsigned long long start_frame = getTime();
     
     while (true)

@@ -128,8 +128,13 @@ void Cell::intelligentRotate(bool underpopulated, bool crowded, ParamDict& simul
 {
     using tools::getLimitedAngle;
     // If a cell has no neighbors, rotate towards visible cells. Otherwise, use neighborhood's center of mass
-    auto center_of_mass = neighbors.empty() or underpopulated ? getAverageLocation(visible)
-                                                              : getAverageLocation(neighbors);
+    auto visible_center  = getAverageLocation(visible);
+    auto neighbor_center = getAverageLocation(neighbors);
+    auto center_of_mass  = neighbors.empty() ? visible_center 
+                                             : neighbor_center; 
+                                             // Midpoint of centers
+                                             //: position{(visible_center.x + neighbor_center.x) / 2.0
+                                             //         , (visible_center.y + neighbor_center.y) / 2.0};
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();

@@ -21,7 +21,7 @@ Simulation::Simulation(std::vector<std::shared_ptr<Cell> > inputCells, double wi
 }
 
 
-Simulation::Simulation(int nCells, double width, double height)
+Simulation::Simulation(int nCells, double width, double height, const ParamDict& set_params)
 {
     //spawn_area = set_spawn_area;
     
@@ -34,7 +34,7 @@ Simulation::Simulation(int nCells, double width, double height)
     last_update = getTime();
     update_count = 0;
     
-    simulation_params = ParamDict("params.txt");
+    simulation_params = set_params;
 }
 
 Simulation::Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize)

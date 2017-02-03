@@ -203,7 +203,11 @@ void Board::_pan()
 
 void Board::run(int nCells, int x, int y, bool debug) 
 {
-    simulation = Simulation(nCells, (double) x, (double) y);
+    using std::to_string;
+
+    ParamDict params("params.txt");
+
+    simulation = Simulation(nCells, (double) x, (double) y, params);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));
     Board::border.setFillColor(sf::Color(0x00000000));
     Board::border.setOutlineColor(sf::Color(200, 0, 200, 128));
@@ -237,24 +241,19 @@ void Board::run(int nCells, int x, int y, bool debug)
         if (frame_time < 1000000/60) {
             usleep((int) (1000000/60) - frame_time);
         }
-        
-        
 
         if (Board::timestepsCompleted % Board::logging_timesteps == 0){
             
             statistics s = simulation.getStatistics();
             
-            std::cout << "Timestep: " << Board::timestepsCompleted << std::endl;
-            std::cout << "Processed " << Board::logging_timesteps << " steps in " << std::to_string((getTime() - logTime)/1000) << "ms" << std::endl;
-            std::cout << "Alive: " << simulation.getCellCount() << " total births: " << s.births << " total deaths: " << s.deaths << std::endl;
-            std::cout << "Overpopulation deaths: " << s.overpopdeaths << " underpopulation deaths: " << s.underpopdeaths << std::endl;
+            print("Timestep: " + to_string(timestepsCompleted));
+            print("Processed " + to_string(logging_timesteps) + " steps in " + to_string((getTime() - logTime)/1000) + "ms");
+            print("Alive: " + to_string(simulation.getCellCount()) 
+                        + " total births: " + to_string(s.births) + " total deaths: " + to_string(s.deaths));
+            print("Overpopulation deaths: " + to_string(s.overpopdeaths) + " underpopulation deaths: " + to_string(s.underpopdeaths));
             logTime = getTime();
         }
-        
-        
     }
-    
-    
 }
 
 } 
