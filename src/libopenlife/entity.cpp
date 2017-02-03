@@ -24,7 +24,10 @@ void Entity::damage(double n)
 void Entity::regen(double n)
 {
     // This function will only run if not dead.
-    life += n;
+    if (life + n <= total_life)
+    {
+        life += n;
+    }
     
 }
 
