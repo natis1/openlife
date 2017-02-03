@@ -8,7 +8,6 @@ const float Board::marker_size = 25.0f;
 const float Board::move_amount = 25.0f;
 const int Board::logging_timesteps = 250;
 
-
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life"),
     averagePoint(marker_size)

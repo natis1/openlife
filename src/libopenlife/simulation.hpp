@@ -30,8 +30,6 @@ struct Simulation
 
     Simulation();
     Simulation(int nCells, double width, double height, const ParamDict& set_params);
-    Simulation(std::vector<std::shared_ptr<Cell>> inputCells, double width, double height);
-    Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize);
     
     //~Simulation();
     statistics getStatistics();

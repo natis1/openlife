@@ -14,3 +14,4 @@ turn_rate              10
 debug                  0
 cell_life              10
 cell_size              10
+random_start           1

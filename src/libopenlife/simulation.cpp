@@ -6,56 +6,39 @@ const int Simulation::csv_save_period = 500000;
 
 Simulation::Simulation(){}
 
-
-Simulation::Simulation(std::vector<std::shared_ptr<Cell> > inputCells, double width, double height)
-{
-    //Spawn border
-    border.x = 0.; border.y = 0.;
-    border.width = width;
-    border.height = height;
-    
-    //reserve cells
-    cells.reserve(inputCells.size());
-    std::copy(std::begin(inputCells), std::end(inputCells), std::begin(cells));
-    last_update = getTime();
-}
-
-
 Simulation::Simulation(int nCells, double width, double height, const ParamDict& set_params)
 {
     simulation_params = set_params;
-    //spawn_area = set_spawn_area;
     
     border.x = 0.; border.y = 0.;
     border.width = width;
     border.height = height;
     
-    // Spawn area defaults to whole board unless specified otherwise
-    _generateManyRandomCells(nCells, (int) width, (int) height);
+    // Different starting configurations based on params
+    bool random = simulation_params.get("random_start") > .5;
+    if (random)
+    {
+        _generateManyRandomCells(nCells, (int) width, (int) height);
+    }
+    else
+    {
+        auto size = simulation_params.get("cell_size");
+        auto life = simulation_params.get("cell_life");
+        Cell a(size, life);
+        Cell b(size, life);
+        a.setPosition(width/2. + 100., height/2.);
+        b.setPosition(width/2. - 100., height/2.);
+        cells.push_back(std::make_shared<Cell>(a));
+        cells.push_back(std::make_shared<Cell>(b));
+    }
     last_update = getTime();
     update_count = 0;
-    
 }
-
-Simulation::Simulation(int nCells, double width, double height, int spawnXSize, int spawnYSize)
-{
-    border.x = 0.; border.y = 0.;
-    border.width = width;
-    border.height = height;
-    
-    _generateManyRandomCells(nCells, spawnXSize, spawnYSize);
-    simulation_params = ParamDict("params.txt");
-    last_update = getTime();
-    update_count = 0;
-}
-
 
 statistics Simulation::getStatistics()
 {
     return simulationStatus;
 }
-
-
 
 int Simulation::getCellCount()
 {
@@ -66,7 +49,6 @@ float Simulation::getArea()
 {
     return border.width * border.height;
 }
-
 
 void Simulation::update()
 {
