@@ -121,8 +121,8 @@ def main():
             plt.plot(values)
             plt.ylabel(view)
             plt.xlabel('60 iterations')
-            plt.show()
             plt.savefig(view + '.png')
+            plt.show()
         else:
             build_network_video()
 
