@@ -2,14 +2,13 @@
 
 Simulation for studying sustained complexity of deterministic rule based systems
 
-Main dependency is [SFML](http://www.sfml-dev.org/license.php)
-
-![Main Sim](http://i.imgur.com/jgBq3Nx.png)
+![Main Sim](http://i.imgur.com/j37P6Qs.png)
 
 Debug mode:
 
-![Debug Mode](http://i.imgur.com/bkwnTHQ.png)
+![Debug Mode](http://i.imgur.com/oSTUvDG.png)
 
+## Analysis
 
 ### Density:
 
@@ -28,6 +27,8 @@ Debug mode:
 ![Network size](http://i.imgur.com/QKQ3Nyf.png)
 
 ## Build Instructions
+
+Main dependency is [SFML](http://www.sfml-dev.org/license.php)
 
 ### Get prerequisite programs
 
