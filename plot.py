@@ -93,7 +93,7 @@ def calc_average_loc(filename):
 def calc_density(filename):
     content = read_csv(filename)
     print(len(content))
-    return len(content) / 4
+    return len(content)
 
 def calc_num_networks(filename):
     return len(get_networks(filename))
@@ -112,11 +112,10 @@ viewsTable = {
     'network_size' : calc_network_size}
 
 def main():
-    # Recursively build list of data files
-    filenames = find_filenames()
+    filenames = sorted(find_filenames())
 
-    if len(sys.argv) > 1:         # Ignore first argument, which is filepath of script
-        view = sys.argv[1] # View type string is second argument
+    if len(sys.argv) > 1:         
+        view = sys.argv[1] 
         if view in viewsTable:    
             values = [viewsTable[view](filename) for filename in filenames]
             plt.plot(values)
