@@ -19,7 +19,7 @@ def distance(x1, y1, x2, y2):
 
 def get_edges(filename):
     content = read_csv(filename)
-    print('%s (%s)' % (filename, len(content)))
+    #print('%s (%s)' % (filename, len(content)))
 
     edges = []
     for i, (x1, y1) in enumerate(content):
@@ -28,7 +28,7 @@ def get_edges(filename):
             return distance(x1, y1, x2, y2)
         others = content[:i] + content[i+1:] 
         # Find n nearest neighbors
-        neighbors = 1
+        neighbors = 2
         nearest   = sorted(enumerate(others), key=score)[:neighbors]
         for node in nearest:
             edges.append((i, node[0]))
@@ -54,8 +54,8 @@ def inner_networks(edges):
 def graph(filename):
     edges    = get_edges(filename)
     networks = inner_networks(edges)
-    print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
-    print(networks)
+    #print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
+    #print(networks)
 
     G=nx.Graph()#  G is an empty Graph
     G.add_nodes_from(range(len(content)))
@@ -69,7 +69,7 @@ def build_network_video():
         filenames = find_filenames() 
         for filename in filenames:
             if filename.endswith('.csv'):
-                print('Graphing %s' % filename)
+                #print('Graphing %s' % filename)
                 graph(filename)
     finally:
         os.chdir('images')
@@ -92,7 +92,7 @@ def calc_average_loc(filename):
 
 def calc_density(filename):
     content = read_csv(filename)
-    print(len(content))
+    #print(len(content))
     return len(content)
 
 def calc_num_networks(filename):
@@ -108,8 +108,8 @@ def calc_network_size(filename):
 viewsTable = {
     'density'      : calc_density,
     'location'     : calc_average_loc,
-    'num_networks' : calc_num_networks,
-    'network_size' : calc_network_size}
+    'num-networks' : calc_num_networks,
+    'network-size' : calc_network_size}
 
 def main():
     filenames = sorted(find_filenames())
@@ -122,7 +122,6 @@ def main():
             plt.ylabel(view)
             plt.xlabel('60 iterations')
             plt.savefig(view + '.png')
-            plt.show()
         else:
             build_network_video()
 

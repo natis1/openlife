@@ -17,3 +17,6 @@ libopenlife.so
 openlifecli
 openlifegui
 *.png
+*.pdf
+*.log
+*.aux
