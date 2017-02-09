@@ -43,9 +43,9 @@ def main():
     plottypes = ['density', 'location', 'num-networks', 'network-size']
 
     reportBody = ''
-    for plottype in plottypes:
+    for i, plottype in enumerate(plottypes):
         subprocess.call(['./plot.py', plottype])
-        reportBody += create_fig(plottype + '.png', '', '') + '\n'
+        reportBody += create_fig(plottype + '.png', plottype + '-graph', str(i)) + '\n'
     
     report = reportTemplate % ('02-06-2017', 'Eli Stone and Lucas Saldyt', reportBody)
     with open('report.tex', 'w') as reportfile:
