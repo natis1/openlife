@@ -18,6 +18,7 @@ Board::Board(int width, int height) :
     
     auto view = window.getView();
     simulation_view = view;
+    simulation_view.zoom(1.7f);
     info_view = view;
     
     if (!font.loadFromFile("resources/UbuntuMono-R.ttf"))
@@ -65,10 +66,12 @@ void Board::_update()
 
     statistics s = simulation.getStatistics();
     info.setString("Cells: "           + to_string(simulation.getCellCount()) + 
+                  "\nDrawtime: "       + to_string(frame_time/1000.) + "ms" +
+                  "\n"+
                   "\nAvg cent dev:   " + to_string(x_dev) + ", " + to_string(y_dev) + 
                   "\nAvg angle diff: " + to_string(tools::angleDiff(average_rotation, 0.0)) +
                   "\nAvg life p:     " + to_string(average_life) + 
-                  "\nDrawtime: "       + to_string(frame_time/1000.) + "ms" +
+                  "\n" +
                   "\nBirths:   "       + to_string(s.births) + 
                   "\nDeaths:   "       + to_string(s.deaths) + 
                   "\nOverpop:  "       + to_string(s.overpopdeaths) + 
