@@ -1,7 +1,7 @@
 mate_radius            40.0
 neighbor_radius        50.0 
 search_radius          100.0
-move_modifier          30
+move_modifier          3
 underpopulation_limit  1
 overpopulation_limit   10
 crowded_limit          3
