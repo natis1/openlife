@@ -10,7 +10,8 @@ const int Board::logging_timesteps = 250;
 
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life"),
-    averagePoint(marker_size)
+    averagePoint(marker_size),
+    angle_line(sf::Vector2f(35, 5))
 {
     border.setFillColor(sf::Color(0, 0, 0, 0));
     border.setOutlineColor(sf::Color(200, 0, 200, 128));
@@ -40,6 +41,10 @@ Board::Board(int width, int height) :
     mate_radius.setFillColor(sf::Color(0, 0, 0, 0));
     mate_radius.setOutlineColor(sf::Color(0, 255, 0, 128));
     mate_radius.setOutlineThickness(2.0);
+
+    auto line_size = angle_line.getSize();
+    angle_line.setOrigin(sf::Vector2f(0., line_size.y / 2.0));
+    angle_line.setFillColor(sf::Color(255, 255, 255, 128));
 }
 
 
@@ -118,8 +123,14 @@ void Board::_drawSimulation(bool debug)
             window.draw(mate_radius);
             neighbor_radius.setPosition(pos.x, pos.y);
             window.draw(neighbor_radius);
+            angle_line.setPosition(pos.x, pos.y);
+            angle_line.setRotation(cell->getRotation());
+            window.draw(angle_line);
         }
     }
+    // Draw averagepoint behind cell bodies
+    window.draw(averagePoint);
+
     // Cell bodies second
     for (auto cell : simulation.cells)
     {
@@ -138,7 +149,6 @@ void Board::_drawSimulation(bool debug)
     averagePoint.setPosition(averageLocation[0] + marker_size/2, averageLocation[1] + marker_size/2); 
     
     window.draw(border);
-    window.draw(averagePoint);
     
 }
 

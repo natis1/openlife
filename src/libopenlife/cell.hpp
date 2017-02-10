@@ -5,7 +5,6 @@
 #include "tools.hpp"
 
 #include "entity.hpp"
-#include "genome.hpp"
 #include "paramdict.hpp"
 
 
@@ -35,8 +34,6 @@ public:
     std::vector<std::shared_ptr<Cell>> mate(ParamDict& simulation_params);
 
     void bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount);
-
-    Genome genome;
 
 private:
     // After this reaches a threshhold a stork comes down and provides the cells with babies

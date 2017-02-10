@@ -45,6 +45,7 @@ private:
     sf::CircleShape search_radius;
     sf::CircleShape neighbor_radius;
     sf::CircleShape mate_radius;
+    sf::RectangleShape angle_line;
 
     // Simulation backend
     Simulation simulation;

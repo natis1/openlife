@@ -2,8 +2,7 @@
 
 // Create initial cell
 Cell::Cell(double size, double life) :
-    Entity(size, life),
-    genome()
+    Entity(size, life)
 {
 }
 
@@ -12,8 +11,6 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
     Cell::Cell(size, life)
 {
     using tools::avg;
-
-    genome = Genome(a.genome, b.genome);
 
     setRotation(a.getRotation() + 90.);
 
@@ -25,7 +22,6 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
-    setFillColor(genome.representation());
 }
 
 void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount)
@@ -197,7 +193,7 @@ void Cell::update(ParamDict& simulation_params)
     }
     else 
     {
-        affection += genome.gene("affection_prime");
+        affection += simulation_params.get("affection_prime");
         regen(simulation_params.get("regeneration_amount"));
     }
     setFillColor(getFillColor().r, getFillColor().g, getFillColor().b, 255 * lifePercent());
