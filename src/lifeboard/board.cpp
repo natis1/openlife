@@ -63,12 +63,16 @@ void Board::_update()
     average_life /= simulation.cells.size();
 
 
-    info.setString("Cells: "   + to_string(simulation.getCellCount()) + 
-                  "\nDensity: " + to_string(simulation.getCellCount() * 1000000 / simulation.getArea()) + 
-                  "\nAverage center deviation: " + to_string(x_dev) + ", " + to_string(y_dev) + 
-                  "\nAverage rotation: " + to_string(average_rotation) +
-                  "\nAverage life percent: " + to_string(average_life) + 
-                  "\nDrawtime: " + to_string(frame_time/1000.) + "ms");
+    statistics s = simulation.getStatistics();
+    info.setString("Cells: "           + to_string(simulation.getCellCount()) + 
+                  "\nAvg cent dev:   " + to_string(x_dev) + ", " + to_string(y_dev) + 
+                  "\nAvg angle diff: " + to_string(tools::angleDiff(average_rotation, 0.0)) +
+                  "\nAvg life p:     " + to_string(average_life) + 
+                  "\nDrawtime: "       + to_string(frame_time/1000.) + "ms" +
+                  "\nBirths:   "       + to_string(s.births) + 
+                  "\nDeaths:   "       + to_string(s.deaths) + 
+                  "\nOverpop:  "       + to_string(s.overpopdeaths) + 
+                  "\nUnderpop: "       + to_string(s.underpopdeaths));
 }
 
 void Board::_render(bool debug)
