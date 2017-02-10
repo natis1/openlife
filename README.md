@@ -12,19 +12,19 @@ Debug mode:
 
 ### Density:
 
-![Density Graph](http://i.imgur.com/oP46GWo.png)
+![Density Graph](http://i.imgur.com/MYmphTZ.png)
 
 ### Average Location:
 
-![Location Graph](http://i.imgur.com/CJyFsea.png)
+![Location Graph](http://i.imgur.com/zc0sZHi.png)
 
 ### Number of networks:
 
-![Number of networks](http://i.imgur.com/wRn584U.png)
+![Number of networks](http://i.imgur.com/bZ1i7E5.png)
 
 ### Network size:
 
-![Network size](http://i.imgur.com/QKQ3Nyf.png)
+![Network size](http://i.imgur.com/GMYjwmU.png)
 
 ## Build Instructions
 
