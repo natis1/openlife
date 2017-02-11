@@ -2,24 +2,33 @@
 
 Simulation for studying sustained complexity of deterministic rule based systems
 
-Main dependency is [SFML](http://www.sfml-dev.org/license.php)
-
-![Main Sim](http://i.imgur.com/jgBq3Nx.png)
+![Main Sim](http://i.imgur.com/j37P6Qs.png)
 
 Debug mode:
 
-![Debug Mode](http://i.imgur.com/bkwnTHQ.png)
+![Debug Mode](http://i.imgur.com/oSTUvDG.png)
 
+## Analysis
 
-### A density graph (Basic analysis):
+### Density:
 
-![Density Graph](http://i.imgur.com/4DIB9a0.png)
+![Density Graph](http://i.imgur.com/MYmphTZ.png)
 
-### Average Location Graph:
+### Average Location:
 
-![Location Graph](http://i.imgur.com/kAvGROO.png)
+![Location Graph](http://i.imgur.com/zc0sZHi.png)
+
+### Number of networks:
+
+![Number of networks](http://i.imgur.com/bZ1i7E5.png)
+
+### Network size:
+
+![Network size](http://i.imgur.com/GMYjwmU.png)
 
 ## Build Instructions
+
+Main dependency is [SFML](http://www.sfml-dev.org/license.php)
 
 ### Get prerequisite programs
 

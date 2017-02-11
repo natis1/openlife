@@ -19,7 +19,7 @@ def distance(x1, y1, x2, y2):
 
 def get_edges(filename):
     content = read_csv(filename)
-    print('%s (%s)' % (filename, len(content)))
+    #print('%s (%s)' % (filename, len(content)))
 
     edges = []
     for i, (x1, y1) in enumerate(content):
@@ -28,7 +28,7 @@ def get_edges(filename):
             return distance(x1, y1, x2, y2)
         others = content[:i] + content[i+1:] 
         # Find n nearest neighbors
-        neighbors = 1
+        neighbors = 2
         nearest   = sorted(enumerate(others), key=score)[:neighbors]
         for node in nearest:
             edges.append((i, node[0]))
@@ -54,8 +54,8 @@ def inner_networks(edges):
 def graph(filename):
     edges    = get_edges(filename)
     networks = inner_networks(edges)
-    print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
-    print(networks)
+    #print('Edge set of %s nodes and %s edges contains %s networks' % (len(content), len(edges), len(networks)))
+    #print(networks)
 
     G=nx.Graph()#  G is an empty Graph
     G.add_nodes_from(range(len(content)))
@@ -69,7 +69,7 @@ def build_network_video():
         filenames = find_filenames() 
         for filename in filenames:
             if filename.endswith('.csv'):
-                print('Graphing %s' % filename)
+                #print('Graphing %s' % filename)
                 graph(filename)
     finally:
         os.chdir('images')
@@ -92,8 +92,8 @@ def calc_average_loc(filename):
 
 def calc_density(filename):
     content = read_csv(filename)
-    print(len(content))
-    return len(content) / 4
+    #print(len(content))
+    return len(content)
 
 def calc_num_networks(filename):
     return len(get_networks(filename))
@@ -108,21 +108,19 @@ def calc_network_size(filename):
 viewsTable = {
     'density'      : calc_density,
     'location'     : calc_average_loc,
-    'num_networks' : calc_num_networks,
-    'network_size' : calc_network_size}
+    'num-networks' : calc_num_networks,
+    'network-size' : calc_network_size}
 
 def main():
-    # Recursively build list of data files
-    filenames = find_filenames()
+    filenames = sorted(find_filenames())
 
-    if len(sys.argv) > 1:         # Ignore first argument, which is filepath of script
-        view = sys.argv[1] # View type string is second argument
+    if len(sys.argv) > 1:         
+        view = sys.argv[1] 
         if view in viewsTable:    
             values = [viewsTable[view](filename) for filename in filenames]
             plt.plot(values)
             plt.ylabel(view)
             plt.xlabel('60 iterations')
-            plt.show()
             plt.savefig(view + '.png')
         else:
             build_network_video()

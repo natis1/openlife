@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -7,6 +8,8 @@
 #include <sys/time.h> // To keep constant frametime
 #include <unistd.h>
 #include <math.h>
+#include <algorithm>
+
 #include "physics.hpp"
 
 namespace tools
@@ -18,6 +21,8 @@ std::uniform_int_distribution<std::mt19937::result_type> dist(int a, int b);
 std::uniform_real_distribution<double> dist(double a, double b);
 int sign(std::mt19937);
 unsigned long long getTime();
+void writeFile(std::vector<std::string> content, std::string filename);
+std::vector<std::string> readFile(std::string filename);
 
 template <typename T>
 T avg (T a, T b)
@@ -44,10 +49,13 @@ void writeCSV(std::string filename, std::vector<T> items)
     csvfile.open(filename);
     for (const auto& item : items)
     {
-        auto line = item->csv();
+        std::string line = item->csv() + " " ;
         csvfile << line + "\n";
     }
     csvfile.close();
 }
+
+double getLimitedAngle(double ideal, double current, double limit);
+double angleDiff(double a, double b);
 
 }

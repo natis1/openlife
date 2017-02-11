@@ -1,9 +1,13 @@
-#include "openlifelib/board.hpp"
+//Openlifecli is, like all of openlife, licensed under the GPLv3 or later.
+
+
+#include "arena.hpp"
 
 int main()
 {
-    Board board;
-    board.run(50, 2000, 2000, true); // Initial simulation with 50 starting cells, with debug information hidden
+    using objects::Arena;
+    Arena arena;
+    arena.run(100, 500, 500); // Initial simulation with 50 starting cells
 
     return 0;
 }
