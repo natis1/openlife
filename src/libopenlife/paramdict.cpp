@@ -1,101 +1,26 @@
 #include "paramdict.hpp"
 
-std::tuple<std::string, double> sepParamLine(std::string line)
-{
-    bool foundString = false;
-    bool foundDouble = false;
-    // is the iterator currently inside a variable?
-    bool isLookingAtData = false;
-    
-    auto startkey = line.begin();
-    auto endkey   = line.begin(); 
-    auto startval = line.begin();
-    auto endval =  line.begin();
-    
-    //An idiot proof error detector will always attract a larger idiot.
-    for (auto it = line.begin(); it != line.end(); it++){
-        if (!foundString) {
-            if (*it == ' ' || *it == '\t'){
-                continue;
-            } else if (*it == EOF) {
-                std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return std::make_tuple("INVALID_TUPLE", 0.0);
-            } else {
-                startkey = it;
-                //Protects against keys with a length of 1
-                endkey   = it;
-                foundString = true;
-                isLookingAtData = true;
-            } 
-            
-            // foundString is implicit in this else if
-        } else if (isLookingAtData && !foundDouble) {
-            if (*it != ' ' &&  *it != '\t' && *it != EOF) {
-                continue;
-            } else if (*it == ' ' || *it == '\t') {
-                endkey = it;
-                isLookingAtData = false;
-                continue;
-            } else {
-                std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return std::make_tuple("INVALID_TUPLE", 0.0);
-            }
-            
-            // !islookingatdata and foundString are implicit in this else if
-        } else if (!foundDouble) {
-            if (*it == ' ' || *it == '\t') {
-                continue;
-            } else if (isdigit(*it) || *it == '.' || *it == '-') {
-                startval = it;
-                endval   = it;
-                isLookingAtData = true;
-                foundDouble = true;
-            } else if (*it != EOF) {
-                std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-                return std::make_tuple("INVALID_TUPLE", 0.0);
-            } else {
-                std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return std::make_tuple("INVALID_TUPLE", 0.0);
-            }
-        } else {
-            if (*it == ' ' || *it == '\t') {
-                break;
-            } else if (isdigit(*it) || *it == '.') {
-                endval = it;
-                continue;
-            } else if (*it != EOF) {
-                std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-                return std::make_tuple("INVALID_TUPLE", 0.0);
-            } else {
-                std::cerr << "MAJOR ERROR: INVALID DATA IN LINE:" << std::endl << line << std::endl << "Unexpected EOF or 0x04" << std::endl;
-                return std::make_tuple("invalid_tuple", 0.0);
-            }
-            
-        }
-    }
-    
-    if (line.length() == 0) {
-        std::cerr << "Found a blank line?! This should NEVER happen!!" << std::endl << "If you haven't modified the code, then please alert us at https://github.com/natis1/openlife/issues" << std::endl;
-        return std::make_tuple("invalid_tuple", 0.0);
-    }
-    
-    // Check if user made a valid double
-    
-    char* validDouble;
-    std::string val(startval, endval + 1);
-    double convertedDouble = strtod(val.c_str(), &validDouble);
+#include <sstream>
+#include <iostream>
+#include <iterator>
+#include <assert.h>
 
-    //Will be true if the operation fails
-    if (*validDouble) {
-        std::cerr << "Minor error: Unable to identify the value in line:" << std::endl << line << std::endl << "This line will be ignored. Please fix it." << std::endl;
-        return std::make_tuple("invalid_tuple", 0.0);
-    }
-    else {
-        std::string key(startkey, endkey);
-        return std::make_tuple(key, convertedDouble);
-    }
-    
-    
+#include <algorithm>
+
+// As per http://stackoverflow.com/questions/2275135/splitting-a-string-by-whitespace-in-c
+std::vector<std::string> split(std::string const &input) { 
+    std::istringstream buffer(input);
+    std::vector<std::string> ret{std::istream_iterator<std::string>(buffer), 
+				 std::istream_iterator<std::string>()};
+    return ret;
+}
+
+std::tuple<std::string, std::string> sepLine(const std::string& line)
+{
+    assert(not line.empty());
+    auto terms = split(line);
+    assert(terms.size() == 2); // KV pairs tend to come in pairs
+    return std::make_tuple(terms[0], terms[1]);
 }
 
 ParamDict::ParamDict(std::string filename)
@@ -103,17 +28,27 @@ ParamDict::ParamDict(std::string filename)
     print("Reading parameter dictionary from " + filename);
     for (auto line : tools::readFile(filename))
     {
-        if (line.length() == 0){
+        if (line.empty()){
             continue;
         }
-        auto seperated = sepParamLine(line);
+        auto seperated = sepLine(line);
         auto key = std::get<0>(seperated);
-        if (key == "INVALID_TUPLE") {
-            continue;
+        auto val_field = std::get<1>(seperated);
+        print("\"" + key + "\", \"" + val_field + "\"");
+        try
+        {
+            auto val = std::stod(val_field);
+            print("Reading " + val_field + " as double setting");
+            params[key] = val;
         }
-        auto val = std::get<1>(seperated);
-        params[key] = val;
-        print("\"" + key + "\", \"" + std::to_string(val) + "\"");
+        catch (const std::invalid_argument& e)
+        {
+            print("Reading " + val_field + " as string setting");
+            assert(not std::any_of(val_field.begin(), val_field.end(), ::isdigit));
+            // Make setting strings lowercase
+            std::transform(val_field.begin(), val_field.end(), val_field.begin(), ::tolower);
+            settings[key] = val_field;
+        }
     }
 }
 
@@ -129,4 +64,15 @@ double ParamDict::get(std::string param)
         throw std::exception();
     }
     return params[param];
+}
+
+std::string ParamDict::getSetting(std::string s)
+{
+    auto got = settings.find(s);
+    if ( got == settings.end() )
+    {
+        print(s + " is not an element of the settings dictionary");
+        throw std::exception();
+    }
+    return settings[s];
 }

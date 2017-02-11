@@ -148,7 +148,10 @@ void Board::_drawSimulation(bool debug)
     
     averagePoint.setPosition(averageLocation[0] + marker_size/2, averageLocation[1] + marker_size/2); 
     
-    //window.draw(border);
+    if (params.getSetting("bordered") == "true")
+    {
+        window.draw(border);
+    }
     
 }
 
@@ -228,7 +231,7 @@ void Board::run(int nCells, int x, int y)
     using std::to_string;
 
     params = ParamDict("params.txt");
-    bool debug = params.get("debug") > .5;
+    bool debug = params.getSetting("debug") == "true";
 
     simulation = Simulation(nCells, (double) x, (double) y, params);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));

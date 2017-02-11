@@ -15,7 +15,7 @@ Simulation::Simulation(int nCells, double width, double height, const ParamDict&
     border.height = height;
     
     // Different starting configurations based on params
-    bool random = simulation_params.get("random_start") > .5;
+    bool random = simulation_params.getSetting("random_start") == "true";
     if (random)
     {
         _generateManyRandomCells(nCells, (int) width, (int) height);
@@ -61,7 +61,10 @@ void Simulation::update()
         if (not _inBounds(*cell))
         {
             // Modify the cell to push it into bounds
-            //cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
+            if (simulation_params.getSetting("bordered") == "true")
+            {
+                cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
+            }
         }
         cell->update(simulation_params);
         auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates
