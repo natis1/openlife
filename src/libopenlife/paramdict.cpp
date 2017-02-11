@@ -37,6 +37,8 @@ ParamDict::ParamDict(std::string filename)
         print("\"" + key + "\", \"" + val_field + "\"");
         try
         {
+            // Treat the string "infinite" as the string "infinite", not as a double
+            if (val_field == "infinite") throw std::invalid_argument("Chose to read \"infinite\" as string"); 
             auto val = std::stod(val_field);
             print("Reading " + val_field + " as double setting");
             params[key] = val;

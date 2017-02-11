@@ -60,10 +60,17 @@ void Simulation::update()
     {
         if (not _inBounds(*cell))
         {
-            // Modify the cell to push it into bounds
-            if (simulation_params.getSetting("bordered") == "true")
+            auto border_setting = simulation_params.getSetting("borders");
+            if (border_setting != "none")
             {
-                cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
+                bool infinite = border_setting == "infinite";
+                cell->interactBorder(border.x, border.y, border.width, border.height, 
+                                     simulation_params.get("move_modifier"), 
+                                     infinite);
+            }
+            if (border_setting == "damage")
+            {
+                cell->damage(simulation_params.get("border_damage"));
             }
         }
         cell->update(simulation_params);
@@ -99,7 +106,6 @@ void Simulation::update()
             count = "0" + count;
         }
         std::string filename = "data/simulation_" + count + ".csv";
-        //print(filename);
         tools::writeCSV(filename, cells);
         last_update = getTime();
         update_count++;
@@ -141,7 +147,6 @@ void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnY
     
     using tools::dist;
     using tools::randomGenerator;
-    
     
     // Distributions for initial random settings
     auto widthDist  = dist((int)border.x, spawnXSize - (int) border.x);

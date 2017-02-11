@@ -33,7 +33,8 @@ public:
     std::string csv();
     std::vector<std::shared_ptr<Cell>> mate(ParamDict& simulation_params);
 
-    void bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount);
+    void interactBorder(double wallx, double wally, double wallwidth, double wallheight, 
+                        double move_amount, bool infinite);
 
 private:
     // After this reaches a threshhold a stork comes down and provides the cells with babies
@@ -44,4 +45,6 @@ private:
     std::vector<std::shared_ptr<Cell>> visible;
 
     void intelligentRotate(bool underpopulated, bool crowded, ParamDict& simulation_params);
+    void _borderMove(bool left, bool right, bool top, bool bottom, double dx, double dy);
+    double _calcReflected(bool left, bool right, bool top, bool bottom, const double& default_reflected);
 };
