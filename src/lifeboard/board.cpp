@@ -148,7 +148,7 @@ void Board::_drawSimulation(bool debug)
     
     averagePoint.setPosition(averageLocation[0] + marker_size/2, averageLocation[1] + marker_size/2); 
     
-    //window.draw(border);
+    window.draw(border);
     
 }
 

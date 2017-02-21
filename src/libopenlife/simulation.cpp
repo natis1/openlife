@@ -61,7 +61,12 @@ void Simulation::update()
         if (not _inBounds(*cell))
         {
             // Modify the cell to push it into bounds
-            //cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
+            //cell->bounce(border.x, border.y, border.width, border.height, 
+            //             simulation_params.get("move_modifier"));
+            
+            cell->damage(10000.);
+            
+            
         }
         cell->update(simulation_params);
         auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates

@@ -3,7 +3,7 @@
 
 #include "arena.hpp"
 
-int main()
+int main(int argc, char** args)
 {
     using objects::Arena;
     Arena arena;

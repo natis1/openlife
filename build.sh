@@ -15,7 +15,6 @@ TEST_NAME="openlifetests"
 LIB_NAME="libopenlife.so"
 GUI_NAME="openlifegui"
 
-rm -r "$BUILD_PATH"
 mkdir "$BUILD_PATH"
 cd "$BUILD_PATH"
 
