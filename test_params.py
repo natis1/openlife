@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import subprocess, os
-from collections import namedtuple
+from collections import namedtuple, OrderedDict
 from copy import deepcopy
 
 Variance = namedtuple('Variance', ['name', 'begin', 'end', 'step'])
@@ -26,7 +26,7 @@ def generate_variances(filename):
     return (variance_set(variance) for variance in variances)
 
 def read_param_file(filename):
-    paramdict = dict()
+    paramdict = OrderedDict()
     with open(filename, 'r') as params:
         for line in params:
             if len(line.split()) == 2:

@@ -1,1 +1,1 @@
-turn_rate 10 100 10
+turn_rate 10 100 30

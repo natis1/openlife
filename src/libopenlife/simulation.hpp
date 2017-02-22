@@ -33,7 +33,6 @@ struct Simulation
     
     //~Simulation();
     statistics getStatistics();
-    
 
     void update();
     void updateInteractions();

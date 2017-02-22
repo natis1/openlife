@@ -24,7 +24,9 @@ void Arena::run(int nCells, int x, int y)
     simulation = Simulation(nCells, x, y, params);
     unsigned long long start_frame = getTime();
     
-    while (true)
+    int i = 0;
+    auto max_iters = static_cast<int>(params.get("max_iterations"));
+    while (i < max_iters)
     {
         _update();
         timestepsCompleted++;
@@ -42,7 +44,7 @@ void Arena::run(int nCells, int x, int y)
         }
 
         if (simulation.getCellCount() == 0) break;
-        
+        i++;
     }
 }
 
