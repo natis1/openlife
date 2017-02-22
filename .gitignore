@@ -21,3 +21,4 @@ openlifegui
 *.log
 *.aux
 __temp_params__.txt
+output/param_testing

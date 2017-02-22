@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import subprocess, os
+import subprocess, shutil, os
 from collections import namedtuple, OrderedDict
 from copy import deepcopy
 
@@ -45,11 +45,15 @@ def main():
         defaultParams = read_param_file('params.txt')
         varianceSets  = generate_variances('variances.txt')
         params        = deepcopy(defaultParams) 
+        i = 0
         for varSet in varianceSets:
             for name, value in varSet:
                 params[name] = value
                 write_params(params, '__temp_params__.txt') 
                 subprocess.call('./openlifecli __temp_params__.txt', shell=True)
+                shutil.copytree('output/data', 'output/param_testing/data_%s' % i)
+                shutil.copy('__temp_params__.txt', 'output/param_testing/params_%s' % i)
+                i += 1
             params = deepcopy(defaultParams)
     finally:
         os.remove('__temp_params__.txt')
