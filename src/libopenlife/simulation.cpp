@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-const int Simulation::csv_save_period = 500000;
+const int Simulation::csv_save_period = 100000;
 
 Simulation::Simulation(){}
 
@@ -105,7 +105,7 @@ void Simulation::update()
         {
             count = "0" + count;
         }
-        std::string filename = "data/simulation_" + count + ".csv";
+        std::string filename = "output/data/simulation_" + count + ".csv";
         tools::writeCSV(filename, cells);
         last_update = getTime();
         update_count++;

@@ -11,7 +11,7 @@ def read_csv(filename):
         return [convert(line) for line in csvfile]
 
 def find_filenames():
-    return ['data/' + filename for _, _, filenames in os.walk('data') for filename in filenames]
+    return ['output/data/' + filename for _, _, filenames in os.walk('output/data') for filename in filenames]
 
 def distance(x1, y1, x2, y2):
     return sqrt((x1 - x2)**2 + (y1 - y2)**2)
@@ -128,7 +128,7 @@ def main():
             plt.plot(values)
             plt.ylabel(view)
             plt.xlabel('60 iterations')
-            plt.savefig('images/%s.png' % view)
+            plt.savefig('output/images/%s.png' % view)
         else:
             raise ValueError('Unknown argument: %s\nValid arguments are:\n%s' % (view, '\n'.join(viewsTable.keys())))
     else:

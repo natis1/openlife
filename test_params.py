@@ -40,15 +40,19 @@ def write_params(params, filename):
             outfile.write('%s %s\n' % param)
 
 def main():
-    defaultParams = read_param_file('params.txt')
-    varianceSets  = generate_variances('variances.txt')
-    params        = deepcopy(defaultParams) 
-    for varSet in varianceSets:
-        for name, value in varSet:
-            params[name] = value
-            write_params(params, '__temp_params__.txt') 
-            subprocess.call('./openlifegui __temp_params__.txt', shell=True)
-        params = deepcopy(defaultParams)
+    try:
+        subprocess.call('./build.sh', shell=True)
+        defaultParams = read_param_file('params.txt')
+        varianceSets  = generate_variances('variances.txt')
+        params        = deepcopy(defaultParams) 
+        for varSet in varianceSets:
+            for name, value in varSet:
+                params[name] = value
+                write_params(params, '__temp_params__.txt') 
+                subprocess.call('./openlifecli __temp_params__.txt', shell=True)
+            params = deepcopy(defaultParams)
+    finally:
+        os.remove('__temp_params__.txt')
 
 if __name__ == '__main__':
     main()
