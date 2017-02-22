@@ -20,3 +20,4 @@ openlifegui
 *.pdf
 *.log
 *.aux
+__temp_params__.txt
