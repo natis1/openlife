@@ -1,6 +1,6 @@
 mate_radius            40.0
 neighbor_radius        50.0 
-search_radius          200.0
+search_radius          500.0
 move_modifier          5
 underpopulation_limit  1
 overpopulation_limit   10
@@ -11,7 +11,7 @@ overpopulation_damage  1.
 affection_prime        .09
 affection_threshold    10.
 kids_per_reproduction  2.
-turn_rate              50
+turn_rate              30
 cell_life              100
 cell_size              10
 
@@ -19,4 +19,4 @@ border_damage          100.0
 
 random_start           true
 debug                  false 
-borders                bounce 
+borders                none 

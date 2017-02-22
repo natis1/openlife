@@ -4,12 +4,18 @@
  */
  
 #include "board.hpp"
+#include "args.hpp"
 
-int main()
+int main(int argc, char** args)
 {
     using objects::Board;
-    Board board(1000, 1000);
-    board.run(100, 1000, 1000); // Initial simulation with 50 starting cells
-
+    
+    
+    
+    
+    Board board(1920, 1080);
+    board.run(100, 1920, 1080); // Initial simulation with 50 starting cells
+    
+    
     return 0;
 }
