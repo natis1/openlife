@@ -223,11 +223,11 @@ void Board::_pan()
 // This function should really only call other functions (Similar to how no code goes in int main)
 
 
-void Board::run(int nCells, int x, int y) 
+void Board::run(int nCells, int x, int y, std::string paramFile) 
 {
     using std::to_string;
 
-    params = ParamDict("params.txt");
+    params = ParamDict(paramFile);
     bool debug = params.get("debug") > .5;
 
     simulation = Simulation(nCells, (double) x, (double) y, params);
