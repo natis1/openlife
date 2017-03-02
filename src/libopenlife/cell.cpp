@@ -12,7 +12,7 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
 {
     using tools::avg;
 
-    setRotation(a.getRotation() + 90.);
+    //setRotation(a.getRotation() + 90.);
 
     position posA = a.getPosition();
     position posB = b.getPosition();
@@ -162,9 +162,12 @@ void Cell::intelligentRotate(bool underpopulated, bool crowded, ParamDict& simul
     auto neighbor_center = getAverageLocation(neighbors);
     auto center_of_mass  = neighbors.empty() ? visible_center :
                            // If crowded, turn away from midpoint between neighbor and visible centers
+                                             neighbor_center;
+    /*
                            crowded           ? position{(visible_center.x + neighbor_center.x) / 2.0
                                                       , (visible_center.y + neighbor_center.y) / 2.0}
                                              : neighbor_center; 
+                                            */
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();

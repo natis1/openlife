@@ -4,7 +4,7 @@ search_radius          200.0
 move_modifier          5
 underpopulation_limit  1
 overpopulation_limit   10
-crowded_limit          3
+crowded_limit          10
 regeneration_amount    0.
 underpopulation_damage 1.
 overpopulation_damage  1.
@@ -16,8 +16,8 @@ cell_life              100
 cell_size              10
 
 border_damage          100.0
-max_iterations         100
+max_iterations         1000
 
 random_start           true
-debug                  false 
+debug                  true 
 borders                none 

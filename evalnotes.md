@@ -26,16 +26,47 @@
 
 Tasks
 
-    Finalize metrics so that hypothesis testing is possible. 
+### Expectation list of parameters
 
-    Find extremes of metrics from certain parameter sets, i.e. high clustering from high turn rate
+``` python
+'density'       : calc_density,
+'location'      : calc_average_loc,
+'network_count' : calc_num_networks,
+'network_size'  : calc_network_size,
+'area'          : calc_area,
+'entropy'       : calc_entropy}
 
-    Entropy of ideal gas, other metric
+mate_radius            40.0
 
-    Gather paramspace test data
+neighbor_radius        50.0 
+search_radius          200.0
 
-    Ranges for params
+Search > neighbor, strange extremes, same...
 
-    Turn on/off different features
+move_modifier          5
+underpopulation_limit  1
+overpopulation_limit   10
+crowded_limit          3
+regeneration_amount    0.
+underpopulation_damage 1.
+overpopulation_damage  1.
+affection_prime        .09
+affection_threshold    10.
+kids_per_reproduction  2.
+turn_rate              30
+cell_life              10
+cell_size              10
 
-    
+border_damage          100.0
+max_iterations         100
+
+random_start           true
+debug                  false 
+borders                none 
+```
+
+3 params
+variances for each
+metrics
+
+boxplots
