@@ -25,7 +25,7 @@ std::tuple<std::string, std::string> sepLine(const std::string& line)
 
 ParamDict::ParamDict(std::string filename)
 {
-    print("Reading parameter dictionary from " + filename);
+    //print("Reading parameter dictionary from " + filename);
     for (auto line : tools::readFile(filename))
     {
         if (line.empty()){
@@ -34,18 +34,18 @@ ParamDict::ParamDict(std::string filename)
         auto seperated = sepLine(line);
         auto key = std::get<0>(seperated);
         auto val_field = std::get<1>(seperated);
-        print("\"" + key + "\", \"" + val_field + "\"");
+        //print("\"" + key + "\", \"" + val_field + "\"");
         try
         {
             // Treat the string "infinite" as the string "infinite", not as a double
             if (val_field == "infinite") throw std::invalid_argument("Chose to read \"infinite\" as string"); 
             auto val = std::stod(val_field);
-            print("Reading " + val_field + " as double setting");
+            //print("Reading " + val_field + " as double setting");
             params[key] = val;
         }
         catch (const std::invalid_argument& e)
         {
-            print("Reading " + val_field + " as string setting");
+            //print("Reading " + val_field + " as string setting");
             assert(not std::any_of(val_field.begin(), val_field.end(), ::isdigit));
             // Make setting strings lowercase
             std::transform(val_field.begin(), val_field.end(), val_field.begin(), ::tolower);

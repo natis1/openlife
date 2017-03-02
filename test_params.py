@@ -3,6 +3,8 @@ import subprocess, shutil, os
 from collections import namedtuple, OrderedDict
 from copy import deepcopy
 
+from plot import get_last_value
+
 Variance = namedtuple('Variance', ['name', 'begin', 'end', 'step'])
 
 def to_variance(line):
@@ -39,21 +41,33 @@ def write_params(params, filename):
         for param in params.items():
             outfile.write('%s %s\n' % param)
 
+def print_kv(key, value):
+    print('%-10s| %s' % (key, value))
+
 def main():
+    if os.path.exists('output/data'):
+        shutil.rmtree('output/data')
+        os.makedirs('output/data')
+    subprocess.call('./build.sh', shell=True)
+    defaultParams = read_param_file('params.txt')
+    varianceSets  = generate_variances('variances.txt')
+    params        = deepcopy(defaultParams) 
     try:
-        subprocess.call('./build.sh', shell=True)
-        defaultParams = read_param_file('params.txt')
-        varianceSets  = generate_variances('variances.txt')
-        params        = deepcopy(defaultParams) 
-        i = 0
-        for varSet in varianceSets:
+        for i, varSet in enumerate(varianceSets):
             for name, value in varSet:
                 params[name] = value
                 write_params(params, '__temp_params__.txt') 
                 subprocess.call('./openlifecli __temp_params__.txt', shell=True)
-                shutil.copytree('output/data', 'output/param_testing/data_%s' % i)
-                shutil.copy('__temp_params__.txt', 'output/param_testing/params_%s' % i)
-                i += 1
+                datadir = 'output/param_testing/data_%s' % i
+                if os.path.exists(datadir):
+                    shutil.rmtree(datadir)
+                shutil.copytree('output/data', datadir)
+                filename = 'output/param_testing/params_%s' % i
+                if os.path.isfile(filename):
+                    os.remove(filename)
+                shutil.copy('__temp_params__.txt', filename)
+                print_kv(name, value)
+                print_kv('Entropy', get_last_value('entropy'))
             params = deepcopy(defaultParams)
     finally:
         os.remove('__temp_params__.txt')

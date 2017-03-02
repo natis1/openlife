@@ -118,6 +118,10 @@ viewsTable = {
     'area'          : calc_area,
     'entropy'       : calc_entropy}
 
+def get_last_value(view):
+    lastFile = sorted(find_filenames())[-1]
+    return viewsTable[view](read_csv(lastFile))
+
 def main():
     filenames = sorted(find_filenames())
 
