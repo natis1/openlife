@@ -110,13 +110,20 @@ def calc_entropy(points):
                     ((4*pi) / (3*N*plank_constant**2))**(3/2) ) 
               + (5/2)))
 
+# Entropy calculation without boltzmann and plank constant
+def calc_entropy_2(points):
+    N = len(points)
+    V = calc_area(points) # assuming a depth of one unit since we are in 2D space
+    return N * log(V / (N**2))
+
 viewsTable = {
     'density'       : calc_density,
     'location'      : calc_average_loc,
     'network_count' : calc_num_networks,
     'network_size'  : calc_network_size,
     'area'          : calc_area,
-    'entropy'       : calc_entropy}
+    'entropy'       : calc_entropy,
+    'entropy2'      : calc_entropy_2}
 
 def get_values(view):
     filenames = sorted(find_filenames())

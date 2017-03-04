@@ -253,9 +253,7 @@ void Board::run(int nCells, int x, int y)
     
     unsigned long long logTime = getTime();
     
-    int i = 0;
-    auto max_iters = static_cast<int>(params.get("max_iterations"));
-    while (i < max_iters and window.isOpen())
+    while (window.isOpen())
     {
         unsigned long long start_frame = getTime();
         _handle();
@@ -282,7 +280,6 @@ void Board::run(int nCells, int x, int y)
             print("Overpopulation deaths: " + to_string(s.overpopdeaths) + " underpopulation deaths: " + to_string(s.underpopdeaths));
             logTime = getTime();
         }
-        i++;
     }
 }
 

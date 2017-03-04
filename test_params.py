@@ -1,13 +1,25 @@
 #!/usr/bin/env python3
-import subprocess, shutil, os
+import subprocess, shutil, sys, os
+import signal
+import pickle
 
 import matplotlib.pyplot as plt
 
 from collections import namedtuple, OrderedDict
+from contextlib  import contextmanager
 from pprint      import pprint
 from copy        import deepcopy
 
 import plot
+
+def timeout_run(command, seconds=5):
+    with subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, preexec_fn=os.setsid) as process:
+        try:
+            output = process.communicate(timeout=seconds)[0]
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid, signal.SIGINT) # send signal to the process group
+            output = process.communicate()[0]
+        return output
 
 Variance = namedtuple('Variance', ['name', 'begin', 'end', 'step'])
 
@@ -45,12 +57,12 @@ def write_params(params, filename):
         for param in params.items():
             outfile.write('%s %s\n' % param)
 
-def get_metrics(iterations=1):
+def get_metrics(iterations=1, max_time=5):
     metrics = OrderedDict()
     for key in plot.view_keys:
         metrics[key] = [] 
     for _ in range(iterations):
-        subprocess.call('./openlifecli __temp_params__.txt', shell=True)
+        timeout_run('./openlifecli __temp_params__.txt', max_time)
         for key in plot.view_keys:
             metrics[key].append(plot.get_last_value(key)) 
         print('.', end='', flush=True)
@@ -89,44 +101,47 @@ def print_metrics(metrics, name, value):
 def plot_metrics(metricDicts, metricKeys=['network_size']):
     for metricName, valueDict in metricDicts.items():
         x = list(valueDict.keys())
-        arglist = []
-        for key in metricKeys:
+        f, axarr = plt.subplots(len(metricKeys), sharex=True)
+        for i, key in enumerate(metricKeys):
             if key != 'location':
-                arglist.append(x)
                 plotItems = [v[key] for (k, v) in valueDict.items()]
-                arglist.append(plotItems)
-        plt.plot(*arglist)
-        #plt.ylabel(metric)
-        #plt.xlabel(metricName)
+                axarr[i].plot(x, plotItems)
+                axarr[i].set_title(key)
         plt.show()
         plt.savefig('output/images/metrics.png')
 
-def main():
+def main(useSaved=False):
     clean_data_dir()
 
-    subprocess.call('./build.sh', shell=True)
-    defaultParams = read_param_file('params.txt')
-    varianceSets  = generate_variances('variances.txt')
-    params        = deepcopy(defaultParams) 
+    if not useSaved:
+        subprocess.call('./build.sh', shell=True)
+        defaultParams = read_param_file('params.txt')
+        varianceSets  = generate_variances('variances.txt')
+        params        = deepcopy(defaultParams) 
 
-    metricDicts = OrderedDict()
-    for i, varSet in enumerate(varianceSets):
-        for name, value in varSet:
-            params[name] = value
-            write_params(params, '__temp_params__.txt') 
-            metrics = get_metrics(iterations=10)
-            print_metrics(metrics, name, value)
-            if name not in metricDicts:
-                metricDicts[name] = OrderedDict()
-            metricDicts[name][value] = metrics
-            clean_output(i)
+        metricDicts = OrderedDict()
+        for i, varSet in enumerate(varianceSets):
+            for name, value in varSet:
+                params[name] = value
+                write_params(params, '__temp_params__.txt') 
+                metrics = get_metrics(iterations=1, max_time=5)
+                print_metrics(metrics, name, value)
+                if name not in metricDicts:
+                    metricDicts[name] = OrderedDict()
+                metricDicts[name][value] = metrics
+                clean_output(i)
 
-        params = deepcopy(defaultParams)
-    plot_metrics(metricDicts, ['network_count', 'network_size'])
-    #plot_metrics(metricDicts, [''])
+            params = deepcopy(defaultParams)
+        with open('output/param_testing/metricDicts.pkl', 'wb') as pickleFile:
+            pickle.dump(metricDicts, pickleFile)
+    else:
+        with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
+            metricDicts = pickle.load(pickleFile)
+    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')
 
 if __name__ == '__main__':
-    main()
+    useSaved = len(sys.argv) > 1
+    main(useSaved)
