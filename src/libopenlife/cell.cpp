@@ -12,7 +12,7 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
 {
     using tools::avg;
 
-    setRotation(a.getRotation() + 90.);
+    //setRotation(a.getRotation() + 90.);
 
     position posA = a.getPosition();
     position posB = b.getPosition();
@@ -24,7 +24,8 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
     setPosition(dx, dy);
 }
 
-void Cell::bounce(double wallx, double wally, double wallwidth, double wallheight, double move_amount)
+void Cell::interactBorder(double wallx, double wally, double wallwidth, double wallheight, 
+                double move_amount, bool infinite)
 {
     auto rotation = getRotation();
     auto radius   = getRadius();
@@ -38,25 +39,37 @@ void Cell::bounce(double wallx, double wally, double wallwidth, double wallheigh
     bool top    = pos.y - radius < wally;
     bool bottom = pos.y + radius > wally + wallheight;
 
-    // Corners don't use a normal angle because it doesn't make sense (collision is with two surfaces)
-    // Single-plane collisions use the law of reflection
+    if (infinite)
+    {
+        _borderMove(left, right, top, bottom, wallwidth, wallheight);
+    }
+    else
+    {
+        _borderMove(left, right, top, bottom, move_amount, move_amount);
+        reflected = _calcReflected(left, right, top, bottom, reflected);
+        setRotation(reflected);
+        moveVec(*this, move_amount);
+    }
+}
 
+void Cell::_borderMove(bool left, bool right, bool top, bool bottom, double dx, double dy)
+{
     // Corner cases -> Turn 180 degrees (Other methods, like facing the center of the board, resulted in bugs)
     if (left && top)
     {
-        move(move_amount, move_amount);
+        move(dx, dy);
     }
     else if (left && bottom)
     {
-        move(move_amount, -move_amount);
+        move(dx, -dy);
     }
     else if (right && top)
     {
-        move(-move_amount, move_amount);
+        move(-dx, dy);
     }
     else if (right && bottom)
     {
-        move(-move_amount, -move_amount);
+        move(-dx, -dy);
     }
 
     // Edge cases
@@ -64,33 +77,54 @@ void Cell::bounce(double wallx, double wally, double wallwidth, double wallheigh
     {
         if (left)       
         {
-            normal = 0;
-            move(move_amount, 0);
+            move(dx, 0);
         }
         else if (right) 
         {
-            normal = move_amount;
-            move(-move_amount, 0);
+            move(-dx, 0);
         }
         else if (top) 
         {
-            normal = 90;
-            move(0, move_amount);
+            move(0, dy);
         }
         else if (bottom) 
         {
-            normal = 270;
-            move(0, -move_amount);
+            move(0, -dy);
         }
+    }
+}
 
-        float inverse_normal = modAngle(normal + 180);
+double Cell::_calcReflected(bool left, bool right, bool top, bool bottom, const double& default_reflected)
+{
+    // If only one of right, top, left, and bottom is true (XOR) See http://stackoverflow.com/questions/1596668/logical-xor-operator-in-c
+    double normal;
+    if ((!right != !top) != (!left != !bottom))
+    {
+        if (left)       
+        {
+            normal = 0.;
+        }
+        else if (right) 
+        {
+            normal = 180.;
+        }
+        else if (top) 
+        {
+            normal = 90.;
+        }
+        else if (bottom) 
+        {
+            normal = 270.;
+        }
+        float inverse_normal = modAngle(normal + 180.);
         float incidence      = modAngle(rotation - inverse_normal);
 
-        reflected = modAngle(normal - incidence);
+        return modAngle(normal - incidence);
     }
-
-    setRotation(reflected);
-    moveVec(*this, move_amount);
+    else
+    {
+        return default_reflected;
+    }
 }
 
 
@@ -128,9 +162,12 @@ void Cell::intelligentRotate(bool underpopulated, bool crowded, ParamDict& simul
     auto neighbor_center = getAverageLocation(neighbors);
     auto center_of_mass  = neighbors.empty() ? visible_center :
                            // If crowded, turn away from midpoint between neighbor and visible centers
+                                             neighbor_center;
+    /*
                            crowded           ? position{(visible_center.x + neighbor_center.x) / 2.0
                                                       , (visible_center.y + neighbor_center.y) / 2.0}
                                              : neighbor_center; 
+                                            */
 
     double ideal   = angle(getPosition(), center_of_mass);
     double current = getRotation();
@@ -177,7 +214,6 @@ void Cell::update(ParamDict& simulation_params)
     bool crowded        = neighbors.size() > (int)simulation_params.get("crowded_limit");
 
     intelligentRotate(underpopulated, crowded, simulation_params);
-    //moveVec(*this, simulation_params.get("move_modifier")); 
 
     if (overpopulated)
     {

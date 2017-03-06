@@ -42,7 +42,6 @@ void Arena::run(int nCells, int x, int y, std::string paramFile)
         }
 
         if (simulation.getCellCount() == 0) break;
-        
     }
 }
 

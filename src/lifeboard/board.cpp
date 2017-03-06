@@ -4,7 +4,7 @@
 namespace objects
 {
 
-const float Board::marker_size = 25.0f;
+const float Board::marker_size = 17.0f;
 const float Board::move_amount = 25.0f;
 const int Board::logging_timesteps = 250;
 
@@ -148,7 +148,11 @@ void Board::_drawSimulation(bool debug)
     
     averagePoint.setPosition(averageLocation[0] + marker_size/2, averageLocation[1] + marker_size/2); 
     
-    window.draw(border);
+    auto border_setting = params.getSetting("borders");
+    if (border_setting != "none")
+    {
+        window.draw(border);
+    }
     
 }
 
@@ -228,7 +232,7 @@ void Board::run(int nCells, int x, int y, std::string paramFile)
     using std::to_string;
 
     params = ParamDict(paramFile);
-    bool debug = params.get("debug") > .5;
+    bool debug = params.getSetting("debug") == "true";
 
     simulation = Simulation(nCells, (double) x, (double) y, params);
     Board::border = sf::RectangleShape(sf::Vector2f(x, y));

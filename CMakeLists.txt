@@ -40,8 +40,8 @@ file (GLOB PROG_SOURCES
     "${CMAKE_SOURCE_DIR}/src/cliargparser.hpp")
 
 file (GLOB TEST_SOURCES
-    "${CMAKE_SOURCE_DIR}/tests/*.cpp" # Skip Compiler.hpp and Compiler.cpp, which include int main()
-    "${CMAKE_SOURCE_DIR}/tests/*.hpp")
+    "${CMAKE_SOURCE_DIR}/unittests/*.cpp" # Skip Compiler.hpp and Compiler.cpp, which include int main()
+    "${CMAKE_SOURCE_DIR}/unittests/*.hpp")
 
 file (GLOB GUI_SOURCES
     "${CMAKE_SOURCE_DIR}/src/lifeboard/*.cpp"
