@@ -19,7 +19,7 @@ class Board
 
 public:
     Board(int width=640, int height=480);
-    void run(int nCells=100, int x=1000, int y=1000);
+    void run(int nCells=100, int x=1000, int y=1000, std::string paramFile="params.txt");
     
 private:
     long timestepsCompleted = 0;

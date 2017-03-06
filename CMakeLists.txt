@@ -35,7 +35,9 @@ file(GLOB LIB_SOURCES
 file (GLOB PROG_SOURCES
     "${CMAKE_SOURCE_DIR}/src/main.cpp"
     "${CMAKE_SOURCE_DIR}/src/arena.cpp"
-    "${CMAKE_SOURCE_DIR}/src/arena.hpp")
+    "${CMAKE_SOURCE_DIR}/src/arena.hpp"
+    "${CMAKE_SOURCE_DIR}/src/cliargparser.cpp"
+    "${CMAKE_SOURCE_DIR}/src/cliargparser.hpp")
 
 file (GLOB TEST_SOURCES
     "${CMAKE_SOURCE_DIR}/unittests/*.cpp" # Skip Compiler.hpp and Compiler.cpp, which include int main()
