@@ -130,7 +130,10 @@ def get_values(view):
     return [viewsTable[view](read_csv(filename)) for filename in filenames]
 
 def get_last_value(view):
-    lastFile = sorted(find_filenames())[-1]
+    filenames = find_filenames()
+    if len(filenames) == 0:
+        return 0
+    lastFile = sorted(filenames)[-1]
     return viewsTable[view](read_csv(lastFile))
 
 view_keys = viewsTable.keys()

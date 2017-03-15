@@ -24,8 +24,11 @@ void Arena::run(int nCells, int x, int y, std::string paramFile)
     simulation = Simulation(nCells, x, y, params);
     unsigned long long start_frame = getTime();
     
-    while (true)
+    int i = 0;
+    int max_timesteps = static_cast<int>(params.get("max_timesteps"));
+    while (i < max_timesteps)
     {
+        i++;
         _update();
         timestepsCompleted++;
         if (Arena::timestepsCompleted % Arena::logging_timesteps == 0){

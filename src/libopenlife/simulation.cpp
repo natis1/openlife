@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-const int Simulation::csv_save_period = 100000;
+const int Simulation::csv_save_period = 10000;
 
 Simulation::Simulation(){}
 
@@ -76,7 +76,6 @@ void Simulation::update()
         cell->update(simulation_params);
         auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates
         
-        //Save 16 bytes in Cell() by storing births and deaths in Simulation instead.
         simulationStatus.births += children.size();
         if (!cell->alive()) {
             simulationStatus.deaths++;

@@ -17,6 +17,7 @@ def timeout_run(command, seconds=5):
         try:
             output = process.communicate(timeout=seconds)[0]
         except subprocess.TimeoutExpired:
+            print('Timeout occured')
             os.killpg(process.pid, signal.SIGINT) # send signal to the process group
             output = process.communicate()[0]
         return output
@@ -34,7 +35,7 @@ def read_variances_file(filename):
 def variance_set(variance):
     varSet = []
     n = variance.begin
-    while n < variance.end:
+    while n <= variance.end:
         varSet.append((variance.name, n))
         n += variance.step
     return varSet
@@ -67,11 +68,6 @@ def get_metrics(iterations=1, max_time=5):
             metrics[key].append(plot.get_last_value(key)) 
         print('.', end='', flush=True)
     print('')
-    for key in plot.view_keys:
-        try:
-            metrics[key] = sum(metrics[key]) / len(metrics[key]) 
-        except:
-            pass
     return metrics
 
 def clean_output(i):
@@ -98,17 +94,22 @@ def print_metrics(metrics, name, value):
         print_kv(k, v)
     print('-' * 80)
 
-def plot_metrics(metricDicts, metricKeys=['network_size']):
+def average(data):
+    return sum(data) / len(data)
+
+def plot_metrics(metricDicts, metricKeys):
+    pprint(metricDicts)
     for metricName, valueDict in metricDicts.items():
         x = list(valueDict.keys())
         f, axarr = plt.subplots(len(metricKeys), sharex=True)
         for i, key in enumerate(metricKeys):
             if key != 'location':
                 plotItems = [v[key] for (k, v) in valueDict.items()]
-                axarr[i].plot(x, plotItems)
+                axarr[i].boxplot(plotItems)
+                #axarr[i].plot(x, [average(item) for item in plotItems])
                 axarr[i].set_title(key)
+        plt.savefig('output/images/%s.png' % metricName)
         plt.show()
-        plt.savefig('output/images/metrics.png')
 
 def main(useSaved=False):
     clean_data_dir()
@@ -124,12 +125,13 @@ def main(useSaved=False):
             for name, value in varSet:
                 params[name] = value
                 write_params(params, '__temp_params__.txt') 
-                metrics = get_metrics(iterations=1, max_time=5)
+                metrics = get_metrics(iterations=3, max_time=30)
                 print_metrics(metrics, name, value)
                 if name not in metricDicts:
                     metricDicts[name] = OrderedDict()
                 metricDicts[name][value] = metrics
                 clean_output(i)
+                clean_data_dir()
 
             params = deepcopy(defaultParams)
         with open('output/param_testing/metricDicts.pkl', 'wb') as pickleFile:

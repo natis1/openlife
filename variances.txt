@@ -1,1 +1,1 @@
-neighbor_radius 100 500 100 
+neighbor_radius 100 400 100 
