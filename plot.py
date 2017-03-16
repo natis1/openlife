@@ -68,9 +68,6 @@ def calc_average_loc(points):
     ysum = sum(point[1] for point in points)
     return xsum / len(points), ysum / len(points)
 
-def calc_density(points):
-    return len(points)
-
 def calc_area(points):
     x_min = 0
     x_max = 0
@@ -82,6 +79,12 @@ def calc_area(points):
         if y < y_min: y_min = y
         if y > y_max: y_max = y
     return abs(x_max - x_min) * abs(y_max - y_min)
+
+def calc_density(points):
+    return len(points) / calc_area(points)
+
+def calc_size(points):
+    return len(points)
 
 boltz_k = 1.38064852 * 10**-23 
 plank_constant = 6.62607004 * 10**-34
@@ -117,6 +120,7 @@ def calc_entropy_2(points):
     return N * log(V / (N**2))
 
 viewsTable = {
+    'size'          : calc_size,
     'density'       : calc_density,
     'location'      : calc_average_loc,
     'network_count' : calc_num_networks,

@@ -102,12 +102,17 @@ def plot_metrics(metricDicts, metricKeys):
     for metricName, valueDict in metricDicts.items():
         x = list(valueDict.keys())
         f, axarr = plt.subplots(len(metricKeys), sharex=True)
+        plt.tight_layout()
+        locs = None
         for i, key in enumerate(metricKeys):
             if key != 'location':
                 plotItems = [v[key] for (k, v) in valueDict.items()]
-                axarr[i].boxplot(plotItems)
-                #axarr[i].plot(x, [average(item) for item in plotItems])
+                axarr[i].plot(x, [average(item) for item in plotItems])
+                locs, _ = plt.xticks() 
+                # Save the default tick positions, so we can reset them...
+                axarr[i].boxplot(plotItems, positions=x, widths=20)
                 axarr[i].set_title(key)
+        plt.xticks(locs)
         plt.savefig('output/images/%s.png' % metricName)
         plt.show()
 
@@ -139,7 +144,7 @@ def main(useSaved=False):
     else:
         with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
             metricDicts = pickle.load(pickleFile)
-    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy'])
+    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'density', 'size'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')
