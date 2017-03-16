@@ -1,1 +1,3 @@
 neighbor_radius 100 400 100 
+crowded_limit 3 10 1
+turn_rate 30 180 30

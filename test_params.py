@@ -109,8 +109,11 @@ def plot_metrics(metricDicts, metricKeys):
                 plotItems = [v[key] for (k, v) in valueDict.items()]
                 axarr[i].plot(x, [average(item) for item in plotItems])
                 locs, _ = plt.xticks() 
-                # Save the default tick positions, so we can reset them...
-                axarr[i].boxplot(plotItems, positions=x, widths=20)
+                if len(x) < 10:
+                    widths = 20
+                else:
+                    widths = .5
+                axarr[i].boxplot(plotItems, positions=x, widths=widths)
                 axarr[i].set_title(key)
         plt.xticks(locs)
         plt.savefig('output/images/%s.png' % metricName)
