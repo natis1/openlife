@@ -101,21 +101,16 @@ def plot_metrics(metricDicts, metricKeys):
     pprint(metricDicts)
     for metricName, valueDict in metricDicts.items():
         x = list(valueDict.keys())
-        f, axarr = plt.subplots(len(metricKeys), sharex=True)
-        plt.tight_layout()
-        locs = None
+        fig, axarr = plt.subplots(len(metricKeys), sharex=True)
+        plt.tight_layout(pad=1.0, h_pad=1.0)
+        fig.subplots_adjust(top=0.88, bottom=.12, left=.24)
         for i, key in enumerate(metricKeys):
             if key != 'location':
                 plotItems = [v[key] for (k, v) in valueDict.items()]
-                axarr[i].plot(x, [average(item) for item in plotItems])
-                locs, _ = plt.xticks() 
-                if len(x) < 10:
-                    widths = 20
-                else:
-                    widths = .5
-                axarr[i].boxplot(plotItems, positions=x, widths=widths)
-                axarr[i].set_title(key)
-        plt.xticks(locs)
+                axarr[i].boxplot(plotItems)
+                axarr[i].set_ylabel(key, rotation='horizontal', horizontalalignment='right')
+        plt.suptitle('Metrics when varying %s' % metricName, size=16) # plt.title() would set the last-added subplot, which is less than ideal ;)
+        fig.text(0.5, 0.04, metricName, ha='center')
         plt.savefig('output/images/%s.png' % metricName)
         plt.show()
 
@@ -133,7 +128,7 @@ def main(useSaved=False):
             for name, value in varSet:
                 params[name] = value
                 write_params(params, '__temp_params__.txt') 
-                metrics = get_metrics(iterations=3, max_time=30)
+                metrics = get_metrics(iterations=10, max_time=60)
                 print_metrics(metrics, name, value)
                 if name not in metricDicts:
                     metricDicts[name] = OrderedDict()
@@ -147,7 +142,7 @@ def main(useSaved=False):
     else:
         with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
             metricDicts = pickle.load(pickleFile)
-    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'density', 'size'])
+    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')
