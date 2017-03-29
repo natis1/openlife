@@ -1,4 +1,4 @@
-mate_radius            40.0
+mate_radius            100.0
 neighbor_radius        400.0 
 search_radius          1000.0
 move_modifier          10

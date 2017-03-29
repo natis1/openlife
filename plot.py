@@ -81,6 +81,7 @@ def calc_area(points):
     return abs(x_max - x_min) * abs(y_max - y_min)
 
 def calc_density(points):
+    if len(points) == 0: return 0 
     return len(points) / calc_area(points)
 
 def calc_size(points):
@@ -106,6 +107,7 @@ def calc_entropy(points):
     # http://hyperphysics.phy-astr.gsu.edu/hbase/Therm/entropgas.html
     # http://hyperphysics.phy-astr.gsu.edu/hbase/thermo/inteng.html#c2
     N = len(points)
+    if N == 0: return 0
     V = calc_area(points) # assuming a depth of one unit since we are in 2D space
 
     return (N * boltz_k * (
@@ -116,6 +118,7 @@ def calc_entropy(points):
 # Entropy calculation without boltzmann and plank constant
 def calc_entropy_2(points):
     N = len(points)
+    if N == 0: return 0
     V = calc_area(points) # assuming a depth of one unit since we are in 2D space
     return N * log(V / (N**2))
 
@@ -152,7 +155,7 @@ def main():
             plt.plot(values)
             plt.ylabel(view)
             plt.xlabel('60 iterations')
-            plt.savefig('output/images/%s.png' % view)
+            plt.savefig('output/images/default/%s.png' % view)
         else:
             raise ValueError('Unknown argument: %s\nValid arguments are:\n%s' % (view, '\n'.join(viewsTable.keys())))
     else:

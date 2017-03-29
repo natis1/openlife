@@ -103,12 +103,12 @@ def plot_metrics(metricDicts, metricKeys):
         x = list(valueDict.keys())
         fig, axarr = plt.subplots(len(metricKeys), sharex=True)
         plt.tight_layout(pad=1.0, h_pad=1.0)
-        fig.subplots_adjust(top=0.88, bottom=.12, left=.24)
+        fig.subplots_adjust(top=0.88, bottom=.12, left=.12)
         for i, key in enumerate(metricKeys):
             if key != 'location':
                 plotItems = [v[key] for (k, v) in valueDict.items()]
-                axarr[i].boxplot(plotItems)
-                axarr[i].set_ylabel(key, rotation='horizontal', horizontalalignment='right')
+                axarr[i].boxplot(plotItems, labels=x)
+                axarr[i].set_title(key)
         plt.suptitle('Metrics when varying %s' % metricName, size=16) # plt.title() would set the last-added subplot, which is less than ideal ;)
         fig.text(0.5, 0.04, metricName, ha='center')
         plt.savefig('output/images/%s.png' % metricName)
@@ -117,32 +117,35 @@ def plot_metrics(metricDicts, metricKeys):
 def main(useSaved=False):
     clean_data_dir()
 
-    if not useSaved:
-        subprocess.call('./build.sh', shell=True)
-        defaultParams = read_param_file('params.txt')
-        varianceSets  = generate_variances('variances.txt')
-        params        = deepcopy(defaultParams) 
+    try:
+        if not useSaved:
+            subprocess.call('./build.sh', shell=True)
+            defaultParams = read_param_file('params.txt')
+            varianceSets  = generate_variances('variances.txt')
+            params        = deepcopy(defaultParams) 
 
-        metricDicts = OrderedDict()
-        for i, varSet in enumerate(varianceSets):
-            for name, value in varSet:
-                params[name] = value
-                write_params(params, '__temp_params__.txt') 
-                metrics = get_metrics(iterations=10, max_time=60)
-                print_metrics(metrics, name, value)
-                if name not in metricDicts:
-                    metricDicts[name] = OrderedDict()
-                metricDicts[name][value] = metrics
-                clean_output(i)
-                clean_data_dir()
+            metricDicts = OrderedDict()
+            for i, varSet in enumerate(varianceSets):
+                for name, value in varSet:
+                    params[name] = value
+                    write_params(params, '__temp_params__.txt') 
+                    metrics = get_metrics(iterations=10, max_time=30)
+                    print_metrics(metrics, name, value)
+                    if name not in metricDicts:
+                        metricDicts[name] = OrderedDict()
+                    metricDicts[name][value] = metrics
+                    clean_output(i)
+                    clean_data_dir()
 
-            params = deepcopy(defaultParams)
-        with open('output/param_testing/metricDicts.pkl', 'wb') as pickleFile:
-            pickle.dump(metricDicts, pickleFile)
-    else:
-        with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
-            metricDicts = pickle.load(pickleFile)
-    plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
+                params = deepcopy(defaultParams)
+            with open('output/param_testing/metricDicts.pkl', 'wb') as pickleFile:
+                pickle.dump(metricDicts, pickleFile)
+        else:
+            with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
+                metricDicts = pickle.load(pickleFile)
+        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
+    except KeyboardInterrupt:
+        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')
