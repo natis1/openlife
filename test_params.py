@@ -167,9 +167,9 @@ def main(useSaved=False):
         else:
             with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
                 metricDicts = pickle.load(pickleFile)
-        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
+        plot_metrics(metricDicts, ['complexity', 'network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
     except KeyboardInterrupt:
-        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
+        plot_metrics(metricDicts, ['complexity', 'network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')

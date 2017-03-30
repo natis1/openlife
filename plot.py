@@ -20,6 +20,12 @@ def distance(x1, y1, x2, y2):
 def get_edges(points):
     edges = []
     for i, (x1, y1) in enumerate(points):
+        def score(value):
+            _, (x2, y2) = value
+            return distance(x1, y1, x2, y2)
+        others = points[:i] + points[i+1:] 
+        neighbors = 2
+        nearest   = sorted(enumerate(others), key=score)[:neighbors]
         others = points[:i] + points[i+1:] 
         nearest = enumerate([(x, y) for (x, y) in others if distance(x1, y1, x, y) < 400.])
         for node in nearest:
