@@ -3,7 +3,8 @@ import os, sys, subprocess
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
-from math import sqrt, log # Seriously? lol
+from math       import sqrt, log # Seriously? lol
+from statistics import stdev
 
 def read_csv(filename):
     convert = lambda line : tuple(float(value) for value in line.split(','))
@@ -19,13 +20,8 @@ def distance(x1, y1, x2, y2):
 def get_edges(points):
     edges = []
     for i, (x1, y1) in enumerate(points):
-        def score(value):
-            _, (x2, y2) = value
-            return distance(x1, y1, x2, y2)
         others = points[:i] + points[i+1:] 
-        # Find n nearest neighbors
-        neighbors = 2
-        nearest   = sorted(enumerate(others), key=score)[:neighbors]
+        nearest = enumerate([(x, y) for (x, y) in others if distance(x1, y1, x, y) < 400.])
         for node in nearest:
             edges.append((i, node[0]))
     return edges
@@ -60,6 +56,15 @@ def calc_network_size(points):
     if len(sizes) == 0:
         return 0
     return sum(sizes) / len(sizes)
+
+def calc_complexity(points):
+    networks = get_networks(points)
+    sizes    = [len(network) for network in networks]
+    if len(sizes) > 1:
+        s = stdev(sizes)
+    else:
+        s = 0
+    return s 
 
 def calc_average_loc(points):
     if len(points) == 0: # Cant find the average location of 0 cells
@@ -123,9 +128,10 @@ def calc_entropy_2(points):
     return N * log(V / (N**2))
 
 viewsTable = {
-    'size'          : calc_size,
+    'population'    : calc_size,
     'density'       : calc_density,
     'location'      : calc_average_loc,
+    'complexity'    : calc_complexity,
     'network_count' : calc_num_networks,
     'network_size'  : calc_network_size,
     'area'          : calc_area,
@@ -151,11 +157,13 @@ def main():
     if len(sys.argv) > 1:         
         view = sys.argv[1] 
         if view in viewsTable:    
+            print('Plotting %s' % view)
             values = [viewsTable[view](read_csv(f)) for f in filenames]
             plt.plot(values)
             plt.ylabel(view)
             plt.xlabel('60 iterations')
             plt.savefig('output/images/default/%s.png' % view)
+            #plt.show()
         else:
             raise ValueError('Unknown argument: %s\nValid arguments are:\n%s' % (view, '\n'.join(viewsTable.keys())))
     else:

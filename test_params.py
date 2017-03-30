@@ -9,6 +9,8 @@ from collections import namedtuple, OrderedDict
 from contextlib  import contextmanager
 from pprint      import pprint
 from copy        import deepcopy
+from statistics  import stdev
+from math        import sqrt
 
 import plot
 
@@ -26,7 +28,10 @@ Variance = namedtuple('Variance', ['name', 'begin', 'end', 'step'])
 
 def to_variance(line):
     name, begin, end, step = line.split()
-    return Variance(name, int(begin), int(end), int(step))
+    try:
+        return Variance(name, int(begin), int(end), int(step))
+    except ValueError:
+        return Variance(name, float(begin), float(end), float(step))
 
 def read_variances_file(filename):
     with open(filename, 'r') as variancefile:
@@ -97,6 +102,23 @@ def print_metrics(metrics, name, value):
 def average(data):
     return sum(data) / len(data)
 
+def test_hypothesis(key, plotItems, x, filename):
+    hypothesis_string = ''
+    assert len(plotItems) > 1
+    mean = average(plotItems[0])
+    for i, paramVals in enumerate(plotItems[1:]):
+        t = abs((mean - average(paramVals))/(max(1, stdev(paramVals)) / sqrt(len(paramVals))))
+        result = 'insignificant'
+        if t > .883:  result = '>80%'
+        if t > 1.1:   result = '>85%'
+        if t > 1.383: result = '>90%'
+        if t > 1.833: result = '>95%'
+        if t > 2.821: result = '>99%'
+        hypothesis_string += '%-10s, %-20s (t=%s)\n' % (x[i], result, t)
+        mean = average(paramVals)
+    with open(filename, 'w') as hypothesis_file:
+       hypothesis_file.write('%s\n%s' % (key, hypothesis_string)) 
+
 def plot_metrics(metricDicts, metricKeys):
     pprint(metricDicts)
     for metricName, valueDict in metricDicts.items():
@@ -107,6 +129,8 @@ def plot_metrics(metricDicts, metricKeys):
         for i, key in enumerate(metricKeys):
             if key != 'location':
                 plotItems = [v[key] for (k, v) in valueDict.items()]
+                print(key)
+                test_hypothesis(key, plotItems, x, 'output/param_testing/%s_%s_hypothesis' % (metricName, key))
                 axarr[i].boxplot(plotItems, labels=x)
                 axarr[i].set_title(key)
         plt.suptitle('Metrics when varying %s' % metricName, size=16) # plt.title() would set the last-added subplot, which is less than ideal ;)
@@ -129,7 +153,7 @@ def main(useSaved=False):
                 for name, value in varSet:
                     params[name] = value
                     write_params(params, '__temp_params__.txt') 
-                    metrics = get_metrics(iterations=10, max_time=30)
+                    metrics = get_metrics(iterations=10, max_time=60)
                     print_metrics(metrics, name, value)
                     if name not in metricDicts:
                         metricDicts[name] = OrderedDict()
@@ -143,9 +167,9 @@ def main(useSaved=False):
         else:
             with open('output/param_testing/metricDicts.pkl', 'rb') as pickleFile:
                 metricDicts = pickle.load(pickleFile)
-        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
+        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
     except KeyboardInterrupt:
-        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'size', 'density'])
+        plot_metrics(metricDicts, ['network_count', 'network_size', 'entropy', 'area', 'population', 'density'])
 
     if os.path.isfile('__temp_params__.txt'):
         os.remove('__temp_params__.txt')
