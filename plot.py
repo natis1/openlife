@@ -26,8 +26,6 @@ def get_edges(points):
         others = points[:i] + points[i+1:] 
         neighbors = 2
         nearest   = sorted(enumerate(others), key=score)[:neighbors]
-        others = points[:i] + points[i+1:] 
-        nearest = enumerate([(x, y) for (x, y) in others if distance(x1, y1, x, y) < 400.])
         for node in nearest:
             edges.append((i, node[0]))
     return edges
