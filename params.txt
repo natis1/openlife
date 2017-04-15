@@ -16,7 +16,7 @@ cell_life              100
 cell_size              10
 
 border_damage          100.0
-max_timesteps          1000.0
+max_timesteps          500.0
 
 random_start           false 
 debug                  false 

@@ -102,20 +102,29 @@ def print_metrics(metrics, name, value):
 def average(data):
     return sum(data) / len(data)
 
+def t_val_test(x, paramVals, mean):
+    signed_t = (average(paramVals) -  mean)/(max(0.000001, stdev(paramVals)) / sqrt(len(paramVals)))
+    sign = '+' if signed_t > 0 else '-'
+    t = abs(signed_t)
+    result = 'insignificant'
+    if t > .883:  result = '>80%'
+    if t > 1.1:   result = '>85%'
+    if t > 1.383: result = '>90%'
+    if t > 1.833: result = '>95%'
+    if t > 2.821: result = '>99%'
+    return '%-7s, %-14s %s (t=%s)\n' % (x, sign, result, signed_t)
+
 def test_hypothesis(key, plotItems, x, filename):
     hypothesis_string = ''
     assert len(plotItems) > 1
-    mean = average(plotItems[0])
+    startMean = average(plotItems[0])
+    lastMean = startMean 
     for i, paramVals in enumerate(plotItems[1:]):
-        t = abs((mean - average(paramVals))/(max(1, stdev(paramVals)) / sqrt(len(paramVals))))
-        result = 'insignificant'
-        if t > .883:  result = '>80%'
-        if t > 1.1:   result = '>85%'
-        if t > 1.383: result = '>90%'
-        if t > 1.833: result = '>95%'
-        if t > 2.821: result = '>99%'
-        hypothesis_string += '%-10s, %-20s (t=%s)\n' % (x[i], result, t)
-        mean = average(paramVals)
+        hypothesis_string += t_val_test(x[i], paramVals, lastMean)
+        lastMean = average(paramVals)
+    hypothesis_string += 'mean test from start sample\n'
+    for i, paramVals in enumerate(plotItems[1:]):
+        hypothesis_string += t_val_test(x[i], paramVals, startMean)
     with open(filename, 'w') as hypothesis_file:
        hypothesis_file.write('%s\n%s' % (key, hypothesis_string)) 
 
