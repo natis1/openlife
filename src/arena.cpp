@@ -16,16 +16,19 @@ void Arena::_update()
 }
 
 // This function should really only call other functions (Similar to how no code goes in int main)
-void Arena::run(int nCells, int x, int y)
+void Arena::run(int nCells, int x, int y, std::string paramFile)
 {
     using tools::getTime;
 
-    ParamDict params("params.txt");
+    ParamDict params(paramFile);
     simulation = Simulation(nCells, x, y, params);
     unsigned long long start_frame = getTime();
     
-    while (true)
+    int i = 0;
+    int max_timesteps = static_cast<int>(params.get("max_timesteps"));
+    while (i < max_timesteps)
     {
+        i++;
         _update();
         timestepsCompleted++;
         if (Arena::timestepsCompleted % Arena::logging_timesteps == 0){
@@ -42,7 +45,6 @@ void Arena::run(int nCells, int x, int y)
         }
 
         if (simulation.getCellCount() == 0) break;
-        
     }
 }
 

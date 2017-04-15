@@ -17,7 +17,7 @@ class Arena
 
 public:
     Arena();
-    void run(int nCells=100, int x=1000, int y=1000);
+    void run(int nCells=100, int x=1000, int y=1000, std::string paramFile="params.txt");
 
 private:
     const static int logging_timesteps;

@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-const int Simulation::csv_save_period = 500000;
+const int Simulation::csv_save_period = 10000;
 
 Simulation::Simulation(){}
 
@@ -15,7 +15,7 @@ Simulation::Simulation(int nCells, double width, double height, const ParamDict&
     border.height = height;
     
     // Different starting configurations based on params
-    bool random = simulation_params.get("random_start") > .5;
+    bool random = simulation_params.getSetting("random_start") == "true";
     if (random)
     {
         _generateManyRandomCells(nCells, (int) width, (int) height);
@@ -60,13 +60,22 @@ void Simulation::update()
     {
         if (not _inBounds(*cell))
         {
-            // Modify the cell to push it into bounds
-            //cell->bounce(border.x, border.y, border.width, border.height, simulation_params.get("move_modifier"));
+            auto border_setting = simulation_params.getSetting("borders");
+            if (border_setting != "none")
+            {
+                bool infinite = border_setting == "infinite";
+                cell->interactBorder(border.x, border.y, border.width, border.height, 
+                                     simulation_params.get("move_modifier"), 
+                                     infinite);
+            }
+            if (border_setting == "damage")
+            {
+                cell->damage(simulation_params.get("border_damage"));
+            }
         }
         cell->update(simulation_params);
         auto children = cell->mate(simulation_params); // Produce children with current set of mates, then clear list of mates
         
-        //Save 16 bytes in Cell() by storing births and deaths in Simulation instead.
         simulationStatus.births += children.size();
         if (!cell->alive()) {
             simulationStatus.deaths++;
@@ -95,8 +104,7 @@ void Simulation::update()
         {
             count = "0" + count;
         }
-        std::string filename = "data/simulation_" + count + ".csv";
-        //print(filename);
+        std::string filename = "output/data/simulation_" + count + ".csv";
         tools::writeCSV(filename, cells);
         last_update = getTime();
         update_count++;
@@ -138,7 +146,6 @@ void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnY
     
     using tools::dist;
     using tools::randomGenerator;
-    
     
     // Distributions for initial random settings
     auto widthDist  = dist((int)border.x, spawnXSize - (int) border.x);

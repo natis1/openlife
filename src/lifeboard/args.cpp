@@ -1,7 +1,7 @@
-#include "cliargparser.hpp"
+#include "args.hpp"
 
 
-struct options parseArgs(int argc, char** args)
+struct options parseArgs(int argc, char ** args)
 {
     std::vector<std::string> arguements;
     arguements.reserve(argc);
@@ -23,3 +23,4 @@ struct options extractArgs(std::vector<std::string> args)
         
     
 }
+
