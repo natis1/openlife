@@ -48,7 +48,7 @@ public:
     
     color getFillColor();
     int getApproximateFillColor();
-    void setFillColor(double r, double g, double b, double a);
+    void setFillColor(double r, double g, double b, double a=255);
     void setFillColor(color c);
     
 protected:

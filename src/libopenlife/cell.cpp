@@ -22,6 +22,9 @@ Cell::Cell(double size, double life, Cell& a, Cell& b) :
     auto dy = avg(posA.y, posB.y);
 
     setPosition(dx, dy);
+    auto a_color = a.getFillColor();
+    auto b_color = b.getFillColor();
+    setFillColor(avg(a_color.r, b_color.r), avg(a_color.g, b_color.g), avg(a_color.b, b_color.b), avg(a_color.a, b_color.a));
 }
 
 void Cell::interactBorder(double wallx, double wally, double wallwidth, double wallheight, 
