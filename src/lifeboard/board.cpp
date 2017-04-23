@@ -11,6 +11,7 @@ const int Board::logging_timesteps = 250;
 Board::Board(int width, int height) :
     window(sf::VideoMode(width, height), "Life"),
     averagePoint(marker_size),
+    center(marker_size),
     angle_line(sf::Vector2f(35, 5))
 {
     border.setFillColor(sf::Color(0, 0, 0, 0));
@@ -31,6 +32,9 @@ Board::Board(int width, int height) :
 
     averagePoint.setFillColor(sf::Color(255, 102, 0));
     averagePoint.setOrigin(sf::Vector2f(marker_size, marker_size));
+    center.setFillColor(sf::Color(66, 134, 244));
+    center.setOrigin(sf::Vector2f(marker_size, marker_size));
+    center.setPosition(width / 2., height / 2.);
 
     search_radius.setFillColor(sf::Color(0, 0, 0, 0));
     search_radius.setOutlineColor(sf::Color(0, 0, 255, 128));
@@ -130,6 +134,7 @@ void Board::_drawSimulation(bool debug)
     }
     // Draw averagepoint behind cell bodies
     window.draw(averagePoint);
+    window.draw(center);
 
     // Cell bodies second
     for (auto cell : simulation.cells)
