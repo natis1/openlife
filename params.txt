@@ -3,8 +3,8 @@ neighbor_radius        400.0
 search_radius          1000.0
 move_modifier          10
 underpopulation_limit  1
-overpopulation_limit   10
-crowded_limit          3
+overpopulation_limit   18
+crowded_limit          10
 regeneration_amount    0.
 underpopulation_damage 1.
 overpopulation_damage  1.
@@ -19,5 +19,5 @@ border_damage          100.0
 max_timesteps          500.0
 
 random_start           false
-debug                  false 
-borders                none 
+debug                  false
+borders                none

@@ -41,6 +41,7 @@ private:
     sf::View info_view;
 
     sf::CircleShape averagePoint;
+    sf::CircleShape center;
 
     sf::CircleShape search_radius;
     sf::CircleShape neighbor_radius;
