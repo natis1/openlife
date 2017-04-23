@@ -28,6 +28,8 @@ Simulation::Simulation(int nCells, double width, double height, const ParamDict&
         Cell b(size, life);
         a.setPosition(width/2. + 100., height/2.);
         b.setPosition(width/2. - 100., height/2.);
+        a.setFillColor(176, 66, 244);
+        b.setFillColor(239, 148, 50);
         cells.push_back(std::make_shared<Cell>(a));
         cells.push_back(std::make_shared<Cell>(b));
     }
@@ -151,6 +153,7 @@ void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnY
     auto widthDist  = dist((int)border.x, spawnXSize - (int) border.x);
     auto heightDist = dist((int)border.y, spawnYSize - (int) border.y);
     auto angleDist  = dist(0, 360);
+    auto colorDist  = dist(0, 255);
     
     
     // Use generation method specified in tools - Default: Mersenne Twister
@@ -158,12 +161,13 @@ void Simulation::_generateManyRandomCells(int nCells, int spawnXSize, int spawnY
     
     cells.reserve(nCells);
     
-    
     for (int i = 0; i < nCells; i++)
     {
         auto cell = std::make_shared<Cell>(Cell(simulation_params.get("cell_size"), simulation_params.get("cell_life")));
         cell->setPosition(widthDist(generator), heightDist(generator));
         cell->setRotation(angleDist(generator));
+
+        cell->setFillColor(colorDist(generator), colorDist(generator), colorDist(generator));
         cells.push_back(cell);
     }
 }
